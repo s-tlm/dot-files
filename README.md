@@ -6,6 +6,4 @@ Will be continually updating as I discover more configurations.
 
 # Usage
 
-Clone to your home directory. 
-
-`cp /vdf/.vimrc ~/.vimrc`
+1. `cp /vdf/.vimrc ~/.vimrc`
