@@ -8,4 +8,4 @@ Will be continually updating as I discover more configurations.
 
 Clone to your home directory. 
 
-`mv /vdf/.vimrc ~/.vimrc`
+`cp /vdf/.vimrc ~/.vimrc`
