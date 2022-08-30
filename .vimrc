@@ -1,4 +1,4 @@
-" set color, show line numbers and navigation position 
+syntax on
 set number
 set relativenumber
 set ruler
