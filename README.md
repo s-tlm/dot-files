@@ -1,9 +1,8 @@
-# Overview
+# vdf
 
-My Vim dot file. A place to store and share my vim configuration.
+## Overview
 
-Will be continually updating as I discover more configurations.
+Contains:
+* .vimrc
+* .vim
 
-# Usage
-
-1. `cp /vdf/.vimrc ~/.vimrc`
