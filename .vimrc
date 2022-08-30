@@ -1,4 +1,3 @@
-syntax on
 set number
 set relativenumber
 set ruler
@@ -14,7 +13,7 @@ hi Search guibg=LightBlue
 " vim-markdown settings
 set conceallevel=2
 
-" enable syntax highlighting
-if &t_Co > 1
-	syntax enable
-endif
+" Set themes
+packadd! dracula
+syntax enable
+colorscheme dracula
