@@ -1,7 +1,10 @@
 set number
 set relativenumber
 set ruler
-set ts=4 sw=4
+set colorcolumn=80
+highlight ColorColumn ctermbg=0 guibg=lightgrey
+set tabstop=2
+set shiftwidth=2
 set laststatus=2
 set statusline=%f
 set visualbell
