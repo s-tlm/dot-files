@@ -1,22 +1,21 @@
-set number
-set relativenumber
-set ruler
-set colorcolumn=80
+" --------------------------------- Visuals -----------------------------------
+set relativenumber " Line numbers relative to current line
+set colorcolumn=80 " Mark end of line
 highlight ColorColumn ctermbg=0 guibg=lightgrey
-set tabstop=2
-set shiftwidth=2
+set hlsearch " Highlights text when searching
+set visualbell " Flash screen instead of beeping
+
+" ---------------------------------- Status -----------------------------------
+set ruler " Show current line and column number
+set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 set laststatus=2
 set statusline=%f
-set visualbell
-set autoindent
-set is
-set hlsearch
-hi Search guibg=LightBlue
+set autoindent " Auto indent lines when typing
 
-" vim-markdown settings
+" -------------------------- Vim-Markdown Settings ----------------------------
 set conceallevel=2
 
-" Set themes
+" ---------------------------------- Theme ------------------------------------
 packadd! dracula
 syntax enable
 colorscheme dracula
