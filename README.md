@@ -4,5 +4,3 @@
 
 Contains:
 * .vimrc
-* .vim
-
