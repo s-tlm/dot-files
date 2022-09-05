@@ -19,3 +19,6 @@ set conceallevel=2
 packadd! dracula
 syntax enable
 colorscheme dracula
+
+" ------------------------------- vim Markdown --------------------------------
+let g:vim_markdown_strikethrough = 1
