@@ -1,5 +1,5 @@
 " --------------------------------- Visuals -----------------------------------
-set relativenumber " Line numbers relative to current line
+set number relativenumber " Line numbers relative to current line
 set colorcolumn=80 " Mark end of line
 highlight ColorColumn ctermbg=0 guibg=lightgrey
 set hlsearch " Highlights text when searching
