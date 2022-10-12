@@ -6,6 +6,7 @@ set hlsearch " Highlights text when searching
 set visualbell " Flash screen instead of beeping
 
 " ---------------------------------- Status -----------------------------------
+set backspace=indent,eol,start " Set backspace to normal behaviour
 syntax on
 set ruler " Show current line and column number
 set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
