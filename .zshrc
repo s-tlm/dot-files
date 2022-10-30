@@ -85,6 +85,7 @@ plugins=(
 	terraform
 	aws
         zsh-autosuggestions
+        colorize
 )
 
 source $ZSH/oh-my-zsh.sh
