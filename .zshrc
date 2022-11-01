@@ -11,9 +11,11 @@ fi
 # Path to your oh-my-zsh installation.
 typeset -aU path # no repeated directories allowed in path array
 export ZSH="$HOME/.oh-my-zsh"
-# Add Pygmentize to PATH
+
+# Pygmentize setup
 path+=$HOME/.local/bin
 export PATH
+export ZSH_COLORIZE_STYLE="dracula"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
