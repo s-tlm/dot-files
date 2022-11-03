@@ -1,4 +1,4 @@
-# Vim Dot File - vdf
+# My Dot Files
 
 ## Dependencies
 
@@ -7,7 +7,7 @@
 3. VIM vim-airline
 4. SHELL zsh
 5. SHELL oh-my-zsh
-6. SHELL zsh-powerlevel-10k
+6. SHELL starship
 7. COLORIZE pygments
 
 ## Overview
@@ -16,9 +16,10 @@ Contains:
 
 * .vimrc
 * .zshrc
+* .config/starship.toml
 
 ## TODO:
 
 * Expand to contain the rest of my dot files.
-* Create setup script to link repository dot files to ~/.
+* Create setup script to symlink repository dot files to ~/.
 * Create setup script to install dependencies
