@@ -9,6 +9,7 @@
 5. SHELL oh-my-zsh
 6. SHELL starship
 7. COLORIZE pygments
+8. FONT Fira Code Nerd Font
 
 ## Overview
 
