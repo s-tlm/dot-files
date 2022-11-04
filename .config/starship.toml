@@ -1,86 +1,71 @@
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$git_metrics\
+$terraform\
+$fill\
+$aws\
+$cmd_duration $jobs $time\
+$line_break\
+$character"""
+
 # Get editor completions based on the config schema
 "$schema" = 'https://starship.rs/config-schema.json'
 
 # Inserts a blank line between shell prompts
 add_newline = true
 
-# Replace the "❯" symbol in the prompt with "➜"
-[character] # The name of the module we are configuring is "character"
-success_symbol = "[➜](bold green)" # The "success_symbol" segment is being set to "➜" with the color "bold green"
+[fill]
+symbol = " "
 
-# Disable the package module, hiding it from the prompt completely
-[package]
-disabled = true
+# Replace the "❯" symbol in the prompt with "➜"
+[character] 
+success_symbol = "[➜](bold green)"
+error_symbol   = "[➜](bold red)" 
 
 [aws]
-format = 'on [$symbol($profile )(\($region\) )]($style)'
+format = 'aws [$symbol($profile )(\($region\) )]($style)'
 symbol = "  "
 style = "bold yellow"
 
 [aws.region_aliases]
 ap-southeast-2 = "au"
 
-[buf]
-symbol = " "
-
-[c]
-symbol = " "
-
-[conda]
-symbol = " "
-
-[dart]
-symbol = " "
-
 [directory]
+format = "[$path]($style)[$read_only]($read_only_style) "
 read_only = " "
+read_only_style = "red"
+home_symbol = "~"
+style = "white bold dimmed"
 
 [docker_context]
 symbol = " "
 
-[elixir]
-symbol = " "
-
-[elm]
-symbol = " "
-
 [git_branch]
+format = "on [$symbol$branch(:$remote_branch)]($style) "
 symbol = " "
+style = "bold purple"
 
 [git_status]
+format = '([\[$all_status$ahead_behind\]]($style) )'
 ahead = "⇡${count}"
 diverged = "⇕⇡${ahead_count}⇣${behind_count}"
 behind = "⇣${count}"
 
+[git_metrics]
+format = "${all_status}"
+
 [golang]
 symbol = " "
-
-[haskell]
-symbol = " "
 
 [hg_branch]
 symbol = " "
 
-[java]
-symbol = " "
-
-[julia]
-symbol = " "
-
-[lua]
-symbol = " "
-
 [memory_usage]
 symbol = " "
-
-[meson]
-symbol = "喝 "
-
-[nim]
-symbol = " "
-
-[nix_shell]
-symbol = " "
 
 [nodejs]
 symbol = " "
@@ -92,22 +77,9 @@ symbol = " "
 symbol = " "
 pyenv_version_name = true
 
-[rlang]
-symbol = "ﳒ "
-
-[ruby]
-symbol = " "
-
-[rust]
-symbol = " "
-
-[scala]
-symbol = " "
-
-[spack]
-symbol = "🅢 "
-
 [terraform]
+format = "[$symbol$version $workspace]($style)"
 symbol = "行"
-format = "[$symbol$version$workspace] "
+version_format = "v${raw}"
+style = "105"
 
