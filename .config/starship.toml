@@ -39,7 +39,7 @@ format = "[$path]($style)[$read_only]($read_only_style) "
 read_only = " "
 read_only_style = "red"
 home_symbol = "~"
-style = "white bold dimmed"
+style = "bold cyan"
 
 [docker_context]
 symbol = " "
