@@ -78,7 +78,7 @@ symbol = " "
 pyenv_version_name = true
 
 [terraform]
-format = "[$symbol$version $workspace]($style)"
+format = "[$symbol$version on $workspace]($style)"
 symbol = "行"
 version_format = "v${raw}"
 style = "105"
