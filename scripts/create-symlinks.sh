@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-ZSHRC=~/.zshrc
-VIMRC=~/.vimrc
-SSTOML=~/.config/starship.toml
-PARENTDIR=$(git rev-parse --show-toplevel)
+local ZSHRC=~/.zshrc
+local VIMRC=~/.vimrc
+local SSTOML=~/.config/starship.toml
+local PARENTDIR=$(git rev-parse --show-toplevel)
 
 echo ""
 echo "Are the following installed?"
