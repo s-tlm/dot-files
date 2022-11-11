@@ -1,4 +1,4 @@
-# My Dot Files
+# Dot Files
 
 ## Dependencies
 
@@ -16,3 +16,4 @@
 
 * .vimrc
 * .zshrc
+* starship.toml
