@@ -5,10 +5,12 @@ $directory\
 $git_branch\
 $git_status\
 $git_metrics\
+$c\
 $terraform\
+$jobs\
 $fill\
 $aws\
-$cmd_duration $jobs $time\
+$cmd_duration $time\
 $line_break\
 $character"""
 
@@ -33,6 +35,12 @@ style = "bold yellow"
 
 [aws.region_aliases]
 ap-southeast-2 = "au"
+
+[c]
+format = "using [$symbol($version(-$name) )]($style)"
+symbol = "C++ "
+detect_extensions = ["c", "cpp", "h"]
+commands = [["g++", "--version"]]
 
 [directory]
 format = "[$path]($style)[$read_only]($read_only_style) "
@@ -78,7 +86,7 @@ symbol = " "
 pyenv_version_name = true
 
 [terraform]
-format = "[$symbol$version on $workspace]($style)"
+format = "[using $symbol$version on $workspace]($style)"
 symbol = "行"
 version_format = "v${raw}"
 style = "105"
