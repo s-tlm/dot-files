@@ -55,5 +55,8 @@ let g:vim_markdown_strikethrough = 1
 
 " ---------------------------------- Theme ------------------------------------
 syntax enable
+set t_Co=256
+set background=dark
+set termguicolors
 colorscheme dracula
 
