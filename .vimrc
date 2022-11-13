@@ -16,9 +16,9 @@ Plugin 'dracula/vim', { 'name': 'dracula' }
 Plugin 'godlygeek/tabular'
 Plugin 'preservim/vim-markdown'
 Plugin 'tpope/vim-fugitive'
-Plugin 'wincent/command-t'
 Plugin 'ycm-core/YouCompleteMe'
 Plugin 'vim-airline/vim-airline'
+Plugin 'preservim/nerdtree'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
