@@ -13,6 +13,8 @@ Plugin 'VundleVim/Vundle.vim'
 
 " Plugins from Github
 Plugin 'dracula/vim', { 'name': 'dracula' }
+Plugin 'godlygeek/tabular'
+Plugin 'preservim/vim-markdown'
 Plugin 'tpope/vim-fugitive'
 Plugin 'wincent/command-t'
 Plugin 'ycm-core/YouCompleteMe'
