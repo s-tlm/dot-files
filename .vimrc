@@ -62,3 +62,5 @@ set background=dark
 set termguicolors
 colorscheme dracula
 
+" -------------------------------- Key Maps -----------------------------------
+nnoremap <C-n> :NERDTreeToggle<CR>
