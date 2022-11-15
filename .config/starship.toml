@@ -5,6 +5,7 @@ $directory\
 $git_branch\
 $git_status\
 $git_metrics\
+$python\
 $c\
 $terraform\
 $jobs\
@@ -37,8 +38,8 @@ style = "bold yellow"
 ap-southeast-2 = "au"
 
 [c]
-format = "using [$symbol($version(-$name) )]($style)"
-symbol = "C++ "
+format = "using [$symbol ($version(-$name) )]($style)"
+symbol = "C++"
 detect_extensions = ["c", "cpp", "h"]
 commands = [["g++", "--version"]]
 
@@ -82,8 +83,11 @@ symbol = " "
 symbol = " "
 
 [python]
+format = 'using [${symbol} ${version}${pyenv_prefix} (\($virtualenv\) )]($style)'
 symbol = " "
-pyenv_version_name = true
+version_format = "v${raw}"
+python_binary = ["python", "python3"]
+pyenv_prefix = "venv"
 
 [terraform]
 format = "[using $symbol$version on $workspace]($style)"
