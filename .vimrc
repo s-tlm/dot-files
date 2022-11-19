@@ -17,6 +17,7 @@ Plugin 'godlygeek/tabular'
 Plugin 'preservim/vim-markdown'
 Plugin 'tpope/vim-fugitive'
 Plugin 'ycm-core/YouCompleteMe'
+Plugin 'dense-analysis/ale'
 Plugin 'vim-airline/vim-airline'
 Plugin 'preservim/nerdtree'
 
