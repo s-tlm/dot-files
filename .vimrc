@@ -43,13 +43,16 @@ set hlsearch " Highlights text when searching
 set visualbell " Flash screen instead of beeping
 
 " ---------------------------------- Status -----------------------------------
+set expandtab                  " enter spaces when tab is pressed
+set textwidth=120              " break lines when line length increases
+set tabstop=4                  " use 4 spaces to represent tab
+set softtabstop=4
+set shiftwidth=4               " number of spaces to use for auto indent
+set autoindent
 set backspace=indent,eol,start " Set backspace to normal behaviour
-syntax on
-set ruler " Show current line and column number
-set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
-set laststatus=2
+set ruler                      " Show current line and column number
+set laststatus=2               " Always display status line
 set statusline=%f
-set autoindent " Auto indent lines when typing
 
 " -------------------------- Vim-Markdown Settings ----------------------------
 set conceallevel=2
