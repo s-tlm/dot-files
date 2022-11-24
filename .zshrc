@@ -120,3 +120,5 @@ complete -o nospace -C /opt/homebrew/bin/terraform terraform
 
 # Start Starship
 eval "$(starship init zsh)"
+
+add-zsh-hook -Uz chpwd(){ source <(tea -Eds) }  #tea
