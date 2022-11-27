@@ -5,6 +5,9 @@
 typeset -aU path # no repeated directories allowed in path array
 export ZSH="$HOME/.oh-my-zsh"
 
+# Use vim key-bindings
+set -o vi
+
 # Pygmentize setup
 path+=$HOME/.local/bin
 export PATH
@@ -122,3 +125,5 @@ complete -o nospace -C /opt/homebrew/bin/terraform terraform
 eval "$(starship init zsh)"
 
 add-zsh-hook -Uz chpwd(){ source <(tea -Eds) }  #tea
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
