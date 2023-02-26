@@ -2,6 +2,7 @@
 
 ZSHRC=~/.zshrc
 VIMRC=~/.vimrc
+NVIMRC=~/.config/nvim/init.vim
 SSTOML=~/.config/starship.toml
 PARENTDIR=$(git rev-parse --show-toplevel)
 
@@ -11,6 +12,7 @@ echo "----------------------------"
 echo "SHELL - zsh"
 echo "SHELL - oh-my-zsh"
 echo "SHELL - starship"
+echo "IDE   - neovim"
 echo "----------------------------"
 read -p "Continue with setup? [yn] " input
 echo "----------------------------"
@@ -26,13 +28,13 @@ if [[ $input =~ ^[Yy]$ ]]; then
         echo ""
     fi
 
-    echo "Setting up VIM..."
+    echo "Setting up NEOVIM..."
     
-    if test -f "$VIMRC";
+    if test -f "$NVIMRC";
     then
-        echo -e ".vimrc exists.\n"
+        echo -e ".init.vim exists.\n"
     else
-        ln -s $PARENTDIR/.vimrc ~/.vimrc
+        ln -s $PARENTDIR/init.vim ~/.config/nvim/init.vim
         echo ""
     fi
 
