@@ -3,7 +3,8 @@ call plug#begin('~/.nvim/autoload')
 " Dracula Theme
 Plug 'Mofiqul/dracula.nvim'
 " Markdown
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'godlygeek/tabular'
+Plug 'preservim/vim-markdown'
 " No distractions
 Plug 'junegunn/goyo.vim'
 " Limelight
