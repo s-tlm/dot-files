@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
 
-ZSHRC=~/.zshrc
-VIMRC=~/.vimrc
-NVIMRC=~/.config/nvim/init.vim
-SSTOML=~/.config/starship.toml
 PARENTDIR=$(git rev-parse --show-toplevel)
+ZSH_SOURCE=$PARENTDIR/zsh/.zshrc
+ZSH_TARGET=~/.zshrc
+VIM_SOURCE=$PARENTDIR/vim/.vimrc
+VIM_TARGET=~/.vimrc
+STARSHIP_SOURCE=$PARENTDIR/starship/starship.toml
+STARSHIP_TARGET=~/.config/starship.toml
+
+# TODO automate pre-requisite checks
+# TODO install missing pre-requisites
+# TODO create symlink for custom nvchadrc
 
 echo ""
 echo "Are the following installed?"
@@ -13,40 +19,39 @@ echo "SHELL - zsh"
 echo "SHELL - oh-my-zsh"
 echo "SHELL - starship"
 echo "IDE   - neovim"
+echo "IDE   - nvchad"
 echo "----------------------------"
 read -p "Continue with setup? [yn] " input
 echo "----------------------------"
 
 if [[ $input =~ ^[Yy]$ ]]; then
-    echo "Setting up ZSH..."
 
-    if test -f "$ZSHRC"; 
+    echo "Configuring .zshrc symlink..."
+
+    if test -f "$ZSH_TARGET"; 
     then
-        echo -e ".zshrc exists.\n"
+        echo -e ".zshrc already exists. Skipped.\n"
     else
-        ln -s $PARENTDIR/.zshrc ~/.zshrc
+        ln -s $ZSH_SOURCE $ZSH_TARGET
         echo ""
     fi
 
-    echo "Setting up NEOVIM..."
+    echo "Configuring Neovim..."
+    # Create neovim .config directory if not exists
+    if [[ ! -d ~/.config/nvim ]]; then
+      mkdir ~/.config/nvim
+    fi
     
-    if test -f "$NVIMRC";
-    then
-        echo -e ".init.vim exists.\n"
-    else
-        ln -s $PARENTDIR/init.vim ~/.config/nvim/init.vim
-        echo ""
-    fi
+    echo "Configuring Starship..."
 
-    echo "Setting up Starship..."
-
-    if test -f "$SSTOML"; 
+    if test -f "$STARSHIP_TARGET"; 
     then
-        echo -e "starship.toml exists.\n"
+        echo -e "starship configuration already exists. Skipped.\n"
     else
         mkdir -p ~/.config
-        ln -s $PARENTDIR/.config/starship.toml ~/.config/starship.toml
+        ln -s $STARSHIP_SOURCE $STARSHIP_TARGET
         echo ""
     fi
+
 fi
 
