@@ -5,6 +5,10 @@ ZSH_SOURCE=$PARENTDIR/zsh/.zshrc
 ZSH_TARGET=~/.zshrc
 VIM_SOURCE=$PARENTDIR/vim/.vimrc
 VIM_TARGET=~/.vimrc
+NEOVIMRC_SOURCE=$PARENTDIR/nvim/lua/custom/chadrc.lua
+NEOVIMRC_TARGET=~/.config/nvim/lua/custom/chadrc.lua
+NEOVIM_PLUGIN_SOURCE=$PARENTDIR/nvim/lua/custom/plugins/init.lua
+NEOVIM_PLUGIN_TARGET=~/.config/nvim/lua/custom/plugins/init.lua
 STARSHIP_SOURCE=$PARENTDIR/starship/starship.toml
 STARSHIP_TARGET=~/.config/starship.toml
 
@@ -38,8 +42,22 @@ if [[ $input =~ ^[Yy]$ ]]; then
 
     echo "Configuring Neovim..."
     # Create neovim .config directory if not exists
-    if [[ ! -d ~/.config/nvim ]]; then
-      mkdir ~/.config/nvim
+    if [[ ! -d ~/.config/nvim/lua/custom/plugins ]]; then
+      mkdir -p ~/.config/nvim/lua/custom/plugins
+    fi
+    if test -f "$NEOVIMRC_TARGET";
+    then
+      echo -e "chadrc already exists. Skipped.\n"
+    else
+        ln -s $NEOVIMRC_SOURCE $NEOVIMRC_TARGET
+        echo ""
+    fi
+    if test -f "$NEOVIM_PLUGIN_TARGET";
+    then
+        echo -e "neovim plugin config exists. Skipped.\n"
+    else
+        ln -s $NEOVIM_PLUGIN_SOURCE $NEOVIM_PLUGIN_TARGET
+        echo ""
     fi
     
     echo "Configuring Starship..."
