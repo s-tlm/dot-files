@@ -7,6 +7,8 @@ VIM_SOURCE=$PARENTDIR/vim/.vimrc
 VIM_TARGET=~/.vimrc
 NEOVIMRC_SOURCE=$PARENTDIR/nvim/lua/custom/chadrc.lua
 NEOVIMRC_TARGET=~/.config/nvim/lua/custom/chadrc.lua
+NEOVIM_CSTM_INIT_SOURCE=$PARENTDIR/nvim/lua/custom/init.lua
+NEOVIM_CSTM_INIT_TARGET=~/.config/nvim/lua/custom/init.lua
 NEOVIM_PLUGIN_SOURCE=$PARENTDIR/nvim/lua/custom/plugins/init.lua
 NEOVIM_PLUGIN_TARGET=~/.config/nvim/lua/custom/plugins/init.lua
 STARSHIP_SOURCE=$PARENTDIR/starship/starship.toml
@@ -30,7 +32,7 @@ echo "----------------------------"
 
 if [[ $input =~ ^[Yy]$ ]]; then
 
-    echo "Configuring .zshrc symlink..."
+    echo "Configuring .zshrc symlink...\n"
 
     if test -f "$ZSH_TARGET"; 
     then
@@ -40,7 +42,7 @@ if [[ $input =~ ^[Yy]$ ]]; then
         echo ""
     fi
 
-    echo "Configuring Neovim..."
+    echo "Configuring Neovim...\n"
     # Create neovim .config directory if not exists
     if [[ ! -d ~/.config/nvim/lua/custom/plugins ]]; then
       mkdir -p ~/.config/nvim/lua/custom/plugins
@@ -52,6 +54,13 @@ if [[ $input =~ ^[Yy]$ ]]; then
         ln -s $NEOVIMRC_SOURCE $NEOVIMRC_TARGET
         echo ""
     fi
+    if test -f "$NEOVIM_CSTM_INIT_TARGET";
+    then
+        echo -e "neovim custom init exists. Skipped.\n"
+    else
+        ln -s $NEOVIM_CSTM_INIT_SOURCE $NEOVIM_CSTM_INIT_TARGET
+        echo ""
+    fi
     if test -f "$NEOVIM_PLUGIN_TARGET";
     then
         echo -e "neovim plugin config exists. Skipped.\n"
@@ -60,7 +69,7 @@ if [[ $input =~ ^[Yy]$ ]]; then
         echo ""
     fi
     
-    echo "Configuring Starship..."
+    echo "Configuring Starship...\n"
 
     if test -f "$STARSHIP_TARGET"; 
     then
