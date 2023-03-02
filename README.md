@@ -1,23 +1,23 @@
 # Dot Files
 
-## VIM/NEOVIM Plugins
+## Pre-requisites
 
-1. VIM              vim-plug
-2. VIM-plugin       Dracula for Vim
-3. VIM-plugin       vim-markdown
-4. VIM-plugin       vim-airline
-5. VIM-plugin       YouCompleteMe
+I currently use:
 
-## Shell Packages
+* zsh as my shell
+* oh-my-zsh for zsh plugins
+* starship as my prompt
+* neovim as terminal-based IDE
+* nvchad as neovim ide overlay
 
-1. SHELL            zsh
-2. SHELL            oh-my-zsh
-3. SHELL            starship
-4. COLORIZE         pygments
-5. PACKAGE-MANAGER tea.xyz
+## Theme
 
-## Configuration Files
+I mainly use Dracula theme.
 
-* .vimrc
-* .zshrc
-* starship.toml
+Neovim/Nvchad is configured to use Aquarium/Blossom as the dark/light theme.
+
+## Setup
+
+Easy setup is a work in progress.
+
+Currently, running `scripts/create-symlinks.sh` will symlink repo dotfiles to the correct locations.
