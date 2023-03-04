@@ -33,11 +33,21 @@ return {
 
         -- custom
         "autopep8",
+        "pylint",
         "cfn-lint",
+        "sqlfluff",
+        "yamllint",
         "terraform-ls",
         "markdownlint"
       }
     }
-  }
+  },
+  -- load it after nvim-lspconfig cuz we lazy loaded lspconfig
+  ["jose-elias-alvarez/null-ls.nvim"] = {
+      after = "nvim-lspconfig",
+      config = function()
+         require "custom.plugins.null-ls"
+      end,
+ }
 }
 
