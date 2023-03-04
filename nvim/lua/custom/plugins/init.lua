@@ -32,13 +32,15 @@ return {
         "shellcheck",
 
         -- custom
+        "autoflake",
         "autopep8",
         "pylint",
         "cfn-lint",
         "sqlfluff",
         "yamllint",
         "terraform-ls",
-        "markdownlint"
+        "markdownlint",
+        "prettier"
       }
     }
   },
