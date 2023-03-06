@@ -15,9 +15,6 @@ local sources = {
    -- Lua
    b.formatting.stylua,
 
-   -- Markdown
-   b.diagnostics.markdownlint,
-
    -- Python
    b.formatting.autoflake,
    b.diagnostics.pylint,
