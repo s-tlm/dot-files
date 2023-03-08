@@ -127,3 +127,7 @@ eval "$(starship init zsh)"
 add-zsh-hook -Uz chpwd(){ source <(tea -Eds) }  #tea
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="/Users/stevelam/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
