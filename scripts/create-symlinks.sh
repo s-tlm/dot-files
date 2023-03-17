@@ -25,6 +25,10 @@ NV_SRC_PLUGIN_INIT="$NV_SRC_DIR/plugins/init.lua"
 NV_TGT_PLUGIN_INIT="$NV_TGT_DIR/plugins/init.lua"
 NV_SRC_MAPPINGS="$NV_SRC_DIR/mappings/init.lua"
 NV_TGT_MAPPINGS="$NV_TGT_DIR/mappings/init.lua"
+NV_SRC_LSP="$NV_SRC_DIR/plugins/lspconfig.lua"
+NV_TGT_LSP="$NV_TGT_DIR/plugins/lspconfig.lua"
+NV_SRC_LS="$NV_SRC_DIR/plugins/null-ls.lua"
+NV_TGT_LS="$NV_TGT_DIR/plugins/null-ls.lua"
 
 # STARSHIP
 SS_SRC_DIR="$REPO_DIR/starship"
@@ -84,6 +88,8 @@ if [[ $input =~ ^[Yy]$ ]]; then
     create_symlink "$NV_SRC_RC" "$NV_TGT_RC"
     create_symlink "$NV_SRC_INIT" "$NV_TGT_INIT"
     create_symlink "$NV_SRC_PLUGIN_INIT" "$NV_TGT_PLUGIN_INIT"
+    create_symlink "$NV_SRC_LSP" "$NV_TGT_LSP"
+    create_symlink "$NV_SRC_LS" "$NV_TGT_LS"
     create_symlink "$NV_SRC_MAPPINGS" "$NV_TGT_MAPPINGS"
     
     printf "Configuring Starship...\n"
