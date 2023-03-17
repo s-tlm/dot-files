@@ -1,23 +1,62 @@
 #!/usr/bin/env bash
 
-PARENTDIR=$(git rev-parse --show-toplevel)
-ZSH_SOURCE=$PARENTDIR/zsh/.zshrc
-ZSH_TARGET=~/.zshrc
-VIM_SOURCE=$PARENTDIR/vim/.vimrc
-VIM_TARGET=~/.vimrc
-NEOVIMRC_SOURCE=$PARENTDIR/nvim/lua/custom/chadrc.lua
-NEOVIMRC_TARGET=~/.config/nvim/lua/custom/chadrc.lua
-NEOVIM_CSTM_INIT_SOURCE=$PARENTDIR/nvim/lua/custom/init.lua
-NEOVIM_CSTM_INIT_TARGET=~/.config/nvim/lua/custom/init.lua
-NEOVIM_PLUGIN_SOURCE=$PARENTDIR/nvim/lua/custom/plugins/init.lua
-NEOVIM_PLUGIN_TARGET=~/.config/nvim/lua/custom/plugins/init.lua
-STARSHIP_SOURCE=$PARENTDIR/starship/starship.toml
-STARSHIP_TARGET=~/.config/starship.toml
-
-# TODO automate pre-requisite checks
 # TODO install missing pre-requisites
 # TODO create symlink for custom nvchadrc
 
+# SHARED DIRS
+REPO_DIR=$(git rev-parse --show-toplevel)
+CONFIG_DIR="$HOME/.config"
+
+# ZSH
+ZSH_SRC_DIR="$REPO_DIR/zsh"
+
+ZSH_SRC_RC="$ZSH_SRC_DIR/.zshrc"
+ZSH_TGT_RC="$HOME/.zshrc"
+
+# NEOVIM
+NV_SRC_DIR="$REPO_DIR/nvim/lua/custom"
+NV_TGT_DIR="$CONFIG_DIR/nvim/lua/custom"
+
+NV_SRC_RC="$NV_SRC_DIR/chadrc.lua"
+NV_TGT_RC="$NV_TGT_DIR/chadrc.lua"
+NV_SRC_INIT="$NV_SRC_DIR/init.lua"
+NV_TGT_INIT="$NV_TGT_DIR/init.lua"
+NV_SRC_PLUGIN_INIT="$NV_SRC_DIR/plugins/init.lua"
+NV_TGT_PLUGIN_INIT="$NV_TGT_DIR/plugins/init.lua"
+NV_SRC_MAPPINGS="$NV_SRC_DIR/mappings/init.lua"
+NV_TGT_MAPPINGS="$NV_TGT_DIR/mappings/init.lua"
+
+# STARSHIP
+SS_SRC_DIR="$REPO_DIR/starship"
+
+SS_SRC_TOML="$SS_SRC_DIR/starship.toml"
+SS_TGT_TOML="$CONFIG_DIR/starship.toml"
+
+# Functions
+create_symlink() {
+  src="$1"
+  tgt="$2"
+
+  if test -f "$tgt";
+  then
+    echo -e "Existing file at $tgt found. Skipped.\n"
+  else
+    echo -e "Creating symlink from $src to $tgt.\n"
+    ln -s "$src" "$tgt"
+    echo -e "Done.\n"
+  fi
+}
+
+check_dir_exists() {
+  tgt_dir="$1"
+
+  if [[ ! -d "$tgt_dir" ]]; then
+    mkdir -p "$tgt_dir"
+  fi
+}
+
+# Main
+# TODO automate pre-requisite checks
 echo ""
 echo "Are the following installed?"
 echo "----------------------------"
@@ -27,58 +66,29 @@ echo "SHELL - starship"
 echo "IDE   - neovim"
 echo "IDE   - nvchad"
 echo "----------------------------"
-read -p "Continue with setup? [yn] " input
+read -r -p "Continue with setup? [yn] " input
 echo "----------------------------"
 
 if [[ $input =~ ^[Yy]$ ]]; then
 
-    echo "Configuring .zshrc symlink...\n"
+    printf "Configuring .zshrc symlink...\n"
 
-    if test -f "$ZSH_TARGET"; 
-    then
-        echo -e ".zshrc already exists. Skipped.\n"
-    else
-        ln -s $ZSH_SOURCE $ZSH_TARGET
-        echo ""
-    fi
+    create_symlink "$ZSH_SRC_RC" "$ZSH_TGT_RC"
 
-    echo "Configuring Neovim...\n"
+    printf "Configuring Neovim...\n"
     # Create neovim .config directory if not exists
-    if [[ ! -d ~/.config/nvim/lua/custom/plugins ]]; then
-      mkdir -p ~/.config/nvim/lua/custom/plugins
-    fi
-    if test -f "$NEOVIMRC_TARGET";
-    then
-      echo -e "chadrc already exists. Skipped.\n"
-    else
-        ln -s $NEOVIMRC_SOURCE $NEOVIMRC_TARGET
-        echo ""
-    fi
-    if test -f "$NEOVIM_CSTM_INIT_TARGET";
-    then
-        echo -e "neovim custom init exists. Skipped.\n"
-    else
-        ln -s $NEOVIM_CSTM_INIT_SOURCE $NEOVIM_CSTM_INIT_TARGET
-        echo ""
-    fi
-    if test -f "$NEOVIM_PLUGIN_TARGET";
-    then
-        echo -e "neovim plugin config exists. Skipped.\n"
-    else
-        ln -s $NEOVIM_PLUGIN_SOURCE $NEOVIM_PLUGIN_TARGET
-        echo ""
-    fi
+    check_dir_exists "$NV_TGT_DIR/plugins"
+    check_dir_exists "$NV_TGT_DIR/mappings"
     
-    echo "Configuring Starship...\n"
+    # Create symlinks
+    create_symlink "$NV_SRC_RC" "$NV_TGT_RC"
+    create_symlink "$NV_SRC_INIT" "$NV_TGT_INIT"
+    create_symlink "$NV_SRC_PLUGIN_INIT" "$NV_TGT_PLUGIN_INIT"
+    create_symlink "$NV_SRC_MAPPINGS" "$NV_TGT_MAPPINGS"
+    
+    printf "Configuring Starship...\n"
 
-    if test -f "$STARSHIP_TARGET"; 
-    then
-        echo -e "starship configuration already exists. Skipped.\n"
-    else
-        mkdir -p ~/.config
-        ln -s $STARSHIP_SOURCE $STARSHIP_TARGET
-        echo ""
-    fi
+    create_symlink "$SS_SRC_TOML" "$SS_TGT_TOML"
 
 fi
 
