@@ -2,22 +2,13 @@
 
 ## Pre-requisites
 
-I currently use:
+Install the following:
 
-* zsh as my shell
-* oh-my-zsh for zsh plugins
-* starship as my prompt
-* neovim as terminal-based IDE
-* nvchad as neovim ide overlay
-
-## Theme
-
-I mainly use Dracula theme.
-
-Neovim/Nvchad is configured to use Aquarium/Blossom as the dark/light theme.
+1. zsh
+2. oh-my-zsh
+3. starship
+4. neovim w. nvchad
 
 ## Setup
 
-Easy setup is a work in progress.
-
-Currently, running `scripts/create-symlinks.sh` will symlink repo dotfiles to the correct locations.
+Run `scripts/create-symlinks.sh` to symlink all config in repo to relevant dirs.
