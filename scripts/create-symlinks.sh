@@ -47,7 +47,7 @@ create_symlink() {
   fi
 }
 
-check_dir_exists() {
+create_dir_ifn_exists() {
   tgt_dir="$1"
 
   if [[ ! -d "$tgt_dir" ]]; then
@@ -77,8 +77,8 @@ if [[ $input =~ ^[Yy]$ ]]; then
 
     printf "Configuring Neovim...\n"
     # Create neovim .config directory if not exists
-    check_dir_exists "$NV_TGT_DIR/plugins"
-    check_dir_exists "$NV_TGT_DIR/mappings"
+    create_dir_ifn_exists "$NV_TGT_DIR/plugins"
+    create_dir_ifn_exists "$NV_TGT_DIR/mappings"
     
     # Create symlinks
     create_symlink "$NV_SRC_RC" "$NV_TGT_RC"
