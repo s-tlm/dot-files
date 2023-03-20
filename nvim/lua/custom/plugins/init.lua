@@ -49,6 +49,12 @@ return {
       config = function()
          require "custom.plugins.null-ls"
       end,
- }
+ },
+  -- preview markdown with glow in terminal
+ ["ellisonleao/glow.nvim"] = {
+      config = function()
+        require ("glow").setup()
+      end
+  }
 }
 
