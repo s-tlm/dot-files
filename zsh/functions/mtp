@@ -1,6 +1,12 @@
-# Use pandoc to convert Markdown to PDF
+# Convert Markdown to PDF with Pandoc
 
 function mtp () {
+  # Check pdf engine is installed
+  if ! command -v xetex > /dev/null; then
+    echo "XeLaTeX not installed."
+    exit 1
+  fi
+
   # Check arguments
   if [ "$#" -ne 2 ]
   then
