@@ -4,6 +4,7 @@
 # Path to your oh-my-zsh installation.
 typeset -aU path # no repeated directories allowed in path array
 export ZSH="$HOME/.oh-my-zsh"
+export EDITOR=nvim
 
 # Use vim key-bindings
 set -o vi
