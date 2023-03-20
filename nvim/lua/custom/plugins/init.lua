@@ -53,7 +53,9 @@ return {
   -- preview markdown with glow in terminal
  ["ellisonleao/glow.nvim"] = {
       config = function()
-        require ("glow").setup()
+        require ("glow").setup({
+          style = "dracula"
+      })
       end
   }
 }
