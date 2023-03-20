@@ -52,7 +52,9 @@ M.nvterm = {
         require("nvterm.terminal").toggle "vertical"
       end,
       "toggle vertical term",
-    }
+    },
+    -- enable Glow
+    ["<C-p>"] = {":Glow <CR>", "toggle Glow Markdown preview"}
   }
 }
 
