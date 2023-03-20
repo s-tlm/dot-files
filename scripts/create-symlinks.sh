@@ -6,6 +6,7 @@
 # SHARED DIRS
 REPO_DIR=$(git rev-parse --show-toplevel)
 CONFIG_DIR="$HOME/.config"
+HELPERS_DIR="$REPO_DIR/scripts/utils"
 
 # ZSH
 ZSH_SRC_DIR="$REPO_DIR/zsh"
@@ -36,28 +37,8 @@ SS_SRC_DIR="$REPO_DIR/starship"
 SS_SRC_TOML="$SS_SRC_DIR/starship.toml"
 SS_TGT_TOML="$CONFIG_DIR/starship.toml"
 
-# Functions
-create_symlink() {
-  src="$1"
-  tgt="$2"
-
-  if test -f "$tgt";
-  then
-    echo -e "Existing file at $tgt found. Skipped.\n"
-  else
-    echo -e "Creating symlink from $src to $tgt.\n"
-    ln -s "$src" "$tgt"
-    echo -e "Done.\n"
-  fi
-}
-
-create_dir_ifn_exists() {
-  tgt_dir="$1"
-
-  if [[ ! -d "$tgt_dir" ]]; then
-    mkdir -p "$tgt_dir"
-  fi
-}
+# Source helpers
+source "$HELPERS_DIR/helper_scripts.sh"
 
 # Main
 # TODO automate pre-requisite checks
