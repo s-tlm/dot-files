@@ -4,7 +4,7 @@ function mtp () {
   # Check pdf engine is installed
   if ! command -v xetex > /dev/null; then
     echo "XeLaTeX not installed."
-    exit 1
+    return 1
   fi
 
   # Check arguments
@@ -18,3 +18,4 @@ function mtp () {
             -o "$2"
   fi
 }
+
