@@ -1,0 +1,6 @@
+# Launch todos
+
+function todo () {
+  $EDITOR $HOME/.todo
+}
+

@@ -138,3 +138,4 @@ export PATH="/Users/stevelam/.rd/bin:$PATH"
 # Functions
 fpath=( ~/.zsh_functions "${fpath[@]}" )
 autoload -Uz mtp
+autoload -Uz todo
