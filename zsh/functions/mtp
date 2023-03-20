@@ -1,0 +1,14 @@
+# Use pandoc to convert Markdown to PDF
+
+function mtp () {
+  # Check arguments
+  if [ "$#" -ne 2 ]
+  then
+    echo "Usage: mtp [file.md] [output.pdf]"
+  else
+    pandoc "$1" \
+            -f gfm \
+            --pdf-engine=xelatex \
+            -o "$2"
+  fi
+}

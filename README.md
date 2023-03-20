@@ -11,4 +11,5 @@ Install the following:
 
 ## Setup
 
-Run `scripts/create-symlinks.sh` to symlink all config in repo to relevant dirs.
+1. Run `scripts/create-symlinks.sh` to symlink all config in repo to relevant dirs.
+2. Copy zsh functions from `zsh/functions` to `~/.zsh_functions/`.
