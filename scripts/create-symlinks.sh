@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 # TODO install missing pre-requisites
-# TODO create symlink for custom nvchadrc
 
 # SHARED DIRS
 REPO_DIR=$(git rev-parse --show-toplevel)
@@ -17,19 +16,14 @@ ZSH_TGT_RC="$HOME/.zshrc"
 # NEOVIM
 NV_SRC_DIR="$REPO_DIR/nvim/lua/custom"
 NV_TGT_DIR="$CONFIG_DIR/nvim/lua/custom"
+NV_SRC_CFG_DIR="$NV_SRC_DIR/configs"
+NV_TGT_CFG_DIR="$NV_TGT_DIR/configs"
 
 NV_SRC_RC="$NV_SRC_DIR/chadrc.lua"
-NV_TGT_RC="$NV_TGT_DIR/chadrc.lua"
 NV_SRC_INIT="$NV_SRC_DIR/init.lua"
-NV_TGT_INIT="$NV_TGT_DIR/init.lua"
-NV_SRC_PLUGIN_INIT="$NV_SRC_DIR/plugins/init.lua"
-NV_TGT_PLUGIN_INIT="$NV_TGT_DIR/plugins/init.lua"
-NV_SRC_MAPPINGS="$NV_SRC_DIR/mappings/init.lua"
-NV_TGT_MAPPINGS="$NV_TGT_DIR/mappings/init.lua"
-NV_SRC_LSP="$NV_SRC_DIR/plugins/lspconfig.lua"
-NV_TGT_LSP="$NV_TGT_DIR/plugins/lspconfig.lua"
-NV_SRC_LS="$NV_SRC_DIR/plugins/null-ls.lua"
-NV_TGT_LS="$NV_TGT_DIR/plugins/null-ls.lua"
+NV_SRC_PLUGINS="$NV_SRC_DIR/plugins.lua"
+NV_SRC_MAPPINGS="$NV_SRC_DIR/mappings.lua"
+NV_SRC_HIGHLIGHTS="$NV_SRC_DIR/highlights.lua"
 
 # STARSHIP
 SS_SRC_DIR="$REPO_DIR/starship"
@@ -61,18 +55,21 @@ if [[ $input =~ ^[Yy]$ ]]; then
     create_symlink "$ZSH_SRC_RC" "$ZSH_TGT_RC"
 
     printf "Configuring Neovim...\n"
-    # Create neovim .config directory if not exists
-    create_dir_ifn_exists "$NV_TGT_DIR/plugins"
-    create_dir_ifn_exists "$NV_TGT_DIR/mappings"
-    
+    # Create neovim .config directories if not exists
+    create_dir_ifn_exists "$NV_TGT_DIR"
+    create_dir_ifn_exists "$NV_TGT_CFG_DIR"
+
     # Create symlinks
-    create_symlink "$NV_SRC_RC" "$NV_TGT_RC"
-    create_symlink "$NV_SRC_INIT" "$NV_TGT_INIT"
-    create_symlink "$NV_SRC_PLUGIN_INIT" "$NV_TGT_PLUGIN_INIT"
-    create_symlink "$NV_SRC_LSP" "$NV_TGT_LSP"
-    create_symlink "$NV_SRC_LS" "$NV_TGT_LS"
-    create_symlink "$NV_SRC_MAPPINGS" "$NV_TGT_MAPPINGS"
-    
+    create_symlink "$NV_SRC_RC" "$NV_TGT_DIR/."
+    create_symlink "$NV_SRC_INIT" "$NV_TGT_DIR/."
+    create_symlink "$NV_SRC_PLUGINS" "$NV_TGT_DIR/."
+    create_symlink "$NV_SRC_HIGHLIGHTS" "$NV_TGT_DIR/."
+    create_symlink "$NV_SRC_MAPPINGS" "$NV_TGT_DIR/."
+    # Loop through all configs in dir
+    for f in "${NV_SRC_CFG_DIR}"/*; do
+      create_symlink "$f" "$NV_TGT_CFG_DIR"/.
+    done
+
     printf "Configuring Starship...\n"
 
     create_symlink "$SS_SRC_TOML" "$SS_TGT_TOML"
