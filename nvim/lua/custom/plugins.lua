@@ -21,6 +21,19 @@ local plugins = {
     end -- Override to setup mason-lspconfig
   },
 
+  -- treesitter config
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = {
+      ensure_installed = {"c", "lua", "vim", "help", "html", "css", "bash"},
+      highlight = {
+        enable = true,
+        use_languagetree = true,
+      },
+      indent = { enable = true },
+    },
+  },
+
   -- mason.vim
   -- install using :MasonInstallAll
    {
