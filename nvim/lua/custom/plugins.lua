@@ -88,15 +88,25 @@ local plugins = {
   },
 
   -- preview markdown with glow in terminal
- {
+  {
     "ellisonleao/glow.nvim",
-    lazy = false,
+    -- lazy load when opening markdown files
+    ft = {"markdown", "md"},
     config = function()
       require ("glow").setup({
         style = "dracula"
     })
     end
+  },
+
+    -- markdown
+  {
+    "preservim/vim-markdown",
+    lazy = false,
+    branch = "master",
+    dependencies = {
+      "godlygeek/tabular"
+    }
   }
 }
-
 return plugins
