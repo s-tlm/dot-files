@@ -120,7 +120,7 @@ local plugins = {
         ["core.norg.dirman"] = { -- Manages Neorg workspaces
           config = {
             workspaces = {
-              notes = "~/Repositories/notes"
+              notes = "~/Notes"
             }
           }
         }
