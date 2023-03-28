@@ -5,6 +5,7 @@
 typeset -aU path # no repeated directories allowed in path array
 export ZSH="$HOME/.oh-my-zsh"
 export EDITOR=nvim
+export CC=gcc-12
 
 # Use vim key-bindings
 set -o vi
