@@ -1,7 +1,10 @@
 local plugins = {
 
-  -- Enable starting dashboard
-  { "goolord/alpha-nvim", lazy = false },
+  -- Dynamic colour column
+  {
+    "Bekaboo/deadcolumn.nvim",
+    lazy = false
+  },
 
   -- LSP server
   {
