@@ -5,21 +5,10 @@ create_symlink() {
   src="$1"
   tgt="$2"
 
-  if test -f "$tgt";
-  then
-    echo -e "Existing file at $tgt found. Skipped.\n"
+  if [ -e "$2" ]; then
+    echo "'$2' already exists. Nothing to do."
   else
-    echo -e "Creating symlink from $src to $tgt.\n"
+    echo "symlinking '$1'"
     ln -s "$src" "$tgt"
-    echo -e "Done.\n"
   fi
 }
-
-create_dir_ifn_exists() {
-  tgt_dir="$1"
-
-  if [[ ! -d "$tgt_dir" ]]; then
-    mkdir -p "$tgt_dir"
-  fi
-}
-
