@@ -8,7 +8,7 @@ REPO_DIR=$(git rev-parse --show-toplevel)
 CONFIG_DIR="$HOME/.config"
 
 # ZSH
-ZSH_SRC_DIR="$REPO_DIR/zsh/.zshrc"
+ZSH_SRC_DIR="$REPO_DIR/zsh"
 
 # NEOVIM
 NV_SRC_DIR="$REPO_DIR/nvim/lua/custom"
@@ -36,7 +36,8 @@ echo "----------------------------"
 
 if [[ $input =~ ^[Yy]$ ]]; then
 
-    create_symlink "$ZSH_SRC_DIR" "$HOME/.zshrc"
+    create_symlink "$ZSH_SRC_DIR/.zshrc" "$HOME/.zshrc"
+    create_symlink "$ZSH_SRC_DIR/.zshenv" "$HOME/.zshenv"
     create_symlink "$NV_SRC_DIR" "$NV_TGT_DIR"
     create_symlink "$SS_SRC_DIR" "$SS_TGT_TOML"
 
