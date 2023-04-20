@@ -62,6 +62,7 @@ local plugins = {
         -- custom
         "autoflake",
         "autopep8",
+        "clangd",
         "pylint",
         "pyright",
         "cfn-lint",
