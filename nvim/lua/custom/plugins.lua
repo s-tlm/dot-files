@@ -46,31 +46,27 @@ local plugins = {
         -- lua stuff
         "lua-language-server",
         "stylua",
-
-        -- web dev
-        "css-lsp",
-        "html-lsp",
-        "typescript-language-server",
-        "deno",
-        "emmet-ls",
+        -- json and yaml
         "json-lsp",
-
+        "prettier",
+        "yamlls",
+        "yamllint",
         -- shell
         "shfmt",
         "shellcheck",
-
-        -- custom
+        -- python
         "autoflake",
         "autopep8",
-        "clangd",
         "pylint",
         "pyright",
+        -- c
+        "clangd",
+        -- iac
         "cfn-lint",
+        "terraform-ls",
+        -- sql
         "sqlls",
         "sqlfluff",
-        "yamllint",
-        "terraform-ls",
-        "prettier"
       }
     }
   },
