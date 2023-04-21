@@ -49,7 +49,7 @@ local plugins = {
         -- json and yaml
         "json-lsp",
         "prettier",
-        "yamlls",
+        "yaml-language-server",
         "yamllint",
         -- shell
         "shfmt",
@@ -61,6 +61,7 @@ local plugins = {
         "pyright",
         -- c
         "clangd",
+        "cpplint",
         -- iac
         "cfn-lint",
         "terraform-ls",
