@@ -66,6 +66,7 @@ local plugins = {
         "pylint",
         "pyright",
         "cfn-lint",
+        "sqlls",
         "sqlfluff",
         "yamllint",
         "terraform-ls",
