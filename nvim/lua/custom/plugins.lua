@@ -46,6 +46,8 @@ local plugins = {
         -- lua stuff
         "lua-language-server",
         "stylua",
+        -- markdown
+        "markdownlint",
         -- json and yaml
         "json-lsp",
         "prettier",
