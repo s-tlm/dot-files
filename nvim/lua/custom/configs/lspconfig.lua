@@ -11,3 +11,8 @@ for _, lsp in ipairs(servers) do
     capabilities = capabilities,
   }
 end
+
+-- Disable virtual text
+vim.diagnostic.config({
+  virtual_text = false
+})
