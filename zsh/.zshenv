@@ -1,3 +1,3 @@
 export AWS_PROFILE=default
-export EDITOR=nvim
+export EDITOR=lvim
 export CC=gcc-12

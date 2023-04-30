@@ -11,8 +11,11 @@ CONFIG_DIR="$HOME/.config"
 ZSH_SRC_DIR="$REPO_DIR/zsh"
 
 # NEOVIM
-NV_SRC_DIR="$REPO_DIR/nvim/lua/custom"
+NV_SRC_DIR="$REPO_DIR/nvim/nvchad/lua/custom"
 NV_TGT_DIR="$CONFIG_DIR/nvim/lua/custom"
+# LUNARVIM
+LV_SRC_DIR="$REPO_DIR/nvim/lunarvim/config.lua"
+LV_TGT_DIR="$CONFIG_DIR/lvim/config.lua"
 
 # STARSHIP
 SS_SRC_DIR="$REPO_DIR/starship/starship.toml"
@@ -38,7 +41,8 @@ if [[ $input =~ ^[Yy]$ ]]; then
 
     create_symlink "$ZSH_SRC_DIR/.zshrc" "$HOME/.zshrc"
     create_symlink "$ZSH_SRC_DIR/.zshenv" "$HOME/.zshenv"
-    create_symlink "$NV_SRC_DIR" "$NV_TGT_DIR"
+    # create_symlink "$NV_SRC_DIR" "$NV_TGT_DIR"
+    create_symlink "$LV_SRC_DIR" "$LV_TGT_DIR"
     create_symlink "$SS_SRC_DIR" "$SS_TGT_TOML"
 
     echo ""
