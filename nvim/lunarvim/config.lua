@@ -3,10 +3,6 @@ vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
 vim.opt.relativenumber = true
 vim.g.maplocalleader = ","
--- disable virtual text
-vim.diagnostic.config({
-  virtual_text = false
-})
 
 -- general
 lvim.log.level = "info"
@@ -42,61 +38,40 @@ lvim.builtin.treesitter.auto_install = true
 
 -- lvim.builtin.treesitter.ignore_install = { "haskell" }
 
--- -- always installed on startup, useful for parsers without a strict filetype
--- lvim.builtin.treesitter.ensure_installed = { "comment", "markdown_inline", "regex" }
+-- always installed on startup, useful for parsers without a strict filetype
+lvim.builtin.treesitter.ensure_installed = {
+  "bash",
+  "c",
+  "cpp",
+  "comment",
+  "dockerfile",
+  "go",
+  "json",
+  "json5",
+  "markdown_inline",
+  "python",
+  "regex",
+  "rust",
+  "sql",
+  "terraform",
+  "yaml",
+}
 
--- -- generic LSP settings <https://www.lunarvim.org/docs/languages#lsp-support>
+-- generic LSP settings <https://www.lunarvim.org/docs/languages#lsp-support>
+---remove a server from the skipped list, e.g. eslint, or emmet_ls. IMPORTANT: Requires `:LvimCacheReset` to take effect
+---`:LvimInfo` lists which server(s) are skipped for the current filetype
+lvim.lsp.automatic_configuration.skipped_servers = vim.tbl_filter(function(server)
+  return server ~= "sqlls"
+end, lvim.lsp.automatic_configuration.skipped_servers)
 
--- --- disable automatic installation of servers
--- lvim.lsp.installer.setup.automatic_installation = false
-
--- ---configure a server manually. IMPORTANT: Requires `:LvimCacheReset` to take effect
--- ---see the full default list `:lua =lvim.lsp.automatic_configuration.skipped_servers`
--- vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "pyright" })
--- local opts = {} -- check the lspconfig documentation for a list of all possible options
--- require("lvim.lsp.manager").setup("pyright", opts)
-
--- ---remove a server from the skipped list, e.g. eslint, or emmet_ls. IMPORTANT: Requires `:LvimCacheReset` to take effect
--- ---`:LvimInfo` lists which server(s) are skipped for the current filetype
--- lvim.lsp.automatic_configuration.skipped_servers = vim.tbl_filter(function(server)
---   return server ~= "emmet_ls"
--- end, lvim.lsp.automatic_configuration.skipped_servers)
-
--- -- you can set a custom on_attach function that will be used for all the language servers
--- -- See <https://github.com/neovim/nvim-lspconfig#keybindings-and-completion>
--- lvim.lsp.on_attach_callback = function(client, bufnr)
---   local function buf_set_option(...)
---     vim.api.nvim_buf_set_option(bufnr, ...)
---   end
---   --Enable completion triggered by <c-x><c-o>
---   buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
--- end
-
--- -- linters, formatters and code actions <https://www.lunarvim.org/docs/languages#lintingformatting>
--- local formatters = require "lvim.lsp.null-ls.formatters"
--- formatters.setup {
---   { command = "stylua" },
---   {
---     command = "prettier",
---     extra_args = { "--print-width", "100" },
---     filetypes = { "typescript", "typescriptreact" },
---   },
--- }
--- local linters = require "lvim.lsp.null-ls.linters"
--- linters.setup {
---   { command = "flake8", filetypes = { "python" } },
---   {
---     command = "shellcheck",
---     args = { "--severity", "warning" },
---   },
--- }
--- local code_actions = require "lvim.lsp.null-ls.code_actions"
--- code_actions.setup {
---   {
---     exe = "eslint",
---     filetypes = { "typescript", "typescriptreact" },
---   },
--- }
+-- linters, formatters and code actions <https://www.lunarvim.org/docs/languages#lintingformatting>
+local linters = require "lvim.lsp.null-ls.linters"
+linters.setup {
+  { command = "pylint",   filetypes = { "python" } },
+  { command = "sqlfluff", filetypes = { "sql" },   extra_args = { "--dialect", "postgres" } },
+}
+-- disable virtual text
+lvim.lsp.diagnostics.virtual_text = false;
 
 -- Additional Plugins <https://www.lunarvim.org/docs/plugins#user-plugins>
 lvim.plugins = {
@@ -127,7 +102,14 @@ lvim.plugins = {
       "godlygeek/tabular"
     }
   },
+  {
+    -- Ensure plugin is also enabled in treesitter
+    "HiPhish/nvim-ts-rainbow2"
+  },
 }
+-- Enable rainbow in treesitter
+lvim.builtin.treesitter.rainbow.enable = true
+lvim.builtin.treesitter.rainbow.strategy = require('ts-rainbow').strategy.global
 
 -- Autocommands (`:help autocmd`) <https://neovim.io/doc/user/autocmd.html>
 -- Neorg concealer settings
