@@ -67,11 +67,12 @@ end, lvim.lsp.automatic_configuration.skipped_servers)
 -- linters, formatters and code actions <https://www.lunarvim.org/docs/languages#lintingformatting>
 local linters = require "lvim.lsp.null-ls.linters"
 linters.setup {
-  { command = "pylint",   filetypes = { "python" } },
-  { command = "sqlfluff", filetypes = { "sql" },   extra_args = { "--dialect", "postgres" } },
+  { command = "pylint",       filetypes = { "python" } },
+  { command = "sqlfluff",     filetypes = { "sql" },           extra_args = { "--dialect", "postgres" } },
+  { command = "markdownlint", filetypes = { "md", "markdown" } },
 }
 -- disable virtual text
-lvim.lsp.diagnostics.virtual_text = false;
+vim.diagnostic.config({ virtual_text = false })
 
 -- Additional Plugins <https://www.lunarvim.org/docs/plugins#user-plugins>
 lvim.plugins = {
