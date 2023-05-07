@@ -23,10 +23,9 @@ lvim.keys.normal_mode["<leader>x"] = ":BufferKill<CR>"
 -- lvim.builtin.which_key.mappings["W"] = { "<cmd>noautocmd w<cr>", "Save without formatting" }
 -- lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
 
--- -- Change theme settings
+-- Change theme settings
 lvim.colorscheme = "lunar"
-lvim.transparent_window = true
-
+-- Change built-ins
 lvim.builtin.alpha.active = true
 lvim.builtin.alpha.mode = "dashboard"
 lvim.builtin.terminal.active = true
@@ -84,7 +83,7 @@ lvim.plugins = {
       load = {
         ["core.defaults"] = {},  -- Loads default behaviour
         ["core.concealer"] = {}, -- Adds pretty icons to your documents
-        ["core.dirman"] = {      -- Manages Neorg workspaces
+        ["core.dirman"] = {      -- Manages Neorg worksp"<leader>za", ":TZAtaraxis<CR>"a"<leader>za", ":TZAtaraxis<CR>"ces
           config = {
             workspaces = {
               notes = "~/Notes"
@@ -94,6 +93,31 @@ lvim.plugins = {
       }
     },
     dependencies = { { "nvim-lua/plenary.nvim" } },
+  },
+  {
+    "Pocco81/true-zen.nvim",
+    config = function()
+      require("true-zen").setup {
+        modes = {
+          ataraxis = {
+            callbacks = {
+              open_pre = function()
+                require("lualine").hide()
+              end,
+              close_pre = function()
+                require("lualine").hide({ unhide = true })
+              end,
+            },
+          },
+        },
+        integrations = {
+          lualine = false
+        },
+      }
+    end,
+    keys = {
+      { "<leader>zm", ":TZAtaraxis<CR>", desc = "Toggle Zen Mode" },
+    },
   },
   {
     "preservim/vim-markdown",
