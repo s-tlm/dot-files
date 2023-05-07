@@ -111,13 +111,19 @@ lvim.plugins = {
           },
         },
         integrations = {
-          lualine = false
+          twilight = true,
         },
       }
     end,
     keys = {
       { "<leader>zm", ":TZAtaraxis<CR>", desc = "Toggle Zen Mode" },
     },
+  },
+  {
+    "folke/twilight.nvim",
+    config = function()
+      require("twilight").setup {}
+    end,
   },
   {
     "preservim/vim-markdown",
