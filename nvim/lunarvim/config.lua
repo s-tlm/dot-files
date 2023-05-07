@@ -100,6 +100,9 @@ lvim.plugins = {
       require("true-zen").setup {
         modes = {
           ataraxis = {
+            minimum_writing_area = {
+              width = 120
+            },
             callbacks = {
               open_pre = function()
                 require("lualine").hide()
