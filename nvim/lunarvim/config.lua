@@ -23,8 +23,6 @@ lvim.keys.normal_mode["<leader>x"] = ":BufferKill<CR>"
 -- lvim.builtin.which_key.mappings["W"] = { "<cmd>noautocmd w<cr>", "Save without formatting" }
 -- lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
 
--- Change theme settings
-lvim.colorscheme = "lunar"
 -- Change built-ins
 lvim.builtin.alpha.active = true
 lvim.builtin.alpha.mode = "dashboard"
@@ -96,28 +94,26 @@ lvim.plugins = {
   },
   {
     "Pocco81/true-zen.nvim",
-    config = function()
-      require("true-zen").setup {
-        modes = {
-          ataraxis = {
-            minimum_writing_area = {
-              width = 120
-            },
-            callbacks = {
-              open_pre = function()
-                require("lualine").hide()
-              end,
-              close_pre = function()
-                require("lualine").hide({ unhide = true })
-              end,
-            },
+    opts = {
+      modes = {
+        ataraxis = {
+          minimum_writing_area = {
+            width = 120
+          },
+          callbacks = {
+            open_pre = function()
+              require("lualine").hide()
+            end,
+            close_pre = function()
+              require("lualine").hide({ unhide = true })
+            end,
           },
         },
-        integrations = {
-          twilight = true,
-        },
-      }
-    end,
+      },
+      integrations = {
+        twilight = true,
+      },
+    },
     keys = {
       { "<leader>zm", ":TZAtaraxis<CR>", desc = "Toggle Zen Mode" },
     },
@@ -125,7 +121,7 @@ lvim.plugins = {
   {
     "folke/twilight.nvim",
     config = function()
-      require("twilight").setup {}
+      require("twilight").setup()
     end,
   },
   {
@@ -140,10 +136,38 @@ lvim.plugins = {
     -- Ensure plugin is also enabled in treesitter
     "HiPhish/nvim-ts-rainbow2"
   },
+  {
+    -- catppuccin nvim theme
+    "catppuccin/nvim",
+    name = "catppuccin",
+    opts = {
+      flavour = "frappe",
+      background = { dark = "frappe" },
+      term_colors = true,
+      integrations = {
+        alpha = true,
+        native_lsp = {
+          enabled = true,
+        },
+        bufferline = true,
+        gitsigns = true,
+        mason = true,
+        cmp = true,
+        nvimtree = true,
+        treesitter = true,
+        treesitter_context = true,
+        ts_rainbow2 = true,
+        telescope = true,
+        which_key = true,
+      }
+    },
+  },
 }
 -- Enable rainbow in treesitter
 lvim.builtin.treesitter.rainbow.enable = true
 lvim.builtin.treesitter.rainbow.strategy = require('ts-rainbow').strategy.global
+-- Change theme settings
+lvim.colorscheme = "catppuccin"
 
 -- Autocommands (`:help autocmd`) <https://neovim.io/doc/user/autocmd.html>
 -- Neorg concealer settings
