@@ -168,6 +168,9 @@ lvim.builtin.treesitter.rainbow.enable = true
 lvim.builtin.treesitter.rainbow.strategy = require('ts-rainbow').strategy.global
 -- Change theme settings
 lvim.colorscheme = "catppuccin"
+-- Bufferline and statusline settings for catppuccin theme
+lvim.builtin.bufferline.highlights = require("catppuccin.groups.integrations.bufferline").get()
+lvim.builtin.lualine.options.theme = "catppuccin"
 
 -- Autocommands (`:help autocmd`) <https://neovim.io/doc/user/autocmd.html>
 -- Neorg concealer settings
