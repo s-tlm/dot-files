@@ -120,6 +120,7 @@ lvim.plugins = {
   },
   {
     "folke/twilight.nvim",
+    lazy = true,
     config = function()
       require("twilight").setup()
     end,
