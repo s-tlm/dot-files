@@ -139,3 +139,8 @@ export PATH="/Users/stevelam/.rd/bin:$PATH"
 fpath=( ~/.zsh_functions "${fpath[@]}" )
 autoload -Uz mtp
 autoload -Uz todo
+
+# Enable zsh syntax highlighting
+# Requires brew install zsh-syntax-highlighting
+source ~/Dotfiles/zsh/themes/catppuccin_frappe-zsh-syntax-highlighting.zsh
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
