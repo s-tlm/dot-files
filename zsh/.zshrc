@@ -11,7 +11,7 @@ set -o vi
 # Pygmentize setup
 path+=$HOME/.local/bin
 export PATH
-export ZSH_COLORIZE_STYLE="dracula"
+export ZSH_COLORIZE_STYLE="nord"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
