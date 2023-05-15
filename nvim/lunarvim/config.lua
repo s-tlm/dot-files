@@ -70,6 +70,7 @@ linters.setup {
   { command = "pylint",       filetypes = { "python" } },
   { command = "sqlfluff",     filetypes = { "sql" },           extra_args = { "--dialect", "postgres" } },
   { command = "markdownlint", filetypes = { "md", "markdown" } },
+  { command = "shellcheck",   filetypes = { "sh" } },
 }
 -- disable virtual text
 vim.diagnostic.config({ virtual_text = false })
