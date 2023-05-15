@@ -1,3 +1,6 @@
+-- TODO
+-- * Fix Bufferline to use Catppuccin theme
+
 -- vim options
 vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
@@ -126,14 +129,6 @@ lvim.plugins = {
     end,
   },
   {
-    "preservim/vim-markdown",
-    ft = { "markdown", "md" },
-    branch = "master",
-    dependencies = {
-      "godlygeek/tabular"
-    }
-  },
-  {
     -- Ensure plugin is also enabled in treesitter
     "HiPhish/nvim-ts-rainbow2"
   },
@@ -150,7 +145,6 @@ lvim.plugins = {
         native_lsp = {
           enabled = true,
         },
-        bufferline = true,
         gitsigns = true,
         mason = true,
         cmp = true,
@@ -169,8 +163,7 @@ lvim.builtin.treesitter.rainbow.enable = true
 lvim.builtin.treesitter.rainbow.strategy = require('ts-rainbow').strategy.global
 -- Change theme settings
 lvim.colorscheme = "catppuccin"
--- Bufferline and statusline settings for catppuccin theme
-lvim.builtin.bufferline.highlights = require("catppuccin.groups.integrations.bufferline").get()
+-- Statusline settings for catppuccin theme
 lvim.builtin.lualine.options.theme = "catppuccin"
 
 -- Autocommands (`:help autocmd`) <https://neovim.io/doc/user/autocmd.html>
