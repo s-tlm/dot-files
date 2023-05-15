@@ -8,8 +8,9 @@ Install the following:
 2. oh-my-zsh
 3. starship
 4. neovim w. nvchad 2.0
+5. Latest Nerd Font of your choosing
 
 ## Setup
 
-1. Run `scripts/create-symlinks.sh` to symlink all config in repo to relevant dirs.
-2. Run `scripts/create-zsh-functions.sh` to symlink custom zsh functions to relevant dirs.
+1. Run `scripts/create-symlinks.sh`.
+2. Run `scripts/create-zsh-functions.sh`.
