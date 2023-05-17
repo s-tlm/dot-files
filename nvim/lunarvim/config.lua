@@ -78,8 +78,16 @@ vim.diagnostic.config({ virtual_text = false })
 -- Additional Plugins <https://www.lunarvim.org/docs/plugins#user-plugins>
 lvim.plugins = {
   {
-    "github/copilot.vim",
-    lazy = false, -- always load on startup
+    "zbirenbaum/copilot-cmp",
+    cmd = "Copilot",
+    event = "InsertEnter",
+    dependencies = { "zbirenbaum/copilot.lua" },
+    config = function()
+      vim.defer_fn(function()
+        require("copilot").setup()     -- https://github.com/zbirenbaum/copilot.lua/blob/master/README.md#setup-and-configuration
+        require("copilot_cmp").setup() -- https://github.com/zbirenbaum/copilot-cmp/blob/master/README.md#configuration
+      end, 100)
+    end,
   },
   {
     "nvim-neorg/neorg",
