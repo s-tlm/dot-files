@@ -1,3 +1,6 @@
+-- TODO
+-- Remap <TAB> for Copilot
+
 -- vim options
 vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
