@@ -1,6 +1,3 @@
--- TODO
--- * Fix Bufferline to use Catppuccin theme
-
 -- vim options
 vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
@@ -77,6 +74,10 @@ vim.diagnostic.config({ virtual_text = false })
 
 -- Additional Plugins <https://www.lunarvim.org/docs/plugins#user-plugins>
 lvim.plugins = {
+  {
+    "github/copilot.vim",
+    lazy = false, -- always load on startup
+  },
   {
     "nvim-neorg/neorg",
     ft = "norg", -- lazy-load on filetype

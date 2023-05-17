@@ -7,7 +7,7 @@ Install the following:
 1. zsh
 2. oh-my-zsh
 3. starship
-4. neovim w. nvchad 2.0
+4. neovim w. lunarvim
 5. Latest Nerd Font of your choosing
 
 ## Setup
