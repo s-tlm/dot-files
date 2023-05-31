@@ -33,8 +33,6 @@ lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
 -- Automatically install missing parsers when entering buffer
 lvim.builtin.treesitter.auto_install = true
 
--- lvim.builtin.treesitter.ignore_install = { "haskell" }
-
 -- always installed on startup, useful for parsers without a strict filetype
 lvim.builtin.treesitter.ensure_installed = {
   "bash",
@@ -57,8 +55,14 @@ lvim.builtin.treesitter.ensure_installed = {
 -- generic LSP settings <https://www.lunarvim.org/docs/languages#lsp-support>
 ---remove a server from the skipped list, e.g. eslint, or emmet_ls. IMPORTANT: Requires `:LvimCacheReset` to take effect
 ---`:LvimInfo` lists which server(s) are skipped for the current filetype
+lvim.lsp.installer.setup.automatic_installation = true
+-- setup for SQL lsp
 lvim.lsp.automatic_configuration.skipped_servers = vim.tbl_filter(function(server)
   return server ~= "sqlls"
+end, lvim.lsp.automatic_configuration.skipped_servers)
+-- setup for terraform lsp
+lvim.lsp.automatic_configuration.skipped_servers = vim.tbl_filter(function(server)
+  return server ~= "tflint"
 end, lvim.lsp.automatic_configuration.skipped_servers)
 
 -- linters, formatters and code actions <https://www.lunarvim.org/docs/languages#lintingformatting>
@@ -92,9 +96,11 @@ lvim.plugins = {
     build = ":Neorg sync-parsers",
     opts = {
       load = {
-        ["core.defaults"] = {},  -- Loads default behaviour
-        ["core.concealer"] = {}, -- Adds pretty icons to your documents
-        ["core.dirman"] = {      -- Manages Neorg workspaces
+        ["core.defaults"] = {},        -- Loads default behaviour
+        ["core.concealer"] = {},       -- Adds pretty icons to your documents
+        ["core.export"] = {},
+        ["core.export.markdown"] = {}, -- Export Norg -> Markdown
+        ["core.dirman"] = {            -- Manages Neorg workspaces
           config = {
             workspaces = {
               notes = "~/Notes"
