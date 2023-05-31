@@ -95,7 +95,7 @@ pyenv_prefix = "venv"
 
 [terraform]
 format = "[using $symbol$version on $workspace]($style)"
-symbol = "行"
+symbol = "󱁢"
 version_format = "v${raw}"
 style = "105"
 
