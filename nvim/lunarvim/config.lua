@@ -60,10 +60,6 @@ lvim.lsp.installer.setup.automatic_installation = true
 lvim.lsp.automatic_configuration.skipped_servers = vim.tbl_filter(function(server)
   return server ~= "sqlls"
 end, lvim.lsp.automatic_configuration.skipped_servers)
--- setup for terraform lsp
-lvim.lsp.automatic_configuration.skipped_servers = vim.tbl_filter(function(server)
-  return server ~= "tflint"
-end, lvim.lsp.automatic_configuration.skipped_servers)
 
 -- linters, formatters and code actions <https://www.lunarvim.org/docs/languages#lintingformatting>
 local linters = require "lvim.lsp.null-ls.linters"
