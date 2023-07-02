@@ -29,7 +29,7 @@ echo "SHELL - zsh"
 echo "SHELL - oh-my-zsh"
 echo "SHELL - starship"
 echo "IDE   - neovim"
-echo "IDE   - nvchad"
+echo "IDE   - lunarvim"
 echo "----------------------------"
 read -r -p "Continue with setup? [yn] " input
 echo "----------------------------"
