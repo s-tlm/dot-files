@@ -94,7 +94,7 @@ python_binary = ["python", "python3"]
 pyenv_prefix = "venv"
 
 [terraform]
-format = "[using $symbol$version on $workspace]($style)"
+format = "[using $symbol on $workspace]($style)"
 symbol = "󱁢 "
 version_format = "v${raw}"
 style = "105"
