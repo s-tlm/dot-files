@@ -8,10 +8,14 @@ export ZSH="$HOME/.oh-my-zsh"
 # Use vim key-bindings
 set -o vi
 
-# Pygmentize setup
+# PATHS
+# Pygmentize
 path+=$HOME/.local/bin
-export PATH
+# Rust
+path+=$HOME/.cargo/bin
+
 export ZSH_COLORIZE_STYLE="nord"
+export PATH
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,

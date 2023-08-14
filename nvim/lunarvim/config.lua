@@ -77,6 +77,7 @@ vim.diagnostic.config({ virtual_text = false })
 lvim.plugins = {
   {
     "zbirenbaum/copilot-cmp",
+    enabled = false,
     cmd = "Copilot",
     event = "InsertEnter",
     dependencies = { "zbirenbaum/copilot.lua" },
