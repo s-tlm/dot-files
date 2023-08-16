@@ -7,6 +7,7 @@ $git_status\
 $git_metrics\
 $python\
 $c\
+$scala\
 $terraform\
 $jobs\
 $fill\
@@ -92,6 +93,15 @@ symbol = " "
 version_format = "v${raw}"
 python_binary = ["python", "python3"]
 pyenv_prefix = "venv"
+
+[scala]
+format = 'via [${symbol}(${version} )]($style)'
+version_format = "v${raw}"
+detect_extensions = ['sbt', 'scala']
+detect_files = ['.scalaenv', '.sbtenv', 'build.sbt']
+detect_folders = ['.metals']
+symbol = " "
+style = "red dimmed"
 
 [terraform]
 format = "[using $symbol on $workspace]($style)"
