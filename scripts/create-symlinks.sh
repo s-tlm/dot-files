@@ -11,8 +11,8 @@ CONFIG_DIR="$HOME/.config"
 ZSH_SRC_DIR="$REPO_DIR/zsh"
 
 # LUNARVIM
-LV_SRC_DIR="$REPO_DIR/nvim/lunarvim/config.lua"
-LV_TGT_DIR="$CONFIG_DIR/lvim/config.lua"
+LV_SRC_DIR="$REPO_DIR/nvim/lunarvim"
+LV_TGT_DIR="$CONFIG_DIR/lvim"
 
 # STARSHIP
 SS_SRC_DIR="$REPO_DIR/starship/starship.toml"

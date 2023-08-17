@@ -2,8 +2,6 @@
 
 ## Pre-requisites
 
-Install the following:
-
 1. zsh
 2. oh-my-zsh
 3. starship
@@ -14,3 +12,4 @@ Install the following:
 
 1. Run `scripts/create-symlinks.sh`.
 2. Run `scripts/create-zsh-functions.sh`.
+3. Install `nvim-metals` seperately

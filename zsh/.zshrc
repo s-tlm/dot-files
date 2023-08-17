@@ -10,9 +10,11 @@ set -o vi
 
 # PATHS
 # Pygmentize
-path+=$HOME/.local/bin
+path+="$HOME/.local/bin"
 # Rust
-path+=$HOME/.cargo/bin
+path+="$HOME/.cargo/bin"
+# Coursier
+path+="$HOME/Library/Application Support/Coursier/bin"
 
 export ZSH_COLORIZE_STYLE="nord"
 export PATH
