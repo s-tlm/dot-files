@@ -107,7 +107,7 @@ symbol = " "
 style = "red dimmed"
 
 [terraform]
-format = "[using $symbol on $workspace]($style)"
+format = "[using ${symbol}(${version}) on $workspace]($style)"
 symbol = "󱁢 "
 version_format = "v${raw}"
 style = "105"
