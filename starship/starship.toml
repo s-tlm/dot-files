@@ -23,7 +23,7 @@ $character"""
 add_newline = true
 # Timeout for commands executed by Starship (in ms)
 # Might decrease as this slows things down a lot...
-command_timeout = 1000
+command_timeout = 1500
 
 [fill]
 symbol = " "
