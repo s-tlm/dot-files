@@ -217,3 +217,8 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
   pattern = { "*.norg" },
   command = "set conceallevel=2 | set concealcursor=nc"
 })
+-- https://www.reddit.com/r/neovim/comments/125gctj/e5248_invalid_character_in_group_name_with/
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  pattern = { "*.tfvars" },
+  command = "set filetype=terraform"
+})
