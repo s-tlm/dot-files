@@ -88,7 +88,6 @@ source $ZSH/oh-my-zsh.sh
 # Aliases
 alias nvim="lvim"
 
-autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /opt/homebrew/bin/terraform terraform
 
 # Start Starship
@@ -106,6 +105,8 @@ export PATH="/Users/stevelam/.rd/bin:$PATH"
 fpath=( ~/.zsh_functions "${fpath[@]}" )
 autoload -Uz mtp
 autoload -Uz todo
+autoload -Uz compinit && compinit
+autoload -U +X bashcompinit && bashcompinit
 
 # Enable zsh syntax highlighting
 # Requires brew install zsh-syntax-highlighting
