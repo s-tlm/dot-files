@@ -19,6 +19,13 @@ lvim.leader = "space"
 lvim.keys.normal_mode["<Tab>"] = ":BufferLineCycleNext<CR>"
 lvim.keys.normal_mode["<S-Tab>"] = ":BufferLineCyclePrev<CR>"
 lvim.keys.normal_mode["<leader>x"] = ":BufferKill<CR>"
+-- Magma
+lvim.builtin.which_key.mappings["r"] = {
+  name = "Magma",
+  r = { "<cmd> MagmaEvaluateLine<CR>", "Evaluate the current line" },
+  c = { "<cmd> MagmaReevaluateCell<CR>", "Reevaluate the currently selected cell" },
+  C = { "<cmd> MagmaInterrupt<CR>", "Keyboard interrupt running kernel" }
+}
 
 -- -- Use which-key to add extra bindings with the leader-key prefix
 -- lvim.builtin.which_key.mappings["W"] = { "<cmd>noautocmd w<cr>", "Save without formatting" }
@@ -75,6 +82,10 @@ vim.diagnostic.config({ virtual_text = false })
 
 -- Additional Plugins <https://www.lunarvim.org/docs/plugins#user-plugins>
 lvim.plugins = {
+  {
+    "dccsillag/magma-nvim",
+    build = ":UpdateRemotePlugins"
+  },
   {
     "scalameta/nvim-metals",
     config = function()
@@ -218,7 +229,12 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
   command = "set conceallevel=2 | set concealcursor=nc"
 })
 -- https://www.reddit.com/r/neovim/comments/125gctj/e5248_invalid_character_in_group_name_with/
-vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
   pattern = { "*.tfvars" },
   command = "set filetype=terraform"
+})
+-- Magma
+vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+  pattern = { "*.py" },
+  command = "MagmaInit python3"
 })
