@@ -105,6 +105,7 @@ export PATH="/Users/stevelam/.rd/bin:$PATH"
 fpath=( ~/.zsh_functions "${fpath[@]}" )
 autoload -Uz mtp
 autoload -Uz todo
+autoload -Uz scrib
 autoload -Uz compinit && compinit
 autoload -U +X bashcompinit && bashcompinit
 

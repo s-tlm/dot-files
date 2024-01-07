@@ -1,0 +1,6 @@
+# Scribble some notes
+
+function scrib() {
+  # Open a new .md document at today's date
+  $EDITOR $HOME/Notes/Scribbles/$(date +%Y-%m-%d).md
+}

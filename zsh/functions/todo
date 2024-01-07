@@ -1,6 +1,5 @@
 # Launch todos
 
 function todo () {
-  $EDITOR $HOME/.todo.norg
+  $EDITOR $HOME/Notes/Personal/TODO.md
 }
-
