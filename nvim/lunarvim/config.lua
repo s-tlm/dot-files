@@ -19,6 +19,12 @@ lvim.leader = "space"
 lvim.keys.normal_mode["<Tab>"] = ":BufferLineCycleNext<CR>"
 lvim.keys.normal_mode["<S-Tab>"] = ":BufferLineCyclePrev<CR>"
 lvim.keys.normal_mode["<leader>x"] = ":BufferKill<CR>"
+lvim.keys.normal_mode["<leader>kv"] = ":MarkdownPreview<CR>"
+-- custom whichkey mappings
+lvim.builtin.which_key.mappings["k"] = {
+  name = "Markdown Preview",
+  v = { "<cmd>MarkdownPreviewToggle<CR>", "Toggle Preview" }
+}
 
 -- -- Use which-key to add extra bindings with the leader-key prefix
 -- lvim.builtin.which_key.mappings["W"] = { "<cmd>noautocmd w<cr>", "Save without formatting" }
@@ -75,6 +81,12 @@ vim.diagnostic.config({ virtual_text = false })
 
 -- Additional Plugins <https://www.lunarvim.org/docs/plugins#user-plugins>
 lvim.plugins = {
+  {
+    "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    ft = { "markdown" },
+    build = function() vim.fn["mkdp#util#install"]() end,
+  },
   {
     "scalameta/nvim-metals",
     config = function()
