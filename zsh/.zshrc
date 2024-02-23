@@ -87,6 +87,7 @@ source $ZSH/oh-my-zsh.sh
 
 # Aliases
 alias nvim="lvim"
+alias cat="ccat"
 
 complete -o nospace -C /opt/homebrew/bin/terraform terraform
 

@@ -1,2 +1,2 @@
-export AWS_PROFILE=default
+export AWS_PROFILE=Bootcamp@Deloitte
 export EDITOR=lvim
