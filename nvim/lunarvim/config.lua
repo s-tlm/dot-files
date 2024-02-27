@@ -161,7 +161,7 @@ lvim.plugins = {
   },
   {
     -- Ensure plugin is also enabled in treesitter
-    "HiPhish/nvim-ts-rainbow2"
+    "hiphish/rainbow-delimiters.nvim"
   },
   {
     -- catppuccin nvim theme
@@ -182,7 +182,7 @@ lvim.plugins = {
         nvimtree = true,
         treesitter = true,
         treesitter_context = true,
-        ts_rainbow2 = true,
+        rainbow_delimiters = true,
         telescope = true,
         which_key = true,
       }
@@ -215,7 +215,6 @@ dap.configurations.scala = {
 
 -- Enable rainbow in treesitter
 lvim.builtin.treesitter.rainbow.enable = true
-lvim.builtin.treesitter.rainbow.strategy = require('ts-rainbow').strategy.global
 -- Change theme settings
 lvim.colorscheme = "catppuccin"
 -- Bufferline and Statusline settings for catppuccin theme
