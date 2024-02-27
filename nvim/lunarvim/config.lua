@@ -6,7 +6,7 @@ vim.g.maplocalleader = ","
 vim.opt.colorcolumn = "80"
 
 -- general
-lvim.log.level = "info"
+lvim.log.level = "OFF"
 lvim.format_on_save = {
   enabled = true,
   pattern = "*.lua",
