@@ -105,25 +105,31 @@ lvim.plugins = {
     end,
   },
   {
+    "vhyrro/luarocks.nvim",
+    priority = 1000,
+    config = true, -- This automatically runs `require("luarocks-nvim").setup()`"
+  },
+  {
     "nvim-neorg/neorg",
     ft = "norg", -- lazy-load on filetype
-    build = ":Neorg sync-parsers",
-    opts = {
-      load = {
-        ["core.defaults"] = {},        -- Loads default behaviour
-        ["core.concealer"] = {},       -- Adds pretty icons to your documents
-        ["core.export"] = {},
-        ["core.export.markdown"] = {}, -- Export Norg -> Markdown
-        ["core.dirman"] = {            -- Manages Neorg workspaces
-          config = {
-            workspaces = {
-              notes = "~/Notes"
+    config = function()
+      require("neorg").setup({
+        load = {
+          ["core.defaults"] = {},        -- Loads default behaviour
+          ["core.concealer"] = {},       -- Adds pretty icons to your documents
+          ["core.export"] = {},
+          ["core.export.markdown"] = {}, -- Export Norg -> Markdown
+          ["core.dirman"] = {            -- Manages Neorg workspaces
+            config = {
+              workspaces = {
+                notes = "~/Notes"
+              }
             }
           }
         }
-      }
-    },
-    dependencies = { "nvim-lua/plenary.nvim" },
+      })
+    end,
+    dependencies = { "luarocks.nvim" },
   },
   {
     "Pocco81/true-zen.nvim",
