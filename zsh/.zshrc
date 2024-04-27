@@ -16,7 +16,7 @@ path+="$HOME/.cargo/bin"
 # Coursier
 path+="$HOME/Library/Application Support/Coursier/bin"
 
-export ZSH_COLORIZE_STYLE="nord"
+export ZSH_COLORIZE_STYLE="dracula"
 export PATH
 
 # Set name of the theme to load --- if set to "random", it will
