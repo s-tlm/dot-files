@@ -81,6 +81,7 @@ plugins=(
   zsh-autosuggestions
   colorize
   pass
+  dbt
 )
 
 source $ZSH/oh-my-zsh.sh
