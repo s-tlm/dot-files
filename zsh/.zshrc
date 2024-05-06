@@ -15,6 +15,8 @@ path+="$HOME/.local/bin"
 path+="$HOME/.cargo/bin"
 # Coursier
 path+="$HOME/Library/Application Support/Coursier/bin"
+# Python 3.11
+path+="$HOME/Library/Python/3.11/bin"
 
 export ZSH_COLORIZE_STYLE="dracula"
 export PATH
