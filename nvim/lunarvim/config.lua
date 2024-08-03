@@ -37,7 +37,6 @@ lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
 lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
 lvim.builtin.nvimtree.setup.view.adaptive_size = true
-
 -- Automatically install missing parsers when entering buffer
 lvim.builtin.treesitter.auto_install = true
 -- always installed on startup, useful for parsers without a strict filetype
@@ -137,32 +136,6 @@ lvim.plugins = {
       })
     end,
     dependencies = { "luarocks.nvim" },
-  },
-  {
-    "Pocco81/true-zen.nvim",
-    opts = {
-      modes = {
-        ataraxis = {
-          minimum_writing_area = {
-            width = 120
-          },
-          callbacks = {
-            open_pre = function()
-              require("lualine").hide()
-            end,
-            close_pre = function()
-              require("lualine").hide({ unhide = true })
-            end,
-          },
-        },
-      },
-      integrations = {
-        twilight = true,
-      },
-    },
-    keys = {
-      { "<leader>zm", ":TZAtaraxis<CR>", desc = "Toggle Zen Mode" },
-    },
   },
   {
     "folke/twilight.nvim",
