@@ -64,10 +64,6 @@ lvim.builtin.treesitter.ensure_installed = {
 -- generic LSP settings <https://www.lunarvim.org/docs/languages#lsp-support>
 ---remove a server from the skipped list, e.g. eslint, or emmet_ls. IMPORTANT: Requires `:LvimCacheReset` to take effect
 ---`:LvimInfo` lists which server(s) are skipped for the current filetype
--- setup for SQL lsp
-lvim.lsp.automatic_configuration.skipped_servers = vim.tbl_filter(function(server)
-  return server ~= "sqlls"
-end, lvim.lsp.automatic_configuration.skipped_servers)
 
 -- linters, formatters and code actions <https://www.lunarvim.org/docs/languages#lintingformatting>
 local linters = require "lvim.lsp.null-ls.linters"
