@@ -37,7 +37,6 @@ lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
 lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
 lvim.builtin.nvimtree.setup.view.adaptive_size = true
-
 -- Automatically install missing parsers when entering buffer
 lvim.builtin.treesitter.auto_install = true
 -- always installed on startup, useful for parsers without a strict filetype
@@ -65,10 +64,6 @@ lvim.builtin.treesitter.ensure_installed = {
 -- generic LSP settings <https://www.lunarvim.org/docs/languages#lsp-support>
 ---remove a server from the skipped list, e.g. eslint, or emmet_ls. IMPORTANT: Requires `:LvimCacheReset` to take effect
 ---`:LvimInfo` lists which server(s) are skipped for the current filetype
--- setup for SQL lsp
-lvim.lsp.automatic_configuration.skipped_servers = vim.tbl_filter(function(server)
-  return server ~= "sqlls"
-end, lvim.lsp.automatic_configuration.skipped_servers)
 
 -- linters, formatters and code actions <https://www.lunarvim.org/docs/languages#lintingformatting>
 local linters = require "lvim.lsp.null-ls.linters"
@@ -137,32 +132,6 @@ lvim.plugins = {
       })
     end,
     dependencies = { "luarocks.nvim" },
-  },
-  {
-    "Pocco81/true-zen.nvim",
-    opts = {
-      modes = {
-        ataraxis = {
-          minimum_writing_area = {
-            width = 120
-          },
-          callbacks = {
-            open_pre = function()
-              require("lualine").hide()
-            end,
-            close_pre = function()
-              require("lualine").hide({ unhide = true })
-            end,
-          },
-        },
-      },
-      integrations = {
-        twilight = true,
-      },
-    },
-    keys = {
-      { "<leader>zm", ":TZAtaraxis<CR>", desc = "Toggle Zen Mode" },
-    },
   },
   {
     "folke/twilight.nvim",
