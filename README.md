@@ -13,3 +13,54 @@
 1. Run `scripts/create-symlinks.sh`.
 2. Run `scripts/create-zsh-functions.sh`.
 3. Install `nvim-metals` seperately
+
+### Neovim Setup
+
+It's about time I make my own Neovim config.
+
+#### Plugins
+
+##### UI
+
+- [alpha-nvim](https://github.com/goolord/alpha-nvim)
+- [Catpuccin Frappe](https://github.com/catppuccin/nvim)
+- [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim)
+- [vim-illuminate](https://github.com/RRethy/vim-illuminate)
+- [rainbow-delimiters](https://github.com/HiPhish/rainbow-delimiters.nvim)
+- [indent-blankline.nvim](https://github.com/lukas-reineke/indent-blankline.nvim)
+- [nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons)
+
+##### Navigation
+
+- [nvim-tree](https://github.com/nvim-tree/nvim-tree.lua)
+- [which-key.nvim](https://github.com/folke/which-key.nvim)
+- [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim)
+- [telescope-fzf-native.nvim](https://github.com/nvim-telescope/telescope-fzf-native.nvim)
+
+##### Package Management
+
+- [lazy.nvim](https://github.com/folke/lazy.nvim)
+- [mason.nvim](https://github.com/williamboman/mason.nvim)
+
+##### Language Server Protocol (LSP)
+
+- [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig)
+- [mason-lspconfig.nvim](https://github.com/williamboman/mason-lspconfig.nvim)
+
+##### Linting & Formatting
+
+- [conform.nvim](https://github.com/stevearc/conform.nvim)
+- [nvim-lint](https://github.com/mfussenegger/nvim-lint)
+
+##### Git
+
+- [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim)
+
+##### Terminal
+
+- [toggleterm](https://github.com/akinsho/toggleterm.nvim)
+
+##### Debugging
+
+- [nvim-dap](https://github.com/mfussenegger/nvim-dap)
+- [nvim-dap-ui](https://github.com/rcarriga/nvim-dap-ui)
