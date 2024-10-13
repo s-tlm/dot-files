@@ -41,6 +41,7 @@ It's about time I make my own Neovim config.
 
 - [lazy.nvim](https://github.com/folke/lazy.nvim)
 - [mason.nvim](https://github.com/williamboman/mason.nvim)
+- [luarocks](https://github.com/luarocks/luarocks/wiki/Download)
 
 ##### Language Server Protocol (LSP)
 
