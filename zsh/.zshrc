@@ -54,6 +54,7 @@ alias nvim="lvim"
 alias cat="ccat"
 alias start-zscaler="open -a /Applications/Zscaler/Zscaler.app --hide; sudo find /Library/LaunchDaemons -name '*zscaler*' -exec launchctl load {} \;"
 alias kill-zscaler="find /Library/LaunchAgents -name '*zscaler*' -exec launchctl unload {} \;;sudo find /Library/LaunchDaemons -name '*zscaler*' -exec launchctl unload {} \;"
+alias make-admin="/Applications/Privileges.app/Contents/Resources/PrivilegesCLI --add"
 
 complete -o nospace -C /opt/homebrew/bin/terraform terraform
 
