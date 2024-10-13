@@ -79,10 +79,6 @@ vim.diagnostic.config({ virtual_text = false })
 -- Additional Plugins <https://www.lunarvim.org/docs/plugins#user-plugins>
 lvim.plugins = {
   {
-    "R-nvim/R.nvim",
-    lazy = false
-  },
-  {
     "iamcco/markdown-preview.nvim",
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
     ft = { "markdown" },
@@ -105,33 +101,6 @@ lvim.plugins = {
         require("copilot_cmp").setup() -- https://github.com/zbirenbaum/copilot-cmp/blob/master/README.md#configuration
       end, 100)
     end,
-  },
-  {
-    "vhyrro/luarocks.nvim",
-    priority = 1000,
-    config = true, -- This automatically runs `require("luarocks-nvim").setup()`"
-  },
-  {
-    "nvim-neorg/neorg",
-    ft = "norg", -- lazy-load on filetype
-    config = function()
-      require("neorg").setup({
-        load = {
-          ["core.defaults"] = {},        -- Loads default behaviour
-          ["core.concealer"] = {},       -- Adds pretty icons to your documents
-          ["core.export"] = {},
-          ["core.export.markdown"] = {}, -- Export Norg -> Markdown
-          ["core.dirman"] = {            -- Manages Neorg workspaces
-            config = {
-              workspaces = {
-                notes = "~/Notes"
-              }
-            }
-          }
-        }
-      })
-    end,
-    dependencies = { "luarocks.nvim" },
   },
   {
     "folke/twilight.nvim",
@@ -203,11 +172,6 @@ lvim.builtin.bufferline.highlights = require("catppuccin.groups.integrations.buf
 lvim.builtin.lualine.options.theme = "catppuccin"
 
 -- Autocommands (`:help autocmd`) <https://neovim.io/doc/user/autocmd.html>
--- Neorg concealer settings
-vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
-  pattern = { "*.norg" },
-  command = "set conceallevel=2 | set concealcursor=nc"
-})
 -- https://www.reddit.com/r/neovim/comments/125gctj/e5248_invalid_character_in_group_name_with/
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
   pattern = { "*.tfvars" },
