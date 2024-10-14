@@ -33,3 +33,6 @@ require("lazy").setup({
   -- automatically check for plugin updates
   checker = { enabled = true },
 })
+
+-- setup telescope with fzf
+require('telescope').load_extension('fzf')

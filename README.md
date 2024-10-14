@@ -53,6 +53,7 @@ It's about time I make my own Neovim config.
 - [conform.nvim](https://github.com/stevearc/conform.nvim)
 - [nvim-lint](https://github.com/mfussenegger/nvim-lint)
 - [nvim-autopairs](https://github.com/windwp/nvim-autopairs)
+- [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter)
 
 ##### Git
 
