@@ -6,7 +6,9 @@ return {
 		priority = 1000,
 		opts = {
 			flavour = "frappe",
-			transparent_background = true,
+			integration = {
+				which_key = true,
+			}
 		},
 		config = function()
 			-- load the colourscheme
