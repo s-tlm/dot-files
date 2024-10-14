@@ -3,5 +3,26 @@ return {
 		"windwp/nvim-autopairs",
 		event = "InsertEnter",
 		config = true
+	},
+	{
+		"nvim-treesitter/nvim-treesitter",
+		build = ":TSUpdate",
+		opts = {
+			highlight = { enable = true },
+			indent = { enable = true },
+			ensure_installed = {
+				"bash",
+				"json",
+				"jsonc",
+				"lua",
+				"luadoc",
+				"markdown",
+				"markdown_inline",
+				"python",
+				"sql",
+				"terraform",
+				"yaml",
+			},
+		},
 	}
 }
