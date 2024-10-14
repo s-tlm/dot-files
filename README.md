@@ -66,3 +66,7 @@ It's about time I make my own Neovim config.
 
 - [nvim-dap](https://github.com/mfussenegger/nvim-dap)
 - [nvim-dap-ui](https://github.com/rcarriga/nvim-dap-ui)
+
+##### Misc
+
+- [plenary.nvim](https://github.com/nvim-lua/plenary.nvim)
