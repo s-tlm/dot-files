@@ -16,6 +16,9 @@ return {
 		end,
 	},
 	{
-		"nvim-tree/nvim-web-devicons",
+		"RRethy/vim-illuminate",
+	},
+	{
+		"HiPhish/rainbow-delimiters.nvim",
 	},
 }
