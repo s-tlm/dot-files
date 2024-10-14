@@ -1,16 +1,16 @@
 return {
-	{ 
+	{
 		"williamboman/mason.nvim",
 		config = function()
 			require("mason").setup()
-		end
+		end,
 	},
-	{ "williamboman/mason-lspconfig.nvim", },
-	{ "neovim/nvim-lspconfig", },
+	{ "williamboman/mason-lspconfig.nvim" },
+	{ "neovim/nvim-lspconfig" },
 	{
 		"windwp/nvim-autopairs",
 		event = "InsertEnter",
-		config = true
+		config = true,
 	},
 	{
 		"nvim-treesitter/nvim-treesitter",
@@ -39,6 +39,32 @@ return {
 		event = "VeryLazy",
 		config = function()
 			require("nvim-surround").setup()
-		end
+		end,
+	},
+	{
+		"stevearc/conform.nvim",
+		event = { "BufReadPre", "BufNewFile" },
+		config = function()
+			local conform = require("conform")
+			local format_settings = {
+				lsp_fallback = true,
+				async = false,
+				timeout_ms = 500,
+			}
+
+			conform.setup({
+				formatters_by_ft = {
+					lua = { "stylua" },
+					python = { "isort", "black" },
+					sql = { "sqlfmt" },
+				},
+
+				format_on_save = format_settings,
+
+				vim.keymap.set({ "n", "v" }, "<leader>ff", function()
+					conform.format(format_settings)
+				end, { desc = "Format file or range (in visual mode)" }),
+			})
+		end,
 	},
 }
