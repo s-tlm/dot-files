@@ -5,6 +5,7 @@ return {
 	  opts = {
 		  spec = {
 			  { "<leader>pi", ":Lazy<CR>", { desc = "Show Lazy UI" } },
+			  { "<leader>e", ":NvimTreeToggle<CR>", {desc = "Toggle navigation tree"} }
 		  },
 	  },
 	  keys = {
