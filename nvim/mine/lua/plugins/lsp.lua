@@ -1,11 +1,16 @@
 return {
 	{
-		"williamboman/mason.nvim",
-		config = function()
-			require("mason").setup()
-		end,
+		"neovim/nvim-lspconfig",
+		dependencies = {
+			{
+				"williamboman/mason.nvim",
+				config = function()
+					require("mason").setup()
+				end,
+			},
+			{ "williamboman/mason-lspconfig.nvim", config = function() end },
+		},
 	},
-	{ "williamboman/mason-lspconfig.nvim" },
 	{ "neovim/nvim-lspconfig" },
 	{
 		"windwp/nvim-autopairs",
