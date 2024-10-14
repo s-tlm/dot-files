@@ -7,6 +7,10 @@ return {
 		opts = {
 			flavour = "frappe",
 			integration = {
+				gitsigns = true,
+				illuminate = { enabled = true },
+				telescope = { enabled = true },
+				treesitter = true,
 				which_key = true,
 			}
 		},
