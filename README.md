@@ -54,6 +54,7 @@ It's about time I make my own Neovim config.
 - [nvim-lint](https://github.com/mfussenegger/nvim-lint)
 - [nvim-autopairs](https://github.com/windwp/nvim-autopairs)
 - [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter)
+- [nvim-surround](https://github.com/kylechui/nvim-surround)
 
 ##### Git
 
