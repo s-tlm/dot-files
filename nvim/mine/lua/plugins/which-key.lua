@@ -12,6 +12,8 @@ return {
 		      { "<leader>st", builtin.live_grep, { desc = "Telescope search text" } },
 	          { "<leader>sb", builtin.buffers, { desc = "Telescope search buffers" } },
 	          { "<leader>sh", builtin.help_tags, { desc = "Telescope search help tags" } },
+	          { "<leader>li", ":Mason<CR>", { desc = "Launch Mason GUI" } },
+	          { "<leader>lu", ":MasonUpdate<CR>", { desc = "Update all Mason managed registries" } },
 		  },
 	  },
 	  keys = {
