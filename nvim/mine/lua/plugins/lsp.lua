@@ -44,8 +44,6 @@ return {
 			local configs = require("nvim-treesitter.configs")
 
 			configs.setup({
-				highlight = { enable = true },
-				indent = { enable = true },
 				ensure_installed = {
 					"bash",
 					"json",
@@ -105,7 +103,6 @@ return {
 
 			lint.linters_by_ft = {
 				lua = { "selene" },
-				markdown = { "vale" },
 				python = { "ruff" },
 				sql = { "sqlfluff" },
 				terraform = { "tflint" },
