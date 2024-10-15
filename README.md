@@ -1,5 +1,9 @@
 # Dot Files
 
+## TODO
+
+- [tmux](https://gitlab.com/gnachman/iterm2/-/wikis/tmux-Integration-Best-Practices)
+
 ## Pre-requisites
 
 1. zsh
