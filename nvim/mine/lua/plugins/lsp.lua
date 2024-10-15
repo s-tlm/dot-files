@@ -32,7 +32,6 @@ return {
 			},
 		},
 	},
-	{ "neovim/nvim-lspconfig" },
 	{
 		"windwp/nvim-autopairs",
 		event = "InsertEnter",
