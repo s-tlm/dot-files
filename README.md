@@ -11,6 +11,7 @@
 3. starship
 4. neovim
 5. Latest Nerd Font of your choosing
+6. `vale` [setup](https://docs.rockylinux.org/books/nvchad/vale_nvchad/#__tabbed_1_2)
 
 ## Setup
 
