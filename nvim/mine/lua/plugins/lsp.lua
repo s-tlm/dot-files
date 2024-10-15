@@ -8,7 +8,28 @@ return {
 					require("mason").setup()
 				end,
 			},
-			{ "williamboman/mason-lspconfig.nvim", config = function() end },
+			{
+				"williamboman/mason-lspconfig.nvim",
+				config = function()
+					require("mason-lspconfig").setup({
+						ensure_installed = {
+							"bashls",
+							"dockerls",
+							"docker_compose_language_service",
+							"jsonls",
+							"lua_ls",
+							"pyright",
+							"ruff",
+							"sqlls",
+							"terraformls",
+							"tflint",
+							"vale_ls",
+							"yamlls",
+						},
+						automatic_installation = true,
+					})
+				end,
+			},
 		},
 	},
 	{ "neovim/nvim-lspconfig" },
