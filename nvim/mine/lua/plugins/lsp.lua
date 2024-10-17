@@ -58,6 +58,11 @@ return {
 					"hcl",
 					"yaml",
 				},
+				auto_install = true,
+				highlight = {
+					enable = true,
+					disable = { "markdown" },
+				},
 			})
 		end,
 	},
