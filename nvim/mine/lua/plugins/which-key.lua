@@ -16,6 +16,7 @@ return {
 				{ "<leader>L", group = "Mason" },
 				{ "<leader>Li", ":Mason<CR>", desc = "Launch Mason GUI" },
 				{ "<leader>Lu", ":MasonUpdate<CR>", desc = "Update all Mason managed registries" },
+				{ "<leader>l", group = "Conform" },
 				{ "<leader>s", group = "Fuzzy Search" },
 				{ "<leader>sb", desc = "Search buffer" },
 				{ "<leader>sh", desc = "Search help" },

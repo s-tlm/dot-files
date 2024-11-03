@@ -93,12 +93,11 @@ return {
 				},
 
 				format_on_save = format_settings,
-
-				vim.keymap.set({ "n", "v" }, "<leader>ff", function()
-					conform.format(format_settings)
-				end, { desc = "Format file or range (in visual mode)" }),
 			})
 		end,
+		keys = {
+			{ "<leader>li", ":ConformInfo<CR>", desc = "See formatter information" },
+		},
 	},
 	{
 		"mfussenegger/nvim-lint",
@@ -121,10 +120,6 @@ return {
 					lint.try_lint()
 				end,
 			})
-
-			vim.keymap.set("n", "<leader>l", function()
-				lint.try_lint()
-			end, { desc = "Trigger linting for current file" })
 		end,
 	},
 }
