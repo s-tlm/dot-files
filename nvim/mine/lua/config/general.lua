@@ -9,3 +9,5 @@ vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 
 vim.opt.colorcolumn = "80"
+
+vim.diagnostic.config({ virtual_text = false })
