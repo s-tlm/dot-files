@@ -51,6 +51,7 @@ It's about time I make my own Neovim config.
 
 - [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig)
 - [mason-lspconfig.nvim](https://github.com/williamboman/mason-lspconfig.nvim)
+- [nvim-cmp](https://github.com/hrsh7th/nvim-cmp)
 
 ##### Linting & Formatting
 
