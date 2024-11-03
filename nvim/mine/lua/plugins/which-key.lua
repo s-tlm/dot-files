@@ -22,6 +22,14 @@ return {
 				{ "<leader>sh", desc = "Search help" },
 				{ "<leader>sf", desc = "Search file" },
 				{ "<leader>st", desc = "Search test" },
+				{ "<leader>d", group = "Diagnostics" },
+				{
+					"<leader>ds",
+					function()
+						vim.diagnostic.open_float()
+					end,
+					desc = "Show diagnostics",
+				},
 			},
 		},
 		keys = {
