@@ -1,8 +1,7 @@
-# Dot Files
+# Dot files
 
 ## TODO
 
-- BUG: treesitter and nvim-lint causing nvim to slow down on large files
 - [tmux](https://gitlab.com/gnachman/iterm2/-/wikis/tmux-Integration-Best-Practices)
 
 ## Pre-requisites
