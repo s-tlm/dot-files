@@ -10,8 +10,7 @@ return {
 			},
 			{
 				"williamboman/mason-lspconfig.nvim",
-				config = function()
-					require("mason-lspconfig").setup({
+				opts = {
 						ensure_installed = {
 							"bashls",
 							"dockerls",
@@ -27,8 +26,8 @@ return {
 							"yamlls",
 						},
 						automatic_installation = true,
-					})
-				end,
+					}
+				}
 			},
 		},
 	},
@@ -70,9 +69,7 @@ return {
 		"kylechui/nvim-surround",
 		version = "*", -- Use for stability; omit to use `main` branch for the latest features
 		event = "VeryLazy",
-		config = function()
-			require("nvim-surround").setup()
-		end,
+		opts = {},
 	},
 	{
 		"stevearc/conform.nvim",
