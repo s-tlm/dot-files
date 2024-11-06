@@ -8,6 +8,7 @@ return {
 			spec = {
 				{ "<leader>p", group = "Lazy" },
 				{ "<leader>pi", ":Lazy<CR>", desc = "Show Lazy UI" },
+				{ "<leader>pu", ":Lazy update<CR>", desc = "Update Lazy plugins" },
 				{ "<leader>e", ":NvimTreeToggle<CR>", desc = "Toggle navigation tree" },
 				{ "<leader>sf", builtin.find_files, { desc = "Telescope search files" } },
 				{ "<leader>st", builtin.live_grep, { desc = "Telescope search text" } },
