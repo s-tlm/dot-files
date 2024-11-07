@@ -1,19 +1,49 @@
 -- TODO configure automatic server setup with Mason
 
+local cmp = require("cmp")
 local lsp = require("lspconfig")
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+-- cmp configuration ---
+cmp.setup({
+	snippet = {
+		expand = function(args)
+			require("luasnip").lsp_expand(args.body)
+		end,
+	},
+	window = {
+		completion = cmp.config.window.bordered(),
+		documentation = cmp.config.window.bordered(),
+	},
+	mapping = cmp.mapping.preset.insert({
+		["<C-b>"] = cmp.mapping.scroll_docs(-4),
+		["<C-f>"] = cmp.mapping.scroll_docs(4),
+		["<C-Space>"] = cmp.mapping.complete(),
+		["<C-e>"] = cmp.mapping.abort(),
+		["<CR>"] = cmp.mapping.confirm({ select = true }),
+	}),
+	sources = cmp.config.sources({
+		{ name = "nvim_lsp" },
+		{ name = "luasnip" },
+		{ name = "buffer" },
+	}),
+})
+------------------------
+-- add capabilties to setup to integrate lsp with nvim-cmp
 
 -- bash
-lsp.bashls.setup({})
+lsp.bashls.setup({ capabilities = capabilities })
 
 -- docker
-lsp.dockerls.setup({})
-lsp.docker_compose_language_service.setup({})
+lsp.dockerls.setup({ capabilities = capabilities })
+lsp.docker_compose_language_service.setup({ capabilities = capabilities })
 
 -- json
-lsp.jsonls.setup({})
+lsp.jsonls.setup({ capabilities = capabilities })
 
 -- lua
 lsp.lua_ls.setup({
+	capabilities = capabilities,
 	on_init = function(client)
 		if client.workspace_folders then
 			local path = client.workspace_folders[1].name
@@ -48,16 +78,16 @@ lsp.lua_ls.setup({
 })
 
 -- python
-lsp.pyright.setup({})
+lsp.pyright.setup({ capabilities = capabilities })
 
 -- markdown
-lsp.vale_ls.setup({})
+lsp.vale_ls.setup({ capabilities = capabilities })
 
 -- sql
-lsp.sqlls.setup({})
+lsp.sqlls.setup({ capabilities = capabilities })
 
 -- terraform
-lsp.terraformls.setup({})
+lsp.terraformls.setup({ capabilities = capabilities })
 
 -- yaml
-lsp.yamlls.setup({})
+lsp.yamlls.setup({ capabilities = capabilities })
