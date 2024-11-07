@@ -11,7 +11,7 @@ CONFIG_DIR="$HOME/.config"
 ZSH_SRC_DIR="$REPO_DIR/zsh"
 
 # NVIM
-NV_SRC_DIR="$REPO_DIR/nvim/mine"
+NV_SRC_DIR="$REPO_DIR/nvim/s-tlm"
 NV_TGT_DIR="$CONFIG_DIR/nvim"
 
 # STARSHIP
