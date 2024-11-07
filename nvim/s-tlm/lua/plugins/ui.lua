@@ -37,10 +37,15 @@ return {
 	},
 	{
 		"nvim-lualine/lualine.nvim",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
+		dependencies = {
+			{ "nvim-tree/nvim-web-devicons" },
+		},
 		opts = {
 			options = {
 				theme = "catppuccin-frappe",
+			},
+			sections = {
+				lualine_x = { "require('codeium.virtual_text').status_string()", "encoding", "fileformat", "filetype" },
 			},
 		},
 	},

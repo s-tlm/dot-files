@@ -24,6 +24,10 @@ It's about time I make my own Neovim config.
 
 #### Plugins
 
+##### AI
+
+- [codeium.nvim](https://github.com/Exafunction/codeium.nvim)
+
 ##### UI
 
 - [alpha-nvim](https://github.com/goolord/alpha-nvim)
