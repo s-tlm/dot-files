@@ -12,6 +12,7 @@ return {
 				enable_cmp_source = false,
 				virtual_text = {
 					enabled = true,
+					accept_fallback = "<Tab>",
 					key_bindings = {
 						-- Clear the virtual_text.
 						clear = "<C-e>",
