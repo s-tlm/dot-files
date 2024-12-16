@@ -35,16 +35,17 @@ zstyle ':omz:update' frequency 7
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-  aliases
+	aliases
 	git
+	poetry
 	python
 	docker
 	terraform
 	aws
-  zsh-autosuggestions
-  colorize
-  pass
-  dbt
+	zsh-autosuggestions
+	colorize
+	pass
+	dbt
 )
 
 source $ZSH/oh-my-zsh.sh
