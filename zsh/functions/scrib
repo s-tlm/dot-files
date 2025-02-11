@@ -2,5 +2,5 @@
 
 function scrib() {
   # Open a new .md document at today's date
-  $EDITOR $HOME/Notes/Personal/Scribbles/$(date +%Y-%m-%d).md
+  $EDITOR $HOME/Notes/Vaults/Personal/Scribbles/$(date +%Y-%m-%d).md
 }
