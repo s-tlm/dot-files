@@ -2,6 +2,6 @@
 
 function sweep () {
   git fetch --prune
-  git branch -a | grep -v -E 'remotes/|main|master' | xargs git branch -D
+  git branch -a | grep -v -E 'remotes/|main|master|dev' | xargs git branch -D
 }
 
