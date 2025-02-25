@@ -22,7 +22,7 @@ return {
 				{ "<leader>sb", desc = "Search buffer" },
 				{ "<leader>sh", desc = "Search help" },
 				{ "<leader>sf", desc = "Search file" },
-				{ "<leader>st", desc = "Search test" },
+				{ "<leader>st", desc = "Search text" },
 				{ "<leader>d", group = "Diagnostics" },
 				{
 					"<leader>ds",
