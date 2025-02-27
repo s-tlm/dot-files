@@ -50,4 +50,5 @@ return {
 		},
 	},
 	{ "echasnovski/mini.icons", opts = {}, version = false },
+	{ "goolord/alpha-nvim" },
 }
