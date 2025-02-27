@@ -24,7 +24,7 @@ dashboard.section.buttons.val = {
 	dashboard.button("<leader>sf", "  > Search files", builtin.find_files),
 	dashboard.button("<leader>st", "󱩾  > Search text", builtin.live_grep),
 	dashboard.button("<leader>sb", "  > Search buffers", builtin.buffers),
-	dashboard.button("<leader>sb", "󰞋  > Search help", builtin.help_tags),
+	dashboard.button("<leader>sh", "󰞋  > Search help", builtin.help_tags),
 	dashboard.button("q", "󰩈  > Quit NVIM", ":qa<CR>"),
 }
 
