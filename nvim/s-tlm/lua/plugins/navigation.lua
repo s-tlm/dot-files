@@ -6,7 +6,11 @@ return {
 		dependencies = {
 			"nvim-tree/nvim-web-devicons",
 		},
-		opts = {},
+		opts = {
+			filters = {
+				dotfiles = false,
+			},
+		},
 	},
 	{
 		"nvim-telescope/telescope.nvim",
