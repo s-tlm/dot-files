@@ -24,6 +24,7 @@ return {
 						"tflint",
 						"vale_ls",
 						"yamlls",
+						"superhtml",
 					},
 					automatic_installation = true,
 				},

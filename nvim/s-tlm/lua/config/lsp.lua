@@ -60,7 +60,7 @@ cmp.setup({
 		{ name = "codeium" },
 	}),
 })
-------------------------
+-------------------------------------------------------------------------------
 -- add capabilties to setup to integrate lsp with nvim-cmp
 
 -- bash
@@ -123,3 +123,6 @@ lsp.terraformls.setup({ capabilities = capabilities })
 
 -- yaml
 lsp.yamlls.setup({ capabilities = capabilities })
+
+--html
+lsp.superhtml.setup({ capabilities = capabilities })
