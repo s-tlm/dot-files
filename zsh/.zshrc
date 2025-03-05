@@ -49,7 +49,7 @@ plugins=(
 source $ZSH/oh-my-zsh.sh
 
 # Aliases
-alias cat="ccat"
+alias cat="ccat" # needs the Python Pygments package
 alias start-zscaler="open -a /Applications/Zscaler/Zscaler.app --hide; sudo find /Library/LaunchDaemons -name '*zscaler*' -exec launchctl load {} \;"
 alias kill-zscaler="find /Library/LaunchAgents -name '*zscaler*' -exec launchctl unload {} \;;sudo find /Library/LaunchDaemons -name '*zscaler*' -exec launchctl unload {} \;"
 alias make-admin="/Applications/Privileges.app/Contents/Resources/PrivilegesCLI --add"
@@ -59,13 +59,7 @@ complete -o nospace -C /opt/homebrew/bin/terraform terraform
 # Start Starship
 eval "$(starship init zsh)"
 
-add-zsh-hook -Uz chpwd(){ source <(tea -Eds) }  #tea
-
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="/Users/stevelam/.rd/bin:$PATH"
-### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
 
 # Functions
 fpath=( ~/.zsh_functions "${fpath[@]}" )
