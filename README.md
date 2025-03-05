@@ -1,9 +1,5 @@
 # Dot files
 
-## TODO
-
-- [tmux](https://gitlab.com/gnachman/iterm2/-/wikis/tmux-Integration-Best-Practices)
-
 ## Pre-requisites
 
 1. zsh
@@ -11,7 +7,6 @@
 3. starship
 4. neovim
 5. Latest Nerd Font of your choosing
-6. `vale` [setup](https://docs.rockylinux.org/books/nvchad/vale_nvchad/#__tabbed_1_2)
 
 ## Setup
 
@@ -19,8 +14,6 @@
 2. Run `scripts/create-zsh-functions.sh`.
 
 ### Neovim Setup
-
-It's about time I make my own Neovim config.
 
 #### Plugins
 

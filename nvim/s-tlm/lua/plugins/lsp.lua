@@ -22,7 +22,6 @@ return {
 						"sqlls",
 						"terraformls",
 						"tflint",
-						"vale_ls",
 						"yamlls",
 						"html",
 						"cssls",
