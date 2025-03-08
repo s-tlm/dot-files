@@ -92,9 +92,6 @@ return {
 				format_on_save = format_settings,
 			})
 		end,
-		keys = {
-			{ "<leader>li", ":ConformInfo<CR>", desc = "See formatter information" },
-		},
 	},
 	{
 		"mfussenegger/nvim-lint",
