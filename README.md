@@ -70,3 +70,11 @@
 
 - [plenary.nvim](https://github.com/nvim-lua/plenary.nvim)
 
+
+## Key Maps
+
+- <kbd>CTRL-]</kbd> in Normal mode maps to "go to definition"
+- <kbd>grn</kbd> in Normal mode maps to `vim.lsp.buf.rename()`
+- <kbd>grr</kbd> in Normal mode maps to `vim.lsp.buf.references()`
+- <kbd>gra</kbd> in Normal and Visual mode maps to `vim.lsp.buf.code_action()`
+- <kbd>CTRL-S</kbd> in Insert mode maps to `vim.lsp.buf.signature_help()`
