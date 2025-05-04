@@ -41,7 +41,6 @@ plugins=(
 	terraform
 	aws
 	zsh-autosuggestions
-	colorize
 	pass
 	dbt
 )
@@ -49,7 +48,13 @@ plugins=(
 source $ZSH/oh-my-zsh.sh
 
 # Aliases
-alias cat="ccat" # needs the Python Pygments package
+alias cat="bat"
+alias ls="eza --group-directories-first"
+alias l="eza -lbF --git"
+alias ll="eza -lbGF --git"
+alias llm="eza -lbGd --git --sort=modified"
+alias la="eza -lbhHigUmuSa --time-style=long-iso --git --color-scale"
+alias lx="eza -lbhHigUmuSa@ --time-style=long-iso --git --color-scale"
 
 complete -o nospace -C /opt/homebrew/bin/terraform terraform
 

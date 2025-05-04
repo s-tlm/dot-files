@@ -7,6 +7,7 @@
 3. starship
 4. neovim
 5. Latest Nerd Font of your choosing
+6. [bat](https://github.com/sharkdp/bat), [eza](https://github.com/eza-community/eza)
 
 ## Setup
 
