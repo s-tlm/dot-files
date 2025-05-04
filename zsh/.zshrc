@@ -6,21 +6,12 @@ export ZSH="$HOME/.oh-my-zsh"
 set -o vi
 
 # PATHS
-# Pygmentize
-path+="$HOME/.local/bin"
 # Rust
 path+="$HOME/.cargo/bin"
-# Coursier
-path+="$HOME/Library/Application Support/Coursier/bin"
 
-export ZSH_COLORIZE_STYLE="dracula"
 export PATH
 
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time oh-my-zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+ZSH_THEME=""
 
 # Automatically update oh my zsh
 zstyle ':omz:update' mode auto
