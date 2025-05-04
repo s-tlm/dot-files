@@ -1,0 +1,8 @@
+##################### NOTES #####################
+# Reload config with cmd+shift+,
+
+##################### FONTS #####################
+font-family = "Fira Code Retina"
+
+##################### VISUAL ####################
+theme = "catppuccin-frappe"
