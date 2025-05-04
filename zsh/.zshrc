@@ -55,6 +55,7 @@ alias ll="eza -lbGF --git"
 alias llm="eza -lbGd --git --sort=modified"
 alias la="eza -lbhHigUmuSa --time-style=long-iso --git --color-scale"
 alias lx="eza -lbhHigUmuSa@ --time-style=long-iso --git --color-scale"
+alias l.="eza -a | grep -E '^\.'" # View dot files only
 
 complete -o nospace -C /opt/homebrew/bin/terraform terraform
 
