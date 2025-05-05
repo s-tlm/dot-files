@@ -1,0 +1,53 @@
+###############################################################################
+# Global Git settings
+###############################################################################
+
+[user]
+	name = Steven Lam
+
+[column]
+	# show branches in column format
+	ui = auto
+
+[branch]
+	# show most recently commited branches first
+	sort = -committerdate
+
+[tag]
+	# correctly order tags for semver
+	sort = version:refname
+
+[init]
+	defaultBranch = main
+
+[diff]
+	algorithm = histogram
+	colorMoved = plain # show moved lines differently in diff
+	mnemonicPrefix = true # i/ (index) | w/ (working directory) | c/ commit
+	renames = true
+	
+[push]
+	default = simple
+	autoSetupRemote = true
+	followTags = true
+	
+[fetch]
+	prune = true
+	pruneTags = true
+	all = true
+
+[help]
+	autocorrect = prompt
+	
+[commit]
+	verbose = true
+	
+[rerere]
+	# record conflict resolution during rebases and automatically apply them
+	enabled = true
+	autoupdate = true
+	
+[rebase]
+	autoSquash = true
+	autoStash = true
+	updateRefs = true

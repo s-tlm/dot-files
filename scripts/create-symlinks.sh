@@ -18,6 +18,9 @@ NV_TGT_DIR="$CONFIG_DIR/nvim"
 SS_SRC_DIR="$REPO_DIR/starship/starship.toml"
 SS_TGT_TOML="$CONFIG_DIR/starship.toml"
 
+# GIT
+GIT_SRC_DIR="$REPO_DIR/git"
+
 # Helper scripts
 source "$REPO_DIR/scripts/utils/helper_scripts.sh"
 
@@ -37,6 +40,7 @@ if [[ $input =~ ^[Yy]$ ]]; then
 
     create_symlink "$ZSH_SRC_DIR/.zshrc" "$HOME/.zshrc"
     create_symlink "$ZSH_SRC_DIR/.zshenv" "$HOME/.zshenv"
+	create_symlink "$GIT_SRC_DIR/.gitconfig" "$HOME/.gitconfig"
     create_symlink "$NV_SRC_DIR" "$NV_TGT_DIR"
     create_symlink "$SS_SRC_DIR" "$SS_TGT_TOML"
 
