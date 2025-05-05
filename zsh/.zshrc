@@ -69,3 +69,4 @@ autoload -U +X bashcompinit && bashcompinit
 source ~/Dotfiles/zsh/themes/catppuccin_frappe-zsh-syntax-highlighting.zsh
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source ~/.oh-my-zsh/plugins/zsh-interactive-cd/zsh-interactive-cd.plugin.zsh
+source "$HOME/.local/bin/env"
