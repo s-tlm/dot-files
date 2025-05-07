@@ -1,3 +1,3 @@
 export EDITOR=nvim
 export BAT_THEME="Dracula"
-. "$HOME/.cargo/env"
+export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include"
