@@ -3,13 +3,13 @@ return {
 		"neovim/nvim-lspconfig",
 		dependencies = {
 			{
-				"williamboman/mason.nvim",
+				"mason-org/mason.nvim",
 				opts = {
 					PATH = "append",
 				},
 			},
 			{
-				"williamboman/mason-lspconfig.nvim",
+				"mason-org/mason-lspconfig.nvim",
 				opts = {
 					ensure_installed = {
 						"bashls",
