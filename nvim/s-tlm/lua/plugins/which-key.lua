@@ -9,6 +9,7 @@ return {
 				{ "<leader>l", group = "Conform" },
 				{ "<leader>s", group = "Fuzzy Search" },
 				{ "<leader>d", group = "Diagnostics" },
+				{ "<leader>k", group = "Markdown" },
 			},
 		},
 		keys = {
