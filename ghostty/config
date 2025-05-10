@@ -6,3 +6,6 @@ font-family = "Fira Code Retina"
 
 ##################### VISUAL ####################
 theme = "catppuccin-frappe"
+
+###################### KEYS #####################
+macos-option-as-alt = true
