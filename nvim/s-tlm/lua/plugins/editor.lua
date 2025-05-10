@@ -21,4 +21,8 @@ return {
 			{ "<leader>kv", "<cmd>MarkdownPreviewToggle<CR>", desc = "Preview Markdown toggle" },
 		},
 	},
+	{
+		"RRethy/vim-illuminate",
+		event = { "BufReadPost", "BufWritePost", "BufNewFile" },
+	},
 }
