@@ -17,7 +17,7 @@ return {
 						"docker_compose_language_service",
 						"jsonls",
 						"lua_ls",
-						"pyright",
+						"basedpyright",
 						"ruff",
 						"sqlls",
 						"terraformls",

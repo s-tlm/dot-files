@@ -140,7 +140,7 @@ lsp.lua_ls.setup({
 })
 
 -- python
-lsp.pyright.setup({ capabilities = capabilities })
+lsp.basedpyright.setup({ capabilities = capabilities })
 
 -- markdown
 lsp.vale_ls.setup({ capabilities = capabilities })
