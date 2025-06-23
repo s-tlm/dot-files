@@ -1,6 +1,6 @@
 return {
 	{
-		"Exafunction/codeium.nvim",
+		"Exafunction/windsurf.nvim",
 		event = "BufEnter",
 		build = ":Codeium Auth",
 		dependencies = {
