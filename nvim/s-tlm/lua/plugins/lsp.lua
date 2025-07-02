@@ -86,7 +86,7 @@ return {
 				formatters_by_ft = {
 					lua = { "stylua" },
 					python = { "ruff" },
-					sql = { "sqlfmt" },
+					sql = { "sqlfluff" },
 				},
 
 				format_on_save = format_settings,
