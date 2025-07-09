@@ -74,3 +74,5 @@ source "$HOME/.local/bin/env"
 source "$HOME/.cargo/env"
 # Set up fzf key bindings and fuzzy completion
 source <(fzf --zsh)
+
+alias claude="/Users/s.lam/.claude/local/claude"

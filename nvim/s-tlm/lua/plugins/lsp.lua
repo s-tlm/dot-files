@@ -79,7 +79,7 @@ return {
 			local format_settings = {
 				lsp_fallback = true,
 				async = false,
-				timeout_ms = 1000,
+				timeout_ms = 5000,
 			}
 
 			conform.setup({
@@ -87,6 +87,10 @@ return {
 					lua = { "stylua" },
 					python = { "ruff" },
 					sql = { "sqlfluff" },
+				},
+
+				formatters = {
+					sqlfluff = { stdin = false, args = { "fix", "$FILENAME" } },
 				},
 
 				format_on_save = format_settings,
@@ -104,6 +108,10 @@ return {
 				python = { "ruff" },
 				sql = { "sqlfluff" },
 				terraform = { "tflint" },
+			}
+
+			lint.linters.sqlfluff = {
+				cmd = { "lint" },
 			}
 
 			local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
