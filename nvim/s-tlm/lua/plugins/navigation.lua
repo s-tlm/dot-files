@@ -7,6 +7,7 @@ return {
 			"nvim-tree/nvim-web-devicons",
 		},
 		opts = {
+			view = { width = 50 },
 			filters = {
 				dotfiles = false,
 			},
