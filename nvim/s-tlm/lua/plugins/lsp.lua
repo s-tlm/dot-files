@@ -76,11 +76,6 @@ return {
 		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			local conform = require("conform")
-			local format_settings = {
-				lsp_fallback = true,
-				async = false,
-				timeout_ms = 5000,
-			}
 
 			conform.setup({
 				formatters_by_ft = {
@@ -90,10 +85,15 @@ return {
 				},
 
 				formatters = {
-					sqlfluff = { stdin = false, args = { "fix", "$FILENAME" } },
+					sqlfluff = {
+						command = "sqlfluff",
+						args = { "format", "$FILENAME" },
+						stdin = false,
+						cwd = function()
+							return vim.fn.getcwd()
+						end,
+					},
 				},
-
-				format_on_save = format_settings,
 			})
 		end,
 	},
