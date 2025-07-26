@@ -110,8 +110,9 @@ return {
 				terraform = { "tflint" },
 			}
 
-			lint.linters.sqlfluff = {
-				cmd = { "lint" },
+			lint.linters.sqlfluff.args = {
+				"lint",
+				"--format=json",
 			}
 
 			local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
