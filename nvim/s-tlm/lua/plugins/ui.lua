@@ -57,8 +57,10 @@ return {
 					"require('codeium.virtual_text').status_string()",
 					"encoding",
 					"fileformat",
-					lint_progress,
 					"filetype",
+				},
+				lualine_y = {
+					lint_progress,
 				},
 			},
 		},
