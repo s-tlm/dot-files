@@ -1,5 +1,4 @@
 local cmp = require("cmp")
-local lsp = require("lspconfig")
 local luasnip = require("luasnip")
 local conform = require("conform")
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
@@ -90,21 +89,14 @@ cmp.setup({
 })
 
 -------------------------------------------------------------------------------
--- Use extended capabilties from cmp-nvim-lsp
--- https://github.com/hrsh7th/cmp-nvim-lsp#capabilities
+-- Setup LSP servers via mason-lspconfig handlers
+-- https://github.com/williamboman/mason-lspconfig.nvim#configuration
 
--- bash
-lsp.bashls.setup({ capabilities = capabilities })
+-- Configure LSP servers using vim.lsp.config() (mason-lspconfig v2.0+)
+-- https://github.com/mason-org/mason-lspconfig.nvim/releases/tag/v2.0.0
 
--- docker
-lsp.dockerls.setup({ capabilities = capabilities })
-lsp.docker_compose_language_service.setup({ capabilities = capabilities })
-
--- json
-lsp.jsonls.setup({ capabilities = capabilities })
-
--- lua
-lsp.lua_ls.setup({
+-- Configure Lua LSP with Neovim-specific settings
+vim.lsp.config("lua_ls", {
 	capabilities = capabilities,
 	on_init = function(client)
 		if client.workspace_folders then
@@ -116,21 +108,16 @@ lsp.lua_ls.setup({
 
 		client.config.settings.Lua = vim.tbl_deep_extend("force", client.config.settings.Lua, {
 			runtime = {
-				-- Tell the language server which version of Lua you're using
-				-- (most likely LuaJIT in the case of Neovim)
 				version = "LuaJIT",
 			},
-			-- Make the server aware of Neovim runtime files
 			workspace = {
 				checkThirdParty = false,
 				library = {
 					vim.env.VIMRUNTIME,
-					-- Depending on the usage, you might want to add additional paths here.
-					-- "${3rd}/luv/library"
-					-- "${3rd}/busted/library",
 				},
-				-- or pull in all of 'runtimepath'. NOTE: this is a lot slower and will cause issues when working on your own configuration (see https://github.com/neovim/nvim-lspconfig/issues/3189)
-				-- library = vim.api.nvim_get_runtime_file("", true)
+			},
+			diagnostics = {
+				globals = { "vim" },
 			},
 		})
 	end,
@@ -143,31 +130,17 @@ lsp.lua_ls.setup({
 	},
 })
 
--- python
-lsp.basedpyright.setup({
+-- Configure Python LSP (basedpyright)
+vim.lsp.config("basedpyright", {
+	capabilities = capabilities,
 	settings = {
 		pyright = {
-			-- Using Ruff's import organiser
 			disableOrganizeImports = true,
 		},
 		python = {
 			analysis = {
-				-- Ignore all files for analysis to exclusively use Ruff for linting
 				ignore = { "*" },
 			},
 		},
 	},
-	capabilities = capabilities,
 })
-
--- markdown
-lsp.vale_ls.setup({ capabilities = capabilities })
-
--- terraform
-lsp.terraformls.setup({ capabilities = capabilities })
-
--- yaml
-lsp.yamlls.setup({ capabilities = capabilities })
-
---html
-lsp.superhtml.setup({ capabilities = capabilities })

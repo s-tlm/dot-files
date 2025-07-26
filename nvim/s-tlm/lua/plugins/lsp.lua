@@ -1,30 +1,38 @@
 return {
 	{
+		"mason-org/mason.nvim",
+		opts = {},
+	},
+	{
+		"mason-org/mason-lspconfig.nvim",
+		opts = {
+			ensure_installed = {
+				"bashls",
+				"dockerls",
+				"docker_compose_language_service",
+				"jsonls",
+				"lua_ls",
+				"basedpyright",
+				"terraformls",
+				"tflint",
+				"yamlls",
+				"html",
+				"cssls",
+			},
+			automatic_installation = true,
+		},
+		dependencies = {
+			{ "mason-org/mason.nvim", opts = {} },
+			"neovim/nvim-lspconfig",
+		},
+	},
+	{
 		"neovim/nvim-lspconfig",
 		dependencies = {
 			{
 				"mason-org/mason.nvim",
 				opts = {
 					PATH = "append",
-				},
-			},
-			{
-				"mason-org/mason-lspconfig.nvim",
-				opts = {
-					ensure_installed = {
-						"bashls",
-						"dockerls",
-						"docker_compose_language_service",
-						"jsonls",
-						"lua_ls",
-						"basedpyright",
-						"terraformls",
-						"tflint",
-						"yamlls",
-						"html",
-						"cssls",
-					},
-					automatic_installation = true,
 				},
 			},
 		},
