@@ -18,7 +18,6 @@ return {
 						"jsonls",
 						"lua_ls",
 						"basedpyright",
-						"ruff",
 						"terraformls",
 						"tflint",
 						"yamlls",
@@ -79,7 +78,14 @@ return {
 			conform.setup({
 				formatters_by_ft = {
 					lua = { "stylua" },
-					python = { "ruff" },
+					python = {
+						-- fixes auto-fixable lint errors
+						"ruff_fix",
+						-- run the ruff formatter
+						"ruff_format",
+						-- organise imports
+						"ruff_organize_imports",
+					},
 					sql = { "sqlfluff" },
 				},
 

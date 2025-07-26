@@ -144,7 +144,21 @@ lsp.lua_ls.setup({
 })
 
 -- python
-lsp.basedpyright.setup({ capabilities = capabilities })
+lsp.basedpyright.setup({
+	settings = {
+		pyright = {
+			-- Using Ruff's import organiser
+			disableOrganizeImports = true,
+		},
+		python = {
+			analysis = {
+				-- Ignore all files for analysis to exclusively use Ruff for linting
+				ignore = { "*" },
+			},
+		},
+	},
+	capabilities = capabilities,
+})
 
 -- markdown
 lsp.vale_ls.setup({ capabilities = capabilities })
