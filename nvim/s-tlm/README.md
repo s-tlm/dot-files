@@ -15,7 +15,7 @@ beautiful UI.
 - **Leader Keys**: Space (leader), Comma (local leader)
 - **Auto-updating plugins** on startup
 - **Multi-language LSP support** with automatic server installation
-- **AI-powered code completion** via Windsurf/Codeium
+- **AI-powered code completion** via Windsurf (virtual text mode)
 - **Advanced fuzzy finding** with Telescope
 - **Format-on-save** with multiple formatters
 - **Real-time linting** for multiple languages
@@ -26,9 +26,9 @@ beautiful UI.
 
 #### Windsurf.nvim (Codeium)
 
-- **Purpose**: AI-powered code completion with inline suggestions
+- **Purpose**: AI-powered code completion with virtual text suggestions
 - **Configuration**:
-  - Virtual text completions enabled
+  - Virtual text mode (no completion menu integration)
   - Accept suggestions: `<Tab>`
   - Clear suggestions: `<C-e>`
   - Cycle next/previous: `<M-]>` / `<M-[>`
@@ -131,13 +131,15 @@ beautiful UI.
 - **YAML**: yamlls
 - **HTML/CSS**: html, cssls
 
-#### Code Completion (nvim-cmp)
+#### Code Completion (blink.cmp)
 
-- **Sources**: LSP, buffer, path, cmdline, LuaSnip, Codeium
+- **Sources**: LSP, path, snippets, buffer
+- **Performance**: 0.5-4ms completion latency vs nvim-cmp's 60ms+ debounce
 - **Configuration**:
-  - Bordered completion and documentation windows
-  - Smart Tab/S-Tab navigation
-  - Enter to confirm with replace behavior
+  - Mini.icons integration for LSP kind highlighting
+  - Custom keybindings matching previous nvim-cmp behavior
+  - Built-in fuzzy matching with frecency scoring
+  - Auto-documentation with signature help
 
 #### Formatting (Conform.nvim)
 
@@ -165,7 +167,7 @@ beautiful UI.
 
 - **Treesitter**: Advanced syntax highlighting and code parsing
 - **Autopairs**: Automatic bracket/quote pairing
-- **LuaSnip**: Snippet engine with regex support
+- **friendly-snippets**: Community snippet collection via blink.cmp
 
 ### 🔍 Which-key (`plugins/which-key.lua`)
 
@@ -218,7 +220,7 @@ Displays available keybindings in popup menus for discoverability
 
 ### Diagnostics
 
-- `<leader>ds`: Show diagnostic float
+- `<leader>ds`: Toggle diagnostic virtual text
 
 ### LSP Defaults
 
@@ -267,7 +269,7 @@ lua/
 
 ## Dependencies
 
-- **Neovim**: 0.8+ (built for latest stable)
+- **Neovim**: 0.11+ (required for mason-lspconfig v2.0+ and vim.lsp.config)
 - **Git**: Required for plugin management
 - **Node.js & Yarn**: For markdown-preview plugin
 - **Build tools**: Make, C compiler (for some plugins)
@@ -275,11 +277,14 @@ lua/
 
 ## Installation
 
-1. Ensure Neovim 0.8+ is installed
+1. Ensure Neovim 0.11+ is installed
 2. Clone/symlink this configuration to `~/.config/nvim`
 3. Launch Neovim - lazy.nvim will automatically install plugins
 4. Run `:Codeium Auth` for AI completion setup
 5. Restart Neovim to complete setup
+
+**Note**: This configuration uses mason-lspconfig v2.0+ with `vim.lsp.config()` 
+for modern LSP server management.
 
 The configuration will automatically install and configure all necessary LSP
 servers, formatters, and linters on first run.

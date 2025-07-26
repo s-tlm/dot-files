@@ -139,21 +139,55 @@ return {
 		end,
 	},
 	{
-		"L3MON4D3/LuaSnip",
-		version = "v2.*",
-		build = "make install_jsregexp",
-	},
-	{
-		"hrsh7th/nvim-cmp",
-		event = { "InsertEnter", "CmdlineEnter" },
-		dependencies = {
-			{ "neovim/nvim-lspconfig" },
-			{ "hrsh7th/cmp-nvim-lsp" },
-			{ "hrsh7th/cmp-buffer" },
-			{ "hrsh7th/cmp-path" },
-			{ "hrsh7th/cmp-cmdline" },
-			{ "L3MON4D3/LuaSnip" },
-			{ "saadparwaiz1/cmp_luasnip" },
+		"saghen/blink.cmp",
+		dependencies = "rafamadriz/friendly-snippets",
+		lazy = true,
+		version = "v1.*",
+		opts = {
+			keymap = {
+				preset = "default",
+				["<C-Space>"] = { "show", "show_documentation", "hide_documentation" },
+				["<C-e>"] = { "cancel" },
+				["<CR>"] = { "accept", "fallback" },
+				["<Tab>"] = { "select_next", "snippet_forward", "fallback" },
+				["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
+				["<C-b>"] = { "scroll_documentation_up", "fallback" },
+				["<C-f>"] = { "scroll_documentation_down", "fallback" },
+			},
+			appearance = {
+				nerd_font_variant = "mono",
+			},
+			sources = {
+				default = { "lsp", "path", "snippets" },
+			},
+			completion = {
+				menu = {
+					draw = {
+						components = {
+							kind_icon = {
+								text = function(ctx)
+									local kind_icon, _, _ = require("mini.icons").get("lsp", ctx.kind)
+									return kind_icon
+								end,
+								highlight = function(ctx)
+									local _, hl, _ = require("mini.icons").get("lsp", ctx.kind)
+									return hl
+								end,
+							},
+							kind = {
+								highlight = function(ctx)
+									local _, hl, _ = require("mini.icons").get("lsp", ctx.kind)
+									return hl
+								end,
+							},
+						},
+					},
+				},
+			},
+			signature = {
+				enabled = true,
+			},
 		},
+		opts_extend = { "sources.default" },
 	},
 }

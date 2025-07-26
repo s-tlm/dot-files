@@ -3,10 +3,7 @@ return {
 		"Exafunction/windsurf.nvim",
 		event = "BufEnter",
 		build = ":Codeium Auth",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"hrsh7th/nvim-cmp",
-		},
+		dependencies = "nvim-lua/plenary.nvim",
 		config = function()
 			require("codeium").setup({
 				enable_cmp_source = false,
