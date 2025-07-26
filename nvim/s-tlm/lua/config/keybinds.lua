@@ -24,8 +24,15 @@ wk.add({
 	{
 		"<leader>ds",
 		function()
-			vim.diagnostic.open_float()
+			local config = vim.diagnostic.config()
+			if config.virtual_text == false then
+				vim.diagnostic.config({ virtual_text = true })
+				print("Diagnostic virtual text enabled")
+			else
+				vim.diagnostic.config({ virtual_text = false })
+				print("Diagnostic virtual text disabled")
+			end
 		end,
-		desc = "Show diagnostics",
+		desc = "Toggle diagnostic virtual text",
 	},
 })
