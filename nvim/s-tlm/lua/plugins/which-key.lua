@@ -6,7 +6,7 @@ return {
 			spec = {
 				{ "<leader>p", group = "Lazy" },
 				{ "<leader>L", group = "Mason" },
-				{ "<leader>l", group = "Conform" },
+				{ "<leader>l", group = "LSP" },
 				{ "<leader>s", group = "Fuzzy Search" },
 				{ "<leader>d", group = "Diagnostics" },
 				{ "<leader>k", group = "Markdown" },

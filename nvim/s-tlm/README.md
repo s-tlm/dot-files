@@ -177,8 +177,8 @@ Displays available keybindings in popup menus for discoverability
 #### Organized Groups
 
 - `<leader>p`: Lazy plugin management
-- `<leader>L`: Mason LSP management  
-- `<leader>l`: Conform formatting controls
+- `<leader>L`: Mason management  
+- `<leader>l`: LSP/Conform controls
 - `<leader>s`: Telescope fuzzy search functions
 - `<leader>d`: Diagnostic functions
 - `<leader>k`: Markdown tools
