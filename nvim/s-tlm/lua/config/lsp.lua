@@ -3,6 +3,11 @@ local luasnip = require("luasnip")
 local conform = require("conform")
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
+-- add the same capabilities to ALL server configurations
+vim.lsp.config("*", {
+	capabilities = capabilities,
+})
+
 -- conform configuration --
 conform.setup({
 	format_on_save = function(bufnr)
@@ -97,7 +102,6 @@ cmp.setup({
 
 -- Configure Lua LSP with Neovim-specific settings
 vim.lsp.config("lua_ls", {
-	capabilities = capabilities,
 	on_init = function(client)
 		if client.workspace_folders then
 			local path = client.workspace_folders[1].name
@@ -132,7 +136,6 @@ vim.lsp.config("lua_ls", {
 
 -- Configure Python LSP (basedpyright)
 vim.lsp.config("basedpyright", {
-	capabilities = capabilities,
 	settings = {
 		pyright = {
 			disableOrganizeImports = true,
