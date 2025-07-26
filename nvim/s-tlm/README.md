@@ -127,7 +127,6 @@ beautiful UI.
 - **JSON**: jsonls
 - **Lua**: lua_ls with Neovim-specific configuration
 - **Python**: basedpyright, ruff
-- **SQL**: sqlls
 - **Terraform**: terraformls, tflint
 - **YAML**: yamlls
 - **HTML/CSS**: html, cssls

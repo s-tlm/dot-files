@@ -149,9 +149,6 @@ lsp.basedpyright.setup({ capabilities = capabilities })
 -- markdown
 lsp.vale_ls.setup({ capabilities = capabilities })
 
--- sql
-lsp.sqlls.setup({ capabilities = capabilities })
-
 -- terraform
 lsp.terraformls.setup({ capabilities = capabilities })
 

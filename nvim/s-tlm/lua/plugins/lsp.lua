@@ -19,7 +19,6 @@ return {
 						"lua_ls",
 						"basedpyright",
 						"ruff",
-						"sqlls",
 						"terraformls",
 						"tflint",
 						"yamlls",
