@@ -1,44 +1,41 @@
-# Path to your oh-my-zsh installation.
-typeset -aU path # no repeated directories allowed in path array
-export ZSH="$HOME/.oh-my-zsh"
-
-# Use vim key-bindings
+# enable vim keybinds with esc
 set -o vi
 
-# PATHS
-# Rust
-path+="$HOME/.cargo/bin"
 
-export PATH
+# path
+typeset -aU path # no repeated directories allowed in path array
 
-ZSH_THEME=""
+path+="$HOME/.cargo/bin" # rust
 
-# Automatically update oh my zsh
+export path
+
+
+# omz
+export ZSH="$HOME/.oh-my-zsh"
+
 zstyle ':omz:update' mode auto
+zstyle ':omz:update' frequency 60 # days
+zstyle ':omz:update' verbose minimal
+zstyle ':omz:*' aliases no
+zstyle ':omz:plugins:*' aliases yes
 
-# Uncomment the following line to change how often to auto-update (in days).
-zstyle ':omz:update' frequency 7
-
-# Which plugins would you like to load?
-# Standard plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# Add wisely, as too many plugins slow down shell startup.
 plugins=(
 	aliases
 	git
-	poetry
 	python
 	docker
 	terraform
 	aws
-	zsh-autosuggestions
 	pass
 	dbt
+	zsh-autosuggestions
+	zsh-interactive-cd
 )
 
 source $ZSH/oh-my-zsh.sh
 
-# Aliases
+
+# aliases
 alias cat="bat"
 alias ls="eza --group-directories-first"
 alias l="eza -lbF --git"
@@ -49,14 +46,8 @@ alias lx="eza -lbhHigUmuSa@ --time-style=long-iso --git --color-scale"
 alias l.="eza -a | grep -E '^\.'" # View dot files only
 alias assume=". assume"
 
-complete -o nospace -C /opt/homebrew/bin/terraform terraform
 
-# Start Starship
-eval "$(starship init zsh)"
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# Functions
+# custom functions
 fpath=( ~/.zsh_functions "${fpath[@]}" )
 autoload -Uz mtp
 autoload -Uz todo
@@ -65,14 +56,18 @@ autoload -Uz sweep
 autoload -Uz compinit && compinit
 autoload -U +X bashcompinit && bashcompinit
 
-# Enable zsh syntax highlighting
-# Requires brew install zsh-syntax-highlighting
-source ~/Dotfiles/zsh/themes/catppuccin_frappe-zsh-syntax-highlighting.zsh
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source ~/.oh-my-zsh/plugins/zsh-interactive-cd/zsh-interactive-cd.plugin.zsh
+
 source "$HOME/.local/bin/env"
 source "$HOME/.cargo/env"
 # Set up fzf key bindings and fuzzy completion
 source <(fzf --zsh)
+source ~/Dotfiles/zsh/themes/catppuccin_frappe-zsh-syntax-highlighting.zsh # load last
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh # load last
 
-alias claude="/Users/s.lam/.claude/local/claude"
+
+# terraform tab-completion
+complete -o nospace -C /opt/homebrew/bin/terraform terraform
+
+
+# starship
+eval "$(starship init zsh)"

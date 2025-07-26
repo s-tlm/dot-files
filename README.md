@@ -2,17 +2,40 @@
 
 ## Pre-requisites
 
-1. zsh
-2. oh-my-zsh
-3. starship
-4. neovim
-5. Latest Nerd Font of your choosing
-6. [bat](https://github.com/sharkdp/bat), [eza](https://github.com/eza-community/eza), [catppuccin-zsh](https://github.com/catppuccin/zsh-syntax-highlighting)
+1. zsh + oh-my-zsh
+2. starship
+3. neovim
+4. A Nerd Font
+5. [bat](https://github.com/sharkdp/bat)
+6. [eza](https://github.com/eza-community/eza)
+7. [catppuccin-zsh](https://github.com/catppuccin/zsh-syntax-highlighting)
+8. [fzf](https://github.com/junegunn/fzf)
+9. [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
+10. [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
+11. [zsh-interactive-cd](https://github.com/changyuheng/zsh-interactive-cd)
+12. Rust (for Cargo)
 
 ## Setup
 
 1. Run `scripts/create-symlinks.sh`.
 2. Run `scripts/create-zsh-functions.sh`.
+
+## Zsh Configuration
+
+### Oh My Zsh Settings
+
+- Auto-update enabled (every 60 days)
+- Minimal verbose output
+- Aliases disabled globally but enabled for plugins
+
+### Additional Features
+
+- **Vi Mode**: Enabled with `set -o vi`
+- **Path Management**: Rust Cargo binaries added to PATH
+- **Starship Prompt**: Modern cross-shell prompt
+- **FZF Integration**: Fuzzy finder key bindings and completion
+- **Syntax Highlighting**: Catppuccin Frappe theme with zsh-syntax-highlighting
+- **Terraform Completion**: Tab completion for Terraform commands
 
 ### Neovim Setup
 
