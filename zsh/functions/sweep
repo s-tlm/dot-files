@@ -1,7 +1,6 @@
 # Prune then delete all stale Git branches from local
 
 function sweep () {
-  git fetch --prune
   git branch -a | grep -v -E 'remotes/|main|master|dev' | xargs git branch -D
 }
 
