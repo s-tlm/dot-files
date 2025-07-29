@@ -8,12 +8,13 @@
 4. A Nerd Font
 5. [bat](https://github.com/sharkdp/bat)
 6. [eza](https://github.com/eza-community/eza)
-7. [catppuccin-zsh](https://github.com/catppuccin/zsh-syntax-highlighting)
-8. [fzf](https://github.com/junegunn/fzf)
-9. [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
-10. [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
-11. [zsh-interactive-cd](https://github.com/changyuheng/zsh-interactive-cd)
-12. Rust (for Cargo)
+7. [delta](https://github.com/dandavison/delta)
+8. [catppuccin-zsh](https://github.com/catppuccin/zsh-syntax-highlighting)
+9. [fzf](https://github.com/junegunn/fzf)
+10. [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
+11. [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
+12. [zsh-interactive-cd](https://github.com/changyuheng/zsh-interactive-cd)
+13. Rust (for Cargo)
 
 ## Setup
 
