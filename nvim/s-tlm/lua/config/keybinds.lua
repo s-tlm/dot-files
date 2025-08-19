@@ -4,6 +4,10 @@ local builtin = require("telescope.builtin")
 wk.add({
 	{ "<C-S-l>", ":bnext<CR>", desc = "Next buffer" },
 	{ "<C-S-h>", ":bprevious<CR>", desc = "Previous buffer" },
+	{ "<leader>tn", ":tabnext<CR>", desc = "Next tab" },
+	{ "<leader>tp", ":tabprevious<CR>", desc = "Previous tab" },
+	{ "<leader>to", ":tabnew<CR>", desc = "Open new tab" },
+	{ "<leader>tc", ":tabclose<CR>", desc = "Close current tab" },
 	{ "<leader>pi", ":Lazy<CR>", desc = "Show Lazy UI" },
 	{ "<leader>pu", ":Lazy update<CR>", desc = "Update Lazy plugins" },
 	{ "<leader>e", ":NvimTreeToggle<CR>", desc = "Toggle navigation tree" },

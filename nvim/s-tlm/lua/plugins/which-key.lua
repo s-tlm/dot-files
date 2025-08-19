@@ -10,6 +10,7 @@ return {
 				{ "<leader>s", group = "Fuzzy Search" },
 				{ "<leader>d", group = "Diagnostics" },
 				{ "<leader>k", group = "Markdown" },
+				{ "<leader>t", group = "Tabs" },
 			},
 		},
 		keys = {
