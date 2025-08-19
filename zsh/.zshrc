@@ -71,3 +71,5 @@ complete -o nospace -C /opt/homebrew/bin/terraform terraform
 
 # starship
 eval "$(starship init zsh)"
+
+alias claude="/Users/s.lam/.claude/local/claude"

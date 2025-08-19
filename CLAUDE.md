@@ -86,6 +86,10 @@ The repository uses Selene for Lua linting with Neovim standards (configured in 
 - LSP servers are automatically installed via Mason
 - The setup creates symlinks rather than copying files to maintain version control
 
-## Making Git Commits
+## Git Interactions
 
-When making Git commits, never add Claude Code to the commit message.
+When interacting with Git (commits, pull requests, branch names, etc.), never mention Claude or Claude Code in any Git-related content including:
+- Commit messages
+- Pull request titles and descriptions
+- Branch names
+- Git tags or release notes
