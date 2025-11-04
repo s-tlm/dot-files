@@ -25,4 +25,13 @@ return {
 		"RRethy/vim-illuminate",
 		event = { "BufReadPost", "BufWritePost", "BufNewFile" },
 	},
+	{
+		"f-person/git-blame.nvim",
+		event = "VeryLazy",
+		opts = {
+			message_template = " <committer> • <date> • <summary>",
+			message_when_not_committed = " Not committed yet",
+			date_format = "%r",
+		},
+	},
 }
