@@ -39,4 +39,17 @@ wk.add({
 		end,
 		desc = "Toggle diagnostic virtual text",
 	},
+	{
+		"<leader>di",
+		function()
+			local is_enabled = vim.lsp.inlay_hint.is_enabled({ bufnr = 0 })
+			vim.lsp.inlay_hint.enable(not is_enabled, { bufnr = 0 })
+			if is_enabled then
+				print("Inlay hints disabled")
+			else
+				print("Inlay hints enabled")
+			end
+		end,
+		desc = "Toggle inlay hints",
+	},
 })
