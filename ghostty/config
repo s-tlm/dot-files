@@ -6,11 +6,11 @@ font-family = "Fira Code Retina"
 font-size = 12
 
 ##################### VISUAL ####################
-theme = "catppuccin-frappe"
+theme = "catppuccin-frappe.conf"
 
 # Transparency and blur effects
-background-opacity = 0.95
-background-blur = 20
+background-opacity = 0.7
+background-blur-radius = 20
 
 # Cursor appearance
 cursor-style = block
