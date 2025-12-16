@@ -32,6 +32,8 @@ plugins=(
 	zsh-interactive-cd
 )
 
+fpath=( ~/.zsh_functions "${fpath[@]}" )
+
 source $ZSH/oh-my-zsh.sh
 
 
@@ -47,14 +49,11 @@ alias l.="eza -a | grep -E '^\.'" # View dot files only
 alias assume=". assume"
 
 
-# custom functions
-fpath=( ~/.zsh_functions "${fpath[@]}" )
+# custom functions (compinit called by oh-my-zsh)
 autoload -Uz mtp
 autoload -Uz todo
 autoload -Uz scrib
 autoload -Uz sweep
-autoload -Uz compinit && compinit
-autoload -U +X bashcompinit && bashcompinit
 
 
 source "$HOME/.local/bin/env"
@@ -63,11 +62,6 @@ source "$HOME/.cargo/env"
 source <(fzf --zsh)
 source ~/Dotfiles/zsh/themes/catppuccin_frappe-zsh-syntax-highlighting.zsh # load last
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh # load last
-
-
-# terraform tab-completion
-complete -o nospace -C /opt/homebrew/bin/terraform terraform
-
 
 # starship
 eval "$(starship init zsh)"
