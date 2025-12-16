@@ -28,6 +28,7 @@ plugins=(
 	aws
 	pass
 	dbt
+    ssh-agent
 	zsh-autosuggestions
 	zsh-interactive-cd
 )
@@ -65,6 +66,3 @@ source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh #
 
 # starship
 eval "$(starship init zsh)"
-
-# ssh-agent
-eval "$(ssh-agent -s)"
