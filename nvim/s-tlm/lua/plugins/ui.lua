@@ -14,6 +14,7 @@ return {
 		priority = 1000,
 		opts = {
 			flavour = "frappe",
+			transparent_background = true,
 			integration = {
 				gitsigns = true,
 				illuminate = { enabled = true },
@@ -27,10 +28,6 @@ return {
 				},
 			},
 		},
-		config = function()
-			-- load the colourscheme
-			vim.cmd([[colorscheme catppuccin]])
-		end,
 	},
 	{ "RRethy/vim-illuminate" },
 	{ "HiPhish/rainbow-delimiters.nvim" },
