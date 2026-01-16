@@ -95,6 +95,8 @@ return {
 						"ruff_organize_imports",
 					},
 					sql = { "sqlfluff" },
+					html = { "prettier" },
+					javascript = { "prettier" },
 				},
 
 				formatters = {
