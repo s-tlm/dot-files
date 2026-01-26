@@ -51,10 +51,10 @@ alias assume=". assume"
 
 
 # custom functions (compinit called by oh-my-zsh)
-autoload -Uz mtp
 autoload -Uz todo
 autoload -Uz scrib
 autoload -Uz sweep
+autoload -Uz bla
 
 
 source "$HOME/.local/bin/env"
