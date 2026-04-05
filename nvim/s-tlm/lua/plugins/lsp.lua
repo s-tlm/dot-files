@@ -102,7 +102,7 @@ return {
 				formatters = {
 					sqlfluff = {
 						command = "sqlfluff",
-						args = { "format", "$FILENAME" },
+						args = { "fix", "$FILENAME" },
 						stdin = false,
 						cwd = function()
 							return vim.fn.getcwd()
