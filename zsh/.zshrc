@@ -6,9 +6,10 @@ set -o vi
 typeset -aU path # no repeated directories allowed in path array
 
 path+="$HOME/.cargo/bin" # rust
+fpath+=$(brew --prefix)/share/zsh/site-functions
 
 export path
-
+export fpath
 
 # omz
 export ZSH="$HOME/.oh-my-zsh"
