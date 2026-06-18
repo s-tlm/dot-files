@@ -47,29 +47,22 @@ return {
 		build = ":TSUpdate",
 		branch = "main",
 		config = function()
-			local configs = require("nvim-treesitter.config")
+			local parsers = {
+				"bash",
+				"json",
+				"jsonc",
+				"lua",
+				"luadoc",
+				"markdown",
+				"markdown_inline",
+				"python",
+				"sql",
+				"terraform",
+				"hcl",
+				"yaml",
+			}
 
-			configs.setup({
-				ensure_installed = {
-					"bash",
-					"json",
-					"jsonc",
-					"lua",
-					"luadoc",
-					"markdown",
-					"markdown_inline",
-					"python",
-					"sql",
-					"terraform",
-					"hcl",
-					"yaml",
-				},
-				auto_install = true,
-				highlight = {
-					enable = true,
-					disable = { "markdown" },
-				},
-			})
+			require("nvim-treesitter").install(parsers)
 		end,
 	},
 	{
@@ -124,6 +117,7 @@ return {
 				python = { "ruff" },
 				sql = { "sqlfluff" },
 				terraform = { "tflint" },
+				["terraform-vars"] = { "tflint" },
 			}
 
 			lint.linters.sqlfluff.args = {
@@ -131,10 +125,8 @@ return {
 				"--format=json",
 			}
 
-			local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
-
 			vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
-				group = lint_augroup,
+				group = vim.api.nvim_create_augroup("lint", { clear = true }),
 				callback = function()
 					lint.try_lint()
 				end,
