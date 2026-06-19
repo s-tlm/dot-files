@@ -50,7 +50,6 @@ return {
 			local parsers = {
 				"bash",
 				"json",
-				"jsonc",
 				"lua",
 				"luadoc",
 				"markdown",
