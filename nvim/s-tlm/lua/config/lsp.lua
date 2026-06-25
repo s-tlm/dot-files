@@ -7,16 +7,6 @@ vim.lsp.config("*", {
 })
 
 -- conform configuration --
-conform.setup({
-	format_on_save = function(bufnr)
-		-- Disable with a global or buffer-local variable
-		if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
-			return
-		end
-		return { timeout_ms = 5000, async = false, lsp_format = "fallback" }
-	end,
-})
-
 vim.api.nvim_create_user_command("FormatDisable", function(args)
 	if args.bang then
 		-- FormatDisable! will disable formatting just for this buffer
@@ -34,7 +24,6 @@ vim.api.nvim_create_user_command("FormatEnable", function()
 end, {
 	desc = "Re-enable autoformat-on-save",
 })
-
 
 -------------------------------------------------------------------------------
 -- Setup LSP servers via mason-lspconfig handlers
