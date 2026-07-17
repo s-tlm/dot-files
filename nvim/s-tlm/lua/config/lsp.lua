@@ -1,4 +1,3 @@
-local conform = require("conform")
 local capabilities = require("blink.cmp").get_lsp_capabilities()
 
 -- add the same capabilities to ALL server configurations
@@ -57,12 +56,9 @@ vim.lsp.config("lua_ls", {
 			},
 		})
 	end,
+	-- on_init extends settings.Lua, so it must exist even when empty
 	settings = {
-		Lua = {
-			diagnostics = {
-				globals = { "vim" },
-			},
-		},
+		Lua = {},
 	},
 })
 

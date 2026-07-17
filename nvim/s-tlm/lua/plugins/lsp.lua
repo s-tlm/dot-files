@@ -131,6 +131,16 @@ return {
 				"--format=json",
 			}
 
+			-- Selene only looks for selene.toml in the linter's cwd, so
+			-- point it at the config shipped with this Neovim setup
+			lint.linters.selene.args = {
+				"--display-style",
+				"json",
+				"--config",
+				vim.fn.stdpath("config") .. "/selene.toml",
+				"-",
+			}
+
 			vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
 				group = vim.api.nvim_create_augroup("lint", { clear = true }),
 				callback = function()
