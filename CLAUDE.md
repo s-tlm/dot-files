@@ -77,7 +77,9 @@ line.
 
 ## Lua Linting
 
-The repository uses Selene for Lua linting with Neovim standards (configured in `selene.toml`).
+The repository uses Selene for Lua linting with Neovim standards. The
+config lives at `nvim/s-tlm/selene.toml` (with `nvim/s-tlm/neovim.yml`)
+so it is reachable through the `~/.config/nvim` symlink.
 
 ## Important Notes
 
