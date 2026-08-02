@@ -120,7 +120,6 @@ return {
 
 			lint.linters_by_ft = {
 				lua = { "selene" },
-				python = { "ruff" },
 				sql = { "sqlfluff" },
 				terraform = { "tflint" },
 				["terraform-vars"] = { "tflint" },

@@ -54,12 +54,10 @@ vim.lsp.config("lua_ls", {
 -- Configure Python LSP (basedpyright)
 vim.lsp.config("basedpyright", {
 	settings = {
-		pyright = {
+		basedpyright = {
 			disableOrganizeImports = true,
-		},
-		python = {
 			analysis = {
-				ignore = { "*" },
+				typeCheckingMode = "standard",
 			},
 		},
 	},
