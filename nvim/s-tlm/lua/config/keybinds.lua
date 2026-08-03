@@ -52,4 +52,14 @@ wk.add({
 		end,
 		desc = "Toggle inlay hints",
 	},
+	{
+		"<leader>Do",
+		":DiffviewOpen origin/HEAD...HEAD<CR>",
+		desc = "Open Diffview for current branch and compare to HEAD",
+	},
+	{
+		"<leader>Dc",
+		":DiffviewClose<CR>",
+		desc = "Close Diffview",
+	},
 })

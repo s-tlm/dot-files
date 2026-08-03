@@ -34,4 +34,13 @@ return {
 			date_format = "%r",
 		},
 	},
+	{
+		"sindrets/diffview.nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		opts = {
+			default_args = {
+				DiffviewOpen = { "--imply-local" },
+			},
+		},
+	},
 }
