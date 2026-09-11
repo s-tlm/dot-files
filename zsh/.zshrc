@@ -4,12 +4,8 @@ set -o vi
 
 # path
 typeset -aU path # no repeated directories allowed in path array
+fpath+="$HOMEBREW_PREFIX/share/zsh/site-functions"
 
-path+="$HOME/.cargo/bin" # rust
-fpath+=$(brew --prefix)/share/zsh/site-functions
-
-export path
-export fpath
 
 # omz
 export ZSH="$HOME/.oh-my-zsh"
@@ -21,17 +17,16 @@ zstyle ':omz:*' aliases no
 zstyle ':omz:plugins:*' aliases yes
 
 plugins=(
-	aliases
-	git
-	python
-	docker
-	terraform
-	aws
-	pass
-	dbt
-    ssh-agent
-	zsh-autosuggestions
-	zsh-interactive-cd
+    aliases
+    git
+    python
+    docker
+    terraform
+    aws
+    pass
+    dbt
+    zsh-autosuggestions
+    zsh-interactive-cd
 )
 
 fpath=( ~/.zsh_functions "${fpath[@]}" )
@@ -62,8 +57,8 @@ source "$HOME/.local/bin/env"
 source "$HOME/.cargo/env"
 # Set up fzf key bindings and fuzzy completion
 source <(fzf --zsh)
-source ~/Dotfiles/zsh/themes/catppuccin_frappe-zsh-syntax-highlighting.zsh # load last
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh # load last
+source ~/Dotfiles/zsh/themes/catppuccin_frappe-zsh-syntax-highlighting.zsh
+source "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" # load last
 
 # starship
 eval "$(starship init zsh)"
