@@ -125,11 +125,6 @@ return {
 				["terraform-vars"] = { "tflint" },
 			}
 
-			lint.linters.sqlfluff.args = {
-				"lint",
-				"--format=json",
-			}
-
 			-- Selene only looks for selene.toml in the linter's cwd, so
 			-- point it at the config shipped with this Neovim setup
 			lint.linters.selene.args = {
