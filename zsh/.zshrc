@@ -44,6 +44,7 @@ alias la="eza -lbhHigUmuSa --time-style=long-iso --git --color-scale"
 alias lx="eza -lbhHigUmuSa@ --time-style=long-iso --git --color-scale"
 alias l.="eza -a | grep -E '^\.'" # View dot files only
 alias assume=". assume"
+alias ssh='ghostty +ssh --'
 
 
 # custom functions (compinit called by oh-my-zsh)
