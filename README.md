@@ -42,10 +42,6 @@
 
 #### Plugins
 
-##### AI
-
-- [codeium.nvim](https://github.com/Exafunction/codeium.nvim)
-
 ##### UI
 
 - [alpha-nvim](https://github.com/goolord/alpha-nvim)

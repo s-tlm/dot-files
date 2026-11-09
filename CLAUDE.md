@@ -64,7 +64,7 @@ The Neovim setup uses a modular Lua-based configuration:
 3. **Formatting/Linting**: 
    - Uses conform.nvim for formatting (stylua, ruff, sqlfluff)
    - Uses nvim-lint for linting (selene, ruff, sqlfluff, tflint)
-4. **Completion**: nvim-cmp with LSP, buffer, and AI (Windsurf) sources
+4. **Completion**: nvim-cmp with LSP and buffer sources
 
 ### Custom Zsh Functions
 

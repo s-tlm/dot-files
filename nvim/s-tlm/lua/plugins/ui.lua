@@ -49,7 +49,6 @@ return {
 			},
 			sections = {
 				lualine_x = {
-					"require('codeium.virtual_text').status_string()",
 					"encoding",
 					"fileformat",
 					"filetype",

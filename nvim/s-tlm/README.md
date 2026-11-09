@@ -7,33 +7,18 @@ IDE-like experience.
 
 This configuration uses [lazy.nvim](https://github.com/folke/lazy.nvim) as the
 plugin manager with a modular structure organized by functionality. The setup
-includes LSP support, AI-powered completion, advanced navigation, and a
-beautiful UI.
+includes LSP support, advanced navigation, and a beautiful UI.
 
 ## Key Features
 
 - **Leader Keys**: Space (leader), Comma (local leader)
 - **Auto-updating plugins** on startup
 - **Multi-language LSP support** with automatic server installation
-- **AI-powered code completion** via Windsurf (virtual text mode)
 - **Advanced fuzzy finding** with Telescope
 - **Format-on-save** with multiple formatters
 - **Real-time linting** for multiple languages
 
 ## Plugin Categories
-
-### 🤖 AI Integration (`plugins/ai.lua`)
-
-#### Windsurf.nvim (Codeium)
-
-- **Purpose**: AI-powered code completion with virtual text suggestions
-- **Configuration**:
-  - Virtual text mode (no completion menu integration)
-  - Accept suggestions: `<Tab>`
-  - Clear suggestions: `<C-e>`
-  - Cycle next/previous: `<M-]>` / `<M-[>`
-  - Integrated into lualine status bar
-- **Setup**: Requires `:Codeium Auth` command on first use
 
 ### 🎨 UI & Theme (`plugins/ui.lua`)
 
@@ -48,7 +33,6 @@ beautiful UI.
 - **Purpose**: Customizable status line
 - **Configuration**: 
   - Uses Catppuccin theme
-  - Shows Codeium status in status line
   - Displays encoding, file format, and file type
 
 #### Alpha-nvim
@@ -243,7 +227,6 @@ lua/
 │   ├── telescope.lua     # Telescope configuration
 │   └── alpha.lua         # Dashboard configuration
 └── plugins/
-    ├── ai.lua            # AI/Codeium configuration
     ├── ui.lua            # Theme and UI plugins
     ├── navigation.lua    # File navigation plugins
     ├── editor.lua        # Editor enhancement plugins
@@ -280,8 +263,7 @@ lua/
 1. Ensure Neovim 0.11+ is installed
 2. Clone/symlink this configuration to `~/.config/nvim`
 3. Launch Neovim - lazy.nvim will automatically install plugins
-4. Run `:Codeium Auth` for AI completion setup
-5. Restart Neovim to complete setup
+4. Restart Neovim to complete setup
 
 **Note**: This configuration uses mason-lspconfig v2.0+ with `vim.lsp.config()` 
 for modern LSP server management.
