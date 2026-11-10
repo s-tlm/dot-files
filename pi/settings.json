@@ -35,7 +35,7 @@
         "skills/slack-messaging"
       ]
     },
-    "git:github.com/s-tlm/pi-subagents@feat/central-schedules",
+    "git:github.com/s-tlm/pi-subagents",
     "npm:pi-fast-lane@0.2.3"
   ],
   "prompts": [
