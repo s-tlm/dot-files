@@ -29,7 +29,6 @@ return {
 			},
 		},
 	},
-	{ "RRethy/vim-illuminate" },
 	{ "HiPhish/rainbow-delimiters.nvim" },
 	{
 		"lewis6991/gitsigns.nvim",
