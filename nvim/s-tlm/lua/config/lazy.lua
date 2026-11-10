@@ -35,14 +35,14 @@ require("lazy").setup({
 	checker = { enabled = true },
 })
 
--- Automatically update plugins if there are updates
-local autoupdate_augroup = vim.api.nvim_create_augroup("lazyvim_autoupdate", { clear = true })
+-- Tell you when plugin updates are waiting. <leader>pu runs the update.
+local update_notify_augroup = vim.api.nvim_create_augroup("lazy_update_notify", { clear = true })
 
 vim.api.nvim_create_autocmd("VimEnter", {
-	group = autoupdate_augroup,
+	group = update_notify_augroup,
 	callback = function()
-		if require("lazy.status").has_updates then
-			require("lazy").update({ show = false })
+		if require("lazy.status").has_updates() then
+			vim.notify("Plugin updates available. Run <leader>pu to update.", vim.log.levels.INFO)
 		end
 	end,
 })
