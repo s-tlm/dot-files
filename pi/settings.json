@@ -1,0 +1,51 @@
+{
+  "$schema": "https://pi.dev/schemas/settings.schema.json",
+  "lastChangelogVersion": "1.4.0",
+  "theme": "system",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-opus-5-5",
+  "defaultThinkingLevel": "medium",
+  "enabledModels": [
+    "anthropic/claude-opus-5-5",
+    "anthropic/claude-fable-5-1",
+    "openai-codex/gpt-6.1-sol",
+    "openai-codex/gpt-6.1-terra",
+    "anthropic/claude-sonnet-5-5"
+  ],
+  "externalEditor": "nvim",
+  "warnings": {
+    "anthropicExtraUsage": false
+  },
+  "packages": [
+    "git:github.com/dbt-labs/dbt-agent-skills",
+    "git:github.com/databricks/databricks-agent-skills@v0.2.37",
+    "git:github.com/antonbabenko/terraform-skill@v1.17.2",
+    "git:github.com/DietrichGebert/ponytail",
+    {
+      "source": "git:github.com/mattpocock/skills@v1.3.1",
+      "skills": [
+        "skills/productivity/grilling",
+        "skills/productivity/grill-me"
+      ]
+    },
+    {
+      "source": "git:github.com/slackapi/slack-skills-plugin@v1.5.0",
+      "skills": [
+        "skills/slack-search",
+        "skills/slack-messaging"
+      ]
+    },
+    "git:github.com/s-tlm/pi-subagents@feat/central-schedules",
+    "npm:pi-fast-lane@0.2.3"
+  ],
+  "prompts": [
+    "~/.pi/agent/git/github.com/slackapi/slack-skills-plugin/commands/standup.md",
+    "~/.pi/agent/git/github.com/slackapi/slack-skills-plugin/commands/draft-announcement.md"
+  ],
+  "enableSkillCommands": true,
+  "terminal": {
+    "showTerminalProgress": true
+  },
+  "hideThinkingBlock": true,
+  "quietStartup": "header"
+}

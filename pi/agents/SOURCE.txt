@@ -1,0 +1,4 @@
+Caveman cavecrew agents
+repository: https://github.com/JuliusBrussee/caveman
+tag: v4.0.1
+files: agents/cavecrew-*.md, unchanged

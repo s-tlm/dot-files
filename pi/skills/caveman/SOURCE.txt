@@ -1,0 +1,6 @@
+Caveman skill source
+repository: https://github.com/JuliusBrussee/caveman
+tag: v4.0.1
+commit: d262ab3882952a59312ff3537cd86d894523c5ab
+copied: skill folders under skills/ only (no npm install, no proxy)
+excluded: caveman-learn caveman-evidence-review caveman-manage caveman-optimize (need the caveman command), caveman-stats (needs Caveman's Claude Code hooks)

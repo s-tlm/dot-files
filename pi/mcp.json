@@ -1,0 +1,27 @@
+{
+  "mcpServers": {
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "description": "Look up current library and framework documentation and API examples.",
+      "exposure": "direct"
+    },
+    "slack": {
+      "type": "http",
+      "url": "https://mcp.slack.com/mcp",
+      "description": "Search, read and draft messages, canvases and files in the Slack workspace.",
+      "oauth": {
+        "clientId": "1601185624273.8899143856786",
+        "callbackUrl": "http://localhost:3118/callback"
+      },
+      "toolExposure": {
+        "slack_send_message": "hidden",
+        "slack_schedule_message": "hidden"
+      }
+    },
+    "atlassian": {
+      "url": "https://mcp.atlassian.com/v2/mcp",
+      "description": "Read, create and update Jira issues and Confluence pages on easygo-group.atlassian.net."
+    }
+  }
+}

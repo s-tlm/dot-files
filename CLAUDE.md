@@ -12,6 +12,7 @@ This is a personal dotfiles repository containing configuration files for:
 - **Starship**: Cross-shell prompt configuration
 - **Ghostty**: Terminal emulator configuration
 - **Git**: Version control settings
+- **Pi**: Coding agent settings, MCP servers, extensions, agents and skills
 
 ## Setup Commands
 
@@ -52,6 +53,8 @@ within this repository and have them also reflect in the `$HOME` directory.
 - `scripts/`: Setup and utility scripts
 - `starship/`: Prompt configuration
 - `ghostty/`: Terminal emulator settings
+- `pi/`: Linked item by item into `~/.pi/agent/`. Secrets, sessions and
+  package caches stay out of the repository.
 
 ### Neovim Configuration Architecture
 
