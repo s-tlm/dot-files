@@ -1,7 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with
-code in this repository.
+This file gives coding agents guidance for working in this repository.
 
 ## Repository Overview
 
@@ -93,7 +92,7 @@ so it is reachable through the `~/.config/nvim` symlink.
 
 ## Git Interactions
 
-When interacting with Git (commits, pull requests, branch names, etc.), never mention Claude or Claude Code in any Git-related content including:
+When working with Git, never mention any AI assistant, agent, model or harness in Git content, including:
 - Commit messages
 - Pull request titles and descriptions
 - Branch names
