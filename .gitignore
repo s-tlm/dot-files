@@ -1,3 +1,4 @@
 *.swp
 lazy-lock.json
 .claude
+*.bak

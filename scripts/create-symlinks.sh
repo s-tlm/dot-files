@@ -26,6 +26,10 @@ GHOSTTY_TGT_DIR="$CONFIG_DIR/ghostty"
 PI_SRC_DIR="$REPO_DIR/pi"
 PI_TGT_DIR="$HOME/.pi/agent"
 
+# AGENT SKILLS
+SKILLS_SRC_DIR="$REPO_DIR/skills"
+SKILLS_TGT_DIR="$HOME/.agents/skills"
+
 # Helper scripts
 source "$REPO_DIR/scripts/utils/helper_scripts.sh"
 
@@ -39,3 +43,5 @@ create_symlink "$GHOSTTY_SRC_DIR" "$GHOSTTY_TGT_DIR"
 for item in settings.json mcp.json AGENTS.md extensions agents skills; do
   create_symlink_with_backup "$PI_SRC_DIR/$item" "$PI_TGT_DIR/$item"
 done
+
+create_symlink_with_backup "$SKILLS_SRC_DIR" "$SKILLS_TGT_DIR"

@@ -27,6 +27,10 @@
 
 Auth tokens, sessions, memory and package caches stay in `~/.pi/agent/` on each machine. After linking, run `pi update --extensions` to install the packages listed in `settings.json`, then sign in to the MCP servers again.
 
+## Agent skills
+
+`skills/` holds your own agent skills. `scripts/create-symlinks.sh` links it to `~/.agents/skills`, where pi and other coding agents look for user skills.
+
 ## Zsh Configuration
 
 ### Oh My Zsh Settings

@@ -12,6 +12,7 @@ This is a personal dotfiles repository containing configuration files for:
 - **Ghostty**: Terminal emulator configuration
 - **Git**: Version control settings
 - **Pi**: Coding agent settings, MCP servers, extensions, agents and skills
+- **Agent skills**: Personal skills shared by coding agents
 
 ## Setup Commands
 
@@ -54,6 +55,7 @@ within this repository and have them also reflect in the `$HOME` directory.
 - `ghostty/`: Terminal emulator settings
 - `pi/`: Linked item by item into `~/.pi/agent/`. Secrets, sessions and
   package caches stay out of the repository.
+- `skills/`: Linked to `~/.agents/skills`.
 
 ### Neovim Configuration Architecture
 
