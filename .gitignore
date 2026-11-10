@@ -2,3 +2,5 @@
 lazy-lock.json
 .claude
 *.bak
+# Written by `herdr integration install pi` through the ~/.pi/agent/extensions symlink.
+pi/extensions/herdr-*
