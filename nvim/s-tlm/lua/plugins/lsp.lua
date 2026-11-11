@@ -91,6 +91,8 @@ return {
 					html = { "prettier" },
 					json = { "prettier" },
 					javascript = { "prettier" },
+					typescript = { "prettier" },
+					typescriptreact = { "prettier" },
 				},
 
 				formatters = {
