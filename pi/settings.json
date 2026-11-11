@@ -1,6 +1,6 @@
 {
   "$schema": "https://pi.dev/schemas/settings.schema.json",
-  "lastChangelogVersion": "1.4.0",
+  "lastChangelogVersion": "1.5.0",
   "theme": "system",
   "defaultProvider": "anthropic",
   "defaultModel": "claude-opus-5-5",
@@ -10,7 +10,10 @@
     "anthropic/claude-fable-5-1",
     "openai-codex/gpt-6.1-sol",
     "openai-codex/gpt-6.1-terra",
-    "anthropic/claude-sonnet-5-5"
+    "anthropic/claude-sonnet-5-5",
+    "openrouter/~deepseek/deepseek-flash-latest",
+    "openrouter/~deepseek/deepseek-pro-latest",
+    "openrouter/~z-ai/glm-flash-latest"
   ],
   "externalEditor": "nvim",
   "warnings": {
@@ -47,5 +50,9 @@
     "showTerminalProgress": true
   },
   "hideThinkingBlock": true,
-  "quietStartup": "header"
+  "quietStartup": "header",
+  "extensionChangelogVersions": {
+    "{\"source\":\"git:github.com/s-tlm/pi-subagents\",\"scope\":\"user\"}": "0.23.2",
+    "{\"source\":\"npm:pi-fast-lane@0.2.3\",\"scope\":\"user\"}": "0.2.3"
+  }
 }
