@@ -1,0 +1,19 @@
+id = "herdr-jira-board"
+name = "Jira board"
+version = "0.1.0"
+min_herdr_version = "0.9.5"
+platforms = ["macos"]
+
+[[actions]]
+id = "open"
+title = "Open Jira board"
+contexts = ["global"]
+command = ["bin/herdr-jira-board.mjs", "open"]
+
+[[panes]]
+id = "board"
+title = "Jira board"
+placement = "popup"
+width = "90%"
+height = "85%"
+command = ["bin/herdr-jira-board.mjs"]

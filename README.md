@@ -27,6 +27,10 @@
 
 Auth tokens, sessions, memory and package caches stay in `~/.pi/agent/` on each machine. After linking, run `pi update --extensions` to install the packages listed in `settings.json`, then sign in to the MCP servers again.
 
+## Herdr
+
+`herdr/plugins/` holds local Herdr plugins. `herdr-jira-board` opens the Jira board and starts peon in pi. To install it, follow its README: run `npm ci --ignore-scripts` in its folder, then `herdr plugin link "$PWD"`.
+
 ## Agent skills
 
 `skills/` holds your own agent skills. `scripts/create-symlinks.sh` links it to `~/.agents/skills`, where pi and other coding agents look for user skills.

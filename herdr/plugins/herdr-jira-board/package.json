@@ -1,0 +1,10 @@
+{
+  "name": "herdr-jira-board",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "bin": { "herdr-jira-board": "bin/herdr-jira-board.mjs" },
+  "scripts": { "test": "node --test", "auth": "node bin/herdr-jira-board.mjs auth", "start": "node bin/herdr-jira-board.mjs" },
+  "dependencies": { "@mariozechner/pi-tui": "0.73.1" }
+}
