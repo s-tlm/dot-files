@@ -2,8 +2,8 @@
   "$schema": "https://pi.dev/schemas/settings.schema.json",
   "lastChangelogVersion": "1.5.0",
   "theme": "system",
-  "defaultProvider": "anthropic",
-  "defaultModel": "claude-opus-5-5",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-6.1-sol",
   "defaultThinkingLevel": "medium",
   "enabledModels": [
     "anthropic/claude-opus-5-5",
