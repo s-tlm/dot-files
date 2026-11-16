@@ -60,6 +60,21 @@ test("validates inputs, budget, concurrency and job IDs", async (t) => {
     assert.throws(() => jobDirectory(root, id));
 });
 
+test("records session modification times when given and validates them", async (t) => {
+  const { root, options } = await fixture(t);
+  const job = await createJob(root, { ...options, sessionModified: [123] });
+  assert.deepEqual(job.inputs[1].session_modified, [123]);
+  assert.equal(
+    (await createJob(root, options)).inputs[1].session_modified,
+    undefined,
+  );
+  for (const sessionModified of [[], [1, 2], [NaN]])
+    await assert.rejects(
+      createJob(root, { ...options, sessionModified }),
+      /modification times/,
+    );
+});
+
 test("every state transition matches the status rules", async (t) => {
   const { job } = await fixture(t);
   const states: Status[] = [

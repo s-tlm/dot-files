@@ -345,6 +345,37 @@ test("incremental selection uses mtime rather than creation or message time", as
   );
 });
 
+test("the ledger skips covered sessions and keeps recent, deferred and continued ones", async (t) => {
+  const f = await fixture(t);
+  const covered = await f.make({ storeKey: key, modified: old });
+  const continued = await f.make({ storeKey: key, modified: old + 5 });
+  const missed = await f.make({ storeKey: key, modified: old - 5 });
+  const done = new Map([
+    [covered, old],
+    [continued, old],
+  ]);
+  assert.deepEqual(
+    (await f.select({ done })).sessions.map((session) => session.path).sort(),
+    [continued, missed].sort(),
+  );
+});
+
+test("sessions deferred by the limit are picked by the next dream", async (t) => {
+  const f = await fixture(t);
+  for (let i = 104; i >= 0; i--)
+    await f.make({ id: `session-${i}`, storeKey: key, created: created + i });
+  const first = await f.select();
+  const done = new Map(
+    first.sessions.map((session) => [session.path, session.modified]),
+  );
+  const next = await f.select({ done });
+  assert.deepEqual(
+    next.sessions.map((session) => session.id),
+    ["session-100", "session-101", "session-102", "session-103", "session-104"],
+  );
+  assert.equal(next.limited, 0);
+});
+
 test("selection takes the oldest 100 and reports the remainder", async (t) => {
   const f = await fixture(t);
   for (let i = 104; i >= 0; i--)

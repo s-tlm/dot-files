@@ -286,6 +286,8 @@ export async function selectSessions(options: {
   currentSessionFile?: string;
   since?: number;
   explicit?: string[];
+  // Session path -> modification time a completed dream already covered.
+  done?: Map<string, number>;
   now?: number;
   exec?: Parameters<typeof resolveStore>[2];
 }): Promise<{
@@ -325,7 +327,8 @@ export async function selectSessions(options: {
       session.parentSession ||
       session.messageCount < 2 ||
       session.modified > now - 10 * 60 * 1000 ||
-      (options.since !== undefined && session.modified <= options.since)
+      (options.since !== undefined && session.modified <= options.since) ||
+      (options.done?.get(session.path) ?? -Infinity) >= session.modified
     )
       continue;
     if (options.explicit === undefined) {

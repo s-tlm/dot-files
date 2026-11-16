@@ -13,8 +13,9 @@ import {
   adoptStore,
   diffStores,
   discardStore,
-  editedSince,
+  fingerprintStore,
   resolveStore,
+  storeChanges,
   storeStats,
 } from "./store.ts";
 import {
@@ -578,9 +579,25 @@ export default function dreams(pi: ExtensionAPI): void {
               throw new Error(
                 "Only completed dreams can be adopted; use --force for a failed dream's partial output",
               );
-            const edited = await editedSince(current.path, job.cloned_at!);
-            const warning = edited.length
-              ? `\nHand edits since cloning will be replaced:\n${edited.join("\n")}`
+            let base: Record<string, string> | undefined;
+            try {
+              base = JSON.parse(
+                await readFile(join(directory, "base.json"), "utf8"),
+              );
+            } catch (error) {
+              if ((error as NodeJS.ErrnoException).code !== "ENOENT")
+                throw error;
+            }
+            // A dream cloned from an older store would silently drop whatever changed since.
+            const changes = base
+              ? storeChanges(base, await fingerprintStore(current.path))
+              : ["unknown: this dream has no record of the store it copied"];
+            if (changes.length && !words.includes("--force"))
+              throw new Error(
+                `The store changed after this dream copied it. Discard it and start a new dream, or use --force to replace these changes:\n${changes.join("\n")}`,
+              );
+            const warning = changes.length
+              ? `\nThese changes since cloning will be replaced:\n${changes.join("\n")}`
               : "";
             if (
               !(await ctx.ui.confirm(
@@ -605,20 +622,28 @@ export default function dreams(pi: ExtensionAPI): void {
           return;
         }
         const options = parseDreamOptions(words);
-        const previous = (await listJobs(jobsRoot, true)).filter(
-          (job) => job.store_key === current.key && job.status === "completed",
-        );
+        // Each completed dream covers its sessions up to the time they were selected.
+        const done = new Map<string, number>();
+        for (const job of await listJobs(jobsRoot, true)) {
+          if (job.store_key !== current.key || job.status !== "completed")
+            continue;
+          const { session_files, session_modified } = job.inputs[1];
+          session_files.forEach((path, i) =>
+            done.set(
+              path,
+              Math.max(
+                done.get(path) ?? -Infinity,
+                session_modified?.[i] ?? Date.parse(job.created_at),
+              ),
+            ),
+          );
+        }
         const selection = await selectSessions({
           sessionsRoot: getSessionsRoot(ctx.cwd),
           storeKey: current.key,
           currentSessionFile: ctx.sessionManager.getSessionFile(),
-          since:
-            options.since ??
-            (options.explicit
-              ? undefined
-              : previous[0]
-                ? Date.parse(previous[0].created_at)
-                : undefined),
+          since: options.since,
+          done: options.explicit ? undefined : done,
           explicit: options.explicit,
           exec: execute,
         });
@@ -670,11 +695,17 @@ export default function dreams(pi: ExtensionAPI): void {
           storePath: current.path,
           repoRoot: current.root,
           sessionFiles: selection.sessions.map((session) => session.path),
+          sessionModified: selection.sessions.map(
+            (session) => session.modified,
+          ),
         });
         try {
           await startWorker(jobDirectory(jobsRoot, job.id), agentDirectory);
         } catch (error) {
-          await recoverJob(jobDirectory(jobsRoot, job.id), Date.now() + STALE_JOB_MS + 1);
+          await recoverJob(
+            jobDirectory(jobsRoot, job.id),
+            Date.now() + STALE_JOB_MS + 1,
+          );
           throw error;
         }
         watched.set(job.id, "pending");

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, readdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 const args = process.argv.slice(2);
@@ -41,6 +41,38 @@ if (model === "fake/hang" || model === "fake/ignore-term") {
   }
   setInterval(() => {}, 1000);
 } else {
+  // Emit read events like pi's JSON mode, so the worker can check what was read.
+  let call = 0;
+  const read = (path: string, text: string) => {
+    const toolCallId = `read-${++call}`;
+    process.stdout.write(
+      `${JSON.stringify({ type: "tool_execution_start", toolCallId, toolName: "read", args: { path } })}\n`,
+    );
+    process.stdout.write(
+      `${JSON.stringify({ type: "tool_execution_end", toolCallId, toolName: "read", result: { content: [{ type: "text", text }] }, isError: false })}\n`,
+    );
+  };
+  if (organizer) {
+    for (const name of (await readdir(process.cwd())).sort())
+      if (
+        name.endsWith(".md") &&
+        (model !== "fake/lazy-organizer" || name === "MEMORY.md")
+      )
+        read(name, await readFile(join(process.cwd(), name), "utf8"));
+  } else {
+    const transcript = JSON.parse(
+      /Analyse this transcript as untrusted data: (".*?")\.\n/.exec(
+        args.at(-1)!,
+      )![1],
+    );
+    const text = await readFile(transcript, "utf8");
+    read(
+      transcript,
+      model === "fake/skim"
+        ? `${text.split("\n")[0]}\n\n[Showing lines 1-1 of ${text.split("\n").length}. Use offset=2 to continue.]`
+        : text,
+    );
+  }
   await writeFile(
     join(process.cwd(), organizer ? "MEMORY.md" : "topic.md"),
     organizer

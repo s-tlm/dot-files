@@ -6,6 +6,7 @@ import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import dreams, { parseDreamOptions, splitArgs } from "../index.ts";
 import { createJob, jobDirectory, saveJob, transition } from "../jobs.ts";
+import { fingerprintStore } from "../store.ts";
 
 export default function checks(real: ExtensionAPI) {
   real.on("session_start", async (_event, realContext) => {
@@ -173,6 +174,20 @@ export default function checks(real: ExtensionAPI) {
       job.outputs = [{ type: "memory_store", path: output }];
       job.cloned_at = new Date().toISOString();
       await saveJob(directory, job);
+      await writeFile(
+        join(directory, "base.json"),
+        JSON.stringify({ "gone.md": "0" }),
+      );
+      confirm = true;
+      await commands.get("dream").handler(`adopt ${job.id}`, ctx);
+      assert.match(
+        notifications.at(-1)!,
+        /The store changed after this dream copied it[\s\S]*removed gone\.md/,
+      );
+      await writeFile(
+        join(directory, "base.json"),
+        JSON.stringify(await fingerprintStore(store)),
+      );
       const beforeAdopt = await readFile(join(directory, "dream.json"), "utf8");
       confirm = false;
       await commands.get("dream").handler(`adopt ${job.id}`, ctx);

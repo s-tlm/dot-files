@@ -22,7 +22,8 @@ export type ErrorType =
   | "input_session_unavailable"
   | "internal_error"
   | "budget_exceeded"
-  | "analyzer_failed";
+  | "analyzer_failed"
+  | "organizer_incomplete";
 export interface Usage {
   input_tokens: number;
   output_tokens: number;
@@ -38,7 +39,12 @@ export interface Dream {
   repo_root: string;
   inputs: [
     { type: "memory_store"; path: string },
-    { type: "sessions"; session_files: string[] },
+    {
+      type: "sessions";
+      session_files: string[];
+      // Modification times at selection, so later dreams can tell which sessions changed since.
+      session_modified?: number[];
+    },
   ];
   outputs: { type: "memory_store"; path: string }[];
   model: string;
@@ -54,6 +60,8 @@ export interface Dream {
   archived_at: string | null;
   usage: Usage;
   summary: string;
+  analyses?: { session: string; summary?: string; error?: string }[];
+  checks?: { problems: string[]; duplicates: [string, string][] };
   error: { type: ErrorType; message: string } | null;
 }
 export interface DreamOptions {
@@ -61,6 +69,7 @@ export interface DreamOptions {
   storePath: string;
   repoRoot: string;
   sessionFiles: string[];
+  sessionModified?: number[];
   model?: string;
   instructions?: string;
   concurrency?: number;
@@ -126,6 +135,12 @@ export async function createJob(
   ) {
     throw new Error(`Choose 1 to ${MAX_SESSIONS} distinct sessions`);
   }
+  if (
+    options.sessionModified &&
+    (options.sessionModified.length !== sessionFiles.length ||
+      !options.sessionModified.every(Number.isFinite))
+  )
+    throw new Error("Session modification times must match the sessions");
   const concurrency = options.concurrency ?? DEFAULT_CONCURRENCY;
   const budget = options.budget ?? DEFAULT_BUDGET_USD;
   if (
@@ -144,7 +159,13 @@ export async function createJob(
     repo_root: options.repoRoot,
     inputs: [
       { type: "memory_store", path: options.storePath },
-      { type: "sessions", session_files: sessionFiles },
+      {
+        type: "sessions",
+        session_files: sessionFiles,
+        ...(options.sessionModified
+          ? { session_modified: options.sessionModified }
+          : {}),
+      },
     ],
     outputs: [],
     model: options.model ?? DEFAULT_MODEL,

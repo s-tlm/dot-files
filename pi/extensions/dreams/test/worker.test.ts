@@ -111,6 +111,21 @@ test("runs analyzers and organizer, sums usage, preserves input, and removes stu
   assert.equal(result.usage.cache_read_input_tokens, 10);
   assert.equal(result.usage.cache_creation_input_tokens, 4);
   assert.match(result.summary, /Curated a topic\.\u2028Checked links/);
+  assert.deepEqual(result.analyses, [
+    {
+      session: f.job.inputs[1].session_files[0],
+      summary: "Curated a topic.\u2028Checked links.",
+    },
+  ]);
+  // The fake organiser leaves the hand-written topic as it found it.
+  assert.deepEqual(result.checks?.problems, [
+    'no frontmatter: "original.md"',
+    'not in MEMORY.md: "original.md"',
+  ]);
+  const base = JSON.parse(
+    await readFile(join(f.directory, "base.json"), "utf8"),
+  );
+  assert.deepEqual(Object.keys(base), ["original.md"]);
   assert.equal(
     await readFile(join(f.store, "original.md"), "utf8"),
     "Original memory.\n",
@@ -158,7 +173,6 @@ test("keeps transcripts only when requested", async (t) => {
 });
 
 for (const model of [
-  "fake/fail",
   "fake/abort",
   "fake/length",
   "fake/unsettled",
@@ -171,11 +185,90 @@ for (const model of [
     assert.equal(result.status, "failed");
     assert.equal(result.error?.type, "analyzer_failed");
     assert.equal(result.progress.failed.length, 1);
+    assert.equal(result.analyses?.[0].summary, undefined);
+    assert.ok(result.analyses?.[0].error);
     assert.equal(result.outputs.length, 1);
-    await assert.rejects(access(join(f.output, "MEMORY.md")));
     await assert.rejects(access(join(f.directory, "transcripts")));
   });
 }
+
+test("retries a failed analyzer once, keeps its reason and still organises", async (t) => {
+  const f = await fixture(t, "fake/fail");
+  const result = await runWorker(f.directory, f.runtime);
+  assert.equal(result.status, "failed");
+  assert.equal(result.error?.type, "analyzer_failed");
+  assert.deepEqual(result.progress.failed, f.job.inputs[1].session_files);
+  assert.match(result.analyses?.[0].error ?? "", /analyzer exited 0/);
+  // Two analyser attempts and one organiser, at $0.01 each.
+  assert.equal(result.usage.cost_usd, 0.03);
+  assert.match(await readFile(join(f.output, "MEMORY.md"), "utf8"), /topic.md/);
+  assert.deepEqual(result.checks?.problems, []);
+});
+
+test("fails an analyzer that does not read its whole transcript", async (t) => {
+  const f = await fixture(t, "fake/skim");
+  const result = await runWorker(f.directory, f.runtime);
+  assert.equal(result.error?.type, "analyzer_failed");
+  assert.equal(
+    result.analyses?.[0].error,
+    "The analyser did not read its whole transcript",
+  );
+});
+
+test("retries an organiser that skips topics, then fails the dream", async (t) => {
+  const f = await fixture(t, "fake/lazy-organizer");
+  const result = await runWorker(f.directory, f.runtime);
+  assert.equal(result.status, "failed");
+  assert.equal(result.error?.type, "organizer_incomplete");
+  assert.match(result.error?.message ?? "", /topic\.md/);
+  // One analyser and two organiser passes.
+  assert.equal(result.usage.cost_usd, 0.03);
+});
+
+test("readRange and covers follow pi's read notices", async () => {
+  const { covers, readRange } = await import("../worker.ts");
+  assert.deepEqual(
+    readRange(
+      undefined,
+      "a\n\n[Showing lines 1-40 of 90 (50.0KB limit). Use offset=41 to continue.]",
+    ),
+    [1, 40],
+  );
+  assert.deepEqual(
+    readRange(41, "b\n\n[10 more lines in file. Use offset=61 to continue.]"),
+    [41, 60],
+  );
+  assert.deepEqual(readRange(61, "end"), [61, Infinity]);
+  assert.deepEqual(
+    readRange(1, " [Showing lines 1-2 of 3. Use offset=3 to continue.] quoted"),
+    [1, Infinity],
+  );
+  assert.equal(
+    readRange(5, "[Line 5 is 60KB, exceeds 50.0KB limit. Use bash: sed]"),
+    undefined,
+  );
+  assert.ok(
+    covers(
+      [
+        [41, 60],
+        [1, 40],
+        [61, Infinity],
+      ],
+      90,
+    ),
+  );
+  assert.ok(
+    !covers(
+      [
+        [1, 40],
+        [61, Infinity],
+      ],
+      90,
+    ),
+  );
+  assert.ok(!covers([[1, 40]], 90));
+  assert.ok(covers([[1, 90]], 90));
+});
 
 test("stops at the reported budget and retains partial output", async (t) => {
   const f = await fixture(t, "fake/budget");

@@ -1,5 +1,5 @@
 import { execFile } from "node:child_process";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { constants, promises as fs } from "node:fs";
 import type { Stats } from "node:fs";
 import { homedir, tmpdir } from "node:os";
@@ -8,6 +8,7 @@ import {
   dirname,
   isAbsolute,
   join,
+  normalize,
   relative,
   resolve,
   sep,
@@ -263,18 +264,181 @@ export async function cloneStore(input: string, output: string): Promise<void> {
   }
 }
 
-// shortcut: timestamps cannot report deletions; compare snapshots if deletion warnings become necessary.
-export async function editedSince(
-  store: string,
-  clonedAt: string,
-): Promise<string[]> {
-  const time = Date.parse(clonedAt);
-  if (!Number.isFinite(time)) throw new Error("Invalid clone timestamp");
-  const snapshot = await scanStore(store);
-  return snapshot.files
-    .filter((file) => file.stat.mtimeMs > time)
-    .map((file) => relative(snapshot.path, file.path))
+// Hashes every file so adoption can tell whether the store changed after a dream cloned it.
+export async function fingerprintStore(
+  path: string,
+): Promise<Record<string, string>> {
+  const store = await scanStore(path);
+  const hashes: Record<string, string> = {};
+  for (const file of store.files)
+    hashes[relative(store.path, file.path)] = createHash("sha256")
+      .update(await fs.readFile(file.path))
+      .digest("hex");
+  return hashes;
+}
+
+export function storeChanges(
+  base: Record<string, string>,
+  current: Record<string, string>,
+): string[] {
+  const changes: string[] = [];
+  for (const path of new Set([...Object.keys(base), ...Object.keys(current)])) {
+    if (!(path in current)) changes.push(`removed ${path}`);
+    else if (!(path in base)) changes.push(`added ${path}`);
+    else if (base[path] !== current[path]) changes.push(`changed ${path}`);
+  }
+  return changes.sort((a, b) => a.split(" ")[1].localeCompare(b.split(" ")[1]));
+}
+
+export interface StoreInspection {
+  topics: string[];
+  problems: string[];
+  duplicates: [string, string][];
+}
+
+const ticketName = /(?:^|-)(?:prs?-\d+|[a-z]+-\d{3,})(?:-|$)/;
+// shortcut: name tokens only find duplicates with similar filenames; compare descriptions if near-duplicates slip through.
+function nameTokens(path: string): Set<string> {
+  return new Set(
+    basename(path, ".md")
+      .split(/[-_]/)
+      .filter(
+        (token) =>
+          token && !/^\d+$/.test(token) && token !== "pr" && token !== "prs",
+      ),
+  );
+}
+
+function frontmatterProblems(path: string, text: string): string[] {
+  const name = JSON.stringify(path);
+  const block = /^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/.exec(text);
+  if (!block) return [`no frontmatter: ${name}`];
+  const yaml = block[1];
+  const problems: string[] = [];
+  const slug = /^name:[ \t]*["']?([^"'\r\n]*?)["']?[ \t]*$/m.exec(yaml)?.[1];
+  if (slug !== basename(path, ".md"))
+    problems.push(`frontmatter name does not match the filename: ${name}`);
+  if (!/^description:[ \t]*\S/m.test(yaml))
+    problems.push(`no description: ${name}`);
+  const fields: [string, RegExp][] = [
+    ["node_type", /^[ \t]+node_type:[ \t]*["']?memory["']?[ \t]*$/m],
+    [
+      "type",
+      /^[ \t]+type:[ \t]*["']?(?:user|feedback|project|reference)["']?[ \t]*$/m,
+    ],
+    ["originSessionId", /^[ \t]+originSessionId:[ \t]*\S/m],
+    ["modified", /^[ \t]+modified:[ \t]*\S/m],
+  ];
+  const missing = /^metadata:[ \t]*$/m.test(yaml)
+    ? fields
+        .filter(([, pattern]) => !pattern.test(yaml))
+        .map(([field]) => field)
+    : fields.map(([field]) => field);
+  if (missing.length)
+    problems.push(
+      `missing or invalid metadata (${missing.join(", ")}): ${name}`,
+    );
+  if (/^---\r?\nname:/m.test(text.slice(block[0].length)))
+    problems.push(`duplicate frontmatter: ${name}`);
+  return problems;
+}
+
+function markdownLinks(text: string): string[] {
+  return [...text.matchAll(/\[[^\]\r\n]*\]\(([^)\s]+)(?:[ \t]+"[^"]*")?\)/g)]
+    .map((match) => match[1].split("#")[0])
+    .filter(
+      (target) => target.endsWith(".md") && !/^[a-z][a-z\d+.-]*:/i.test(target),
+    );
+}
+
+// Deterministic checks of the memory format, run before and after the organiser.
+export async function inspectStore(path: string): Promise<StoreInspection> {
+  const store = await scanStore(path);
+  const texts = new Map<string, string>();
+  for (const file of store.files) {
+    const rel = relative(store.path, file.path);
+    if (rel.endsWith(".md"))
+      texts.set(rel, await fs.readFile(file.path, "utf8"));
+  }
+  const stubs = new Set(
+    [...texts]
+      .filter(
+        ([rel, text]) => rel !== "MEMORY.md" && movedTarget(text) !== undefined,
+      )
+      .map(([rel]) => rel),
+  );
+  const topics = [...texts.keys()]
+    .filter((rel) => rel !== "MEMORY.md" && !stubs.has(rel))
     .sort();
+  const problems: string[] = [...stubs].map(
+    (rel) => `retirement stub: ${JSON.stringify(rel)}`,
+  );
+  const target = (from: string, link: string): string | undefined => {
+    if (isAbsolute(link)) return undefined;
+    const resolved = normalize(join(dirname(from), link));
+    return resolved.startsWith("..") || isAbsolute(resolved)
+      ? undefined
+      : resolved;
+  };
+  for (const rel of topics) {
+    const text = texts.get(rel)!;
+    const name = JSON.stringify(rel);
+    if (Buffer.byteLength(text) > 100 * 1024)
+      problems.push(`over 100 KB: ${name}`);
+    if (ticketName.test(basename(rel, ".md")))
+      problems.push(`named after a PR or ticket: ${name}`);
+    problems.push(...frontmatterProblems(rel, text));
+    if (/\[\[[^\]\r\n]+\]\]/.test(text))
+      problems.push(`wiki-style link instead of a Markdown link: ${name}`);
+    for (const link of markdownLinks(text)) {
+      const destination = target(rel, link);
+      if (destination === undefined || !texts.has(destination))
+        problems.push(`broken link in ${name}: ${JSON.stringify(link)}`);
+      else if (stubs.has(destination))
+        problems.push(`link to a stub in ${name}: ${JSON.stringify(link)}`);
+    }
+  }
+  const index = texts.get("MEMORY.md");
+  if (index === undefined) {
+    if (topics.length) problems.push("MEMORY.md is missing");
+  } else {
+    if (/^---\r?\n/.test(index)) problems.push("MEMORY.md has frontmatter");
+    const lines = index.split("\n").length - (index.endsWith("\n") ? 1 : 0);
+    if (lines > 200)
+      problems.push(
+        `MEMORY.md has ${lines} lines; sessions only see the first 200`,
+      );
+    const counts = new Map<string, number>();
+    for (const link of markdownLinks(index)) {
+      const destination = target("MEMORY.md", link);
+      if (destination === undefined || !texts.has(destination))
+        problems.push(
+          `MEMORY.md links a missing file: ${JSON.stringify(link)}`,
+        );
+      else if (stubs.has(destination))
+        problems.push(`MEMORY.md links a stub: ${JSON.stringify(link)}`);
+      else counts.set(destination, (counts.get(destination) ?? 0) + 1);
+    }
+    for (const rel of topics) {
+      const count = counts.get(rel) ?? 0;
+      if (!count) problems.push(`not in MEMORY.md: ${JSON.stringify(rel)}`);
+      if (count > 1)
+        problems.push(
+          `listed ${count} times in MEMORY.md: ${JSON.stringify(rel)}`,
+        );
+    }
+  }
+  const duplicates: [string, string][] = [];
+  for (const [i, a] of topics.entries()) {
+    const left = nameTokens(a);
+    for (const b of topics.slice(i + 1)) {
+      const right = nameTokens(b);
+      const shared = [...left].filter((token) => right.has(token)).length;
+      if (shared >= 2 && shared / new Set([...left, ...right]).size >= 0.6)
+        duplicates.push([a, b]);
+    }
+  }
+  return { topics, problems, duplicates };
 }
 
 export async function adoptStore(
@@ -322,12 +486,13 @@ export async function discardStore(output: string): Promise<void> {
   if (store.exists) await fs.rm(store.path, { recursive: true });
 }
 
+function movedTarget(text: string): string | undefined {
+  const match = /^MOVED TO \[\[([^\[\]\r\n]+)\]\](?:\r?\n)?$/.exec(text);
+  return match && match[0] === text ? match[1] : undefined;
+}
+
 export async function removeMovedStubs(output: string): Promise<void> {
   const store = await scanStore(output);
-  const movedTarget = (text: string): string | undefined => {
-    const match = /^MOVED TO \[\[([^\[\]\r\n]+)\]\](?:\r?\n)?$/.exec(text);
-    return match && match[0] === text ? match[1] : undefined;
-  };
   const markdown = new Map<string, string>();
   for (const file of store.files) {
     if (file.path.endsWith(".md"))

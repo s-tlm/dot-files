@@ -13,9 +13,11 @@ import {
   cloneStore,
   diffStores,
   discardStore,
-  editedSince,
+  fingerprintStore,
+  inspectStore,
   removeMovedStubs,
   resolveStore,
+  storeChanges,
   storeStats,
 } from "../store.ts";
 import type { Exec } from "../store.ts";
@@ -273,7 +275,8 @@ test("store operations reject symlink roots, ancestors, nested links and broken 
   await assert.rejects(cloneStore(store, output), /Symlink/);
   await assert.rejects(discardStore(store), /Symlink/);
   await assert.rejects(removeMovedStubs(store), /Symlink/);
-  await assert.rejects(editedSince(store, new Date().toISOString()), /Symlink/);
+  await assert.rejects(fingerprintStore(store), /Symlink/);
+  await assert.rejects(inspectStore(store), /Symlink/);
 });
 
 test("storeStats rejects regular file roots, invalid paths and hard links", async (t) => {
@@ -405,23 +408,117 @@ test("a changed source is rejected and the incomplete clone is removed", async (
   await assert.rejects(fs.lstat(output), { code: "ENOENT" });
 });
 
-test("editedSince returns sorted relative files strictly after the clone timestamp", async (t) => {
+test("storeChanges lists files added, changed and removed since a fingerprint", async (t) => {
   const { store, put } = await fixture(t);
-  const clonedAt = "2026-11-06T10:00:00.000Z";
-  for (const [name, offset] of [
-    ["before.md", -1],
-    ["equal.md", 0],
-    ["z.md", 1],
-    ["nested/a.md", 2],
-  ] as const) {
-    const path = join(store, name);
-    await put(path);
-    const date = new Date(Date.parse(clonedAt) + offset * 1_000);
-    await fs.utimes(path, date, date);
-  }
-  assert.deepEqual(await editedSince(store, clonedAt), ["nested/a.md", "z.md"]);
-  assert.deepEqual(await editedSince(join(store, "absent"), clonedAt), []);
-  await assert.rejects(editedSince(store, "not a date"), /timestamp/);
+  assert.deepEqual(await fingerprintStore(join(store, "absent")), {});
+  await put(join(store, "kept.md"), "same");
+  await put(join(store, "edited.md"), "before");
+  await put(join(store, "nested", "gone.md"), "old");
+  const base = await fingerprintStore(store);
+  assert.deepEqual(storeChanges(base, await fingerprintStore(store)), []);
+  await put(join(store, "edited.md"), "after");
+  await put(join(store, "new.md"), "new");
+  await fs.rm(join(store, "nested", "gone.md"));
+  assert.deepEqual(storeChanges(base, await fingerprintStore(store)), [
+    "changed edited.md",
+    "removed nested/gone.md",
+    "added new.md",
+  ]);
+});
+
+const topic = (name: string, body = "A fact.\n", type = "project") =>
+  `---\nname: ${name}\ndescription: "About ${name}"\nmetadata:\n  node_type: memory\n  type: ${type}\n  originSessionId: s1\n  modified: 2026-11-16T00:00:00Z\n---\n${body}`;
+
+test("inspectStore passes a well-formed store", async (t) => {
+  const { store, put } = await fixture(t);
+  await put(
+    join(store, "dbt-seeds.md"),
+    topic(
+      "dbt-seeds",
+      "See [deploy](ci/deploy-workflow.md) and [docs](https://example.com/x.md).\n",
+    ),
+  );
+  await put(
+    join(store, "ci", "deploy-workflow.md"),
+    topic("deploy-workflow", "Back to [seeds](../dbt-seeds.md).\n"),
+  );
+  await put(
+    join(store, "MEMORY.md"),
+    "## CI\n- [Seeds](dbt-seeds.md): seeds.\n- [Deploy](ci/deploy-workflow.md): deploys.\n",
+  );
+  assert.deepEqual(await inspectStore(store), {
+    topics: ["ci/deploy-workflow.md", "dbt-seeds.md"],
+    problems: [],
+    duplicates: [],
+  });
+  assert.deepEqual(await inspectStore(join(store, "absent")), {
+    topics: [],
+    problems: [],
+    duplicates: [],
+  });
+});
+
+test("inspectStore reports format, index, link, naming and duplicate problems", async (t) => {
+  const { store, put } = await fixture(t);
+  await put(
+    join(store, "kick-seeds-deploy-pr-3393.md"),
+    topic(
+      "kick-seeds-deploy-pr-3393",
+      "[gone](missing.md) [old](retired.md) [up](../outside.md) [[wiki]]\n",
+    ),
+  );
+  await put(
+    join(store, "insider-ingest-data-6334.md"),
+    topic("wrong-name", "x", "story"),
+  );
+  await put(join(store, "bare.md"), "No frontmatter.\n");
+  await put(
+    join(store, "twice.md"),
+    `${topic("twice")}---\nname: twice\n---\n`,
+  );
+  await put(
+    join(store, "kick-scd2-snapshots-rollout.md"),
+    topic("kick-scd2-snapshots-rollout"),
+  );
+  await put(
+    join(store, "kick-scd2-snapshots-rollout-design.md"),
+    topic("kick-scd2-snapshots-rollout-design"),
+  );
+  await put(join(store, "huge.md"), topic("huge", "x".repeat(100 * 1024)));
+  await put(join(store, "retired.md"), "MOVED TO [[bare.md]]\n");
+  await put(
+    join(store, "MEMORY.md"),
+    `- [A](bare.md)\n- [A again](bare.md)\n- [Stub](retired.md)\n- [Missing](nope.md)\n${"line\n".repeat(200)}`,
+  );
+  const result = await inspectStore(store);
+  for (const expected of [
+    'retirement stub: "retired.md"',
+    'named after a PR or ticket: "kick-seeds-deploy-pr-3393.md"',
+    'named after a PR or ticket: "insider-ingest-data-6334.md"',
+    'broken link in "kick-seeds-deploy-pr-3393.md": "missing.md"',
+    'link to a stub in "kick-seeds-deploy-pr-3393.md": "retired.md"',
+    'broken link in "kick-seeds-deploy-pr-3393.md": "../outside.md"',
+    'wiki-style link instead of a Markdown link: "kick-seeds-deploy-pr-3393.md"',
+    'frontmatter name does not match the filename: "insider-ingest-data-6334.md"',
+    'missing or invalid metadata (type): "insider-ingest-data-6334.md"',
+    'no frontmatter: "bare.md"',
+    'duplicate frontmatter: "twice.md"',
+    'over 100 KB: "huge.md"',
+    'listed 2 times in MEMORY.md: "bare.md"',
+    'MEMORY.md links a stub: "retired.md"',
+    'MEMORY.md links a missing file: "nope.md"',
+    'not in MEMORY.md: "twice.md"',
+    "MEMORY.md has 204 lines; sessions only see the first 200",
+  ])
+    assert.ok(result.problems.includes(expected), expected);
+  assert.ok(!result.topics.includes("retired.md"));
+  assert.deepEqual(result.duplicates, [
+    ["kick-scd2-snapshots-rollout-design.md", "kick-scd2-snapshots-rollout.md"],
+  ]);
+  await fs.rm(join(store, "MEMORY.md"));
+  assert.ok(
+    (await inspectStore(store)).problems.includes("MEMORY.md is missing"),
+  );
 });
 
 test("adoptStore returns a private backup and replaces the store by rename", async (t) => {
