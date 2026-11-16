@@ -8,7 +8,7 @@ Dreams turns past pi sessions into a reviewed, read-only memory store for each r
 2. Run `/memory` to inspect your store.
 3. Run `/dream` and confirm the selected sessions, model and budget.
 4. Run `/dream show <id>` and `/dream diff <id>` when it finishes. The diff shows a file summary; read the output files before adoption.
-5. Run `/dream adopt <id>` to replace your store and keep a backup, or `/dream discard <id>` to delete the output.
+5. Run `/dream adopt <id>` to replace your store and keep a backup, or `/dream discard <id>` to delete the output and every file in the dream's directory. Discard also removes dreams that never produced output or that an earlier version discarded.
 
 The memory prompt stays unchanged within a session until you adopt a dream or reload. Hand edits take effect after reload.
 
@@ -16,17 +16,19 @@ While a dream is active, the status bar cycles a sleeping-face ASCII animation b
 
 `/dream list` lists your repository's dreams. Add `--all` to include archived dreams. `/dream cancel <id>` requests cancellation through a file, without signalling a PID. `/dream archive <id>` hides a finished dream from the default list.
 
-You can set `--sessions <id-or-folder,...>`, `--since 14d`, `--model provider/model-id`, `--instructions "..."`, `--budget 5`, `--concurrency 1` and `--keep-transcripts`. An explicit session list replaces automatic selection. Headless starts require `--yes`.
+You can set `--sessions <id-or-folder,...>`, `--since 14d`, `--model provider/model-id`, `--instructions "..."`, `--budget 5`, `--concurrency 1` and `--keep-transcripts`. For example, `/dream --model openai/gpt-5 --budget 2`. The model must be available with your credentials. An explicit session list replaces automatic selection. Headless starts require `--yes`.
 
-The default model is `anthropic/claude-sonnet-5-5`, with low thinking and a $10 reported-cost budget. Sequential analysis preserves chronological updates; concurrent analysis can overwrite conflicting facts.
+The default model is `anthropic/claude-sonnet-5-5`, with low thinking, a $10 reported-cost budget and a concurrency of 1. A dream takes at most 100 sessions, and concurrency goes up to 100. Thinking has no flag. To change a default or limit, edit `constants.ts`. Sequential analysis preserves chronological updates; concurrent analysis can overwrite conflicting facts.
+
+Automatic selection starts from your most recent completed dream that still exists. Once you discard a dream, its sessions are eligible again.
 
 ## Storage and safety
 
 The agent directory is `PI_CODING_AGENT_DIR` or `~/.pi/agent`. It contains `memory/` and `dreams/`. Session discovery uses `PI_CODING_AGENT_SESSION_DIR`, then pi's `sessionDir` setting, then the agent directory's `sessions/`.
 
-Dreams never adopts output automatically. Failed output needs `/dream adopt <id> --force`. Adoption and discard require interactive confirmation. Each dream runs once; start a new dream after a failure.
+Dreams never adopts output automatically. Failed output needs `/dream adopt <id> --force`. Adoption and discard require interactive confirmation. You can't discard an adopted dream, so its directory stays. Each dream runs once; start a new dream after a failure.
 
-Known secret formats are redacted, but unknown secrets can still reach your model provider. Transcripts are private and removed after a normal finish unless you keep them. Child session logs remain in the dream directory.
+Known secret formats are redacted, but unknown secrets can still reach your model provider. Transcripts are private and removed after a normal finish unless you keep them. Child session logs remain in the dream directory until you discard the dream.
 
 The main-session gate protects file-tool writes, including nested calls through codemode, but cannot stop shell writes. Child tools have narrower filesystem access. Neither gate provides OS isolation against another local process changing paths during a check.
 

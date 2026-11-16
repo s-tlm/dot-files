@@ -4,7 +4,7 @@ import type {
 } from "@earendil-works/pi-coding-agent";
 import { Text } from "@earendil-works/pi-tui";
 import { spawn } from "node:child_process";
-import { lstat, open, readFile, writeFile } from "node:fs/promises";
+import { lstat, open, readFile, rm, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -537,9 +537,15 @@ export default function dreams(pi: ExtensionAPI): void {
           } catch (error) {
             if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
           }
-          if (outputState) throw new Error(`Output already ${outputState}`);
+          // Discard also cleans up dreams discarded before it removed job directories, and dreams without output.
+          const cleanup = action === "discard";
+          if (outputState && !(cleanup && outputState === "discarded"))
+            throw new Error(`Output already ${outputState}`);
           const output = job.outputs[0]?.path;
-          if (output !== `${current.path}.dream-${id}`)
+          if (
+            output !== `${current.path}.dream-${id}` &&
+            !(cleanup && output === undefined)
+          )
             throw new Error("This dream has no valid output store");
           if (action === "diff") {
             report(
@@ -554,13 +560,16 @@ export default function dreams(pi: ExtensionAPI): void {
           if (!ctx.hasUI)
             throw new Error(`${action} requires an interactive confirmation`);
           if (action === "discard") {
-            if (!(await ctx.ui.confirm("Discard dream output?", output)))
+            if (
+              !(await ctx.ui.confirm(
+                "Delete dream?",
+                [output, directory].filter(Boolean).join("\n"),
+              ))
+            )
               return;
-            await discardStore(output);
-            await writeFile(join(directory, "output-state"), "discarded", {
-              mode: 0o600,
-              flag: "wx",
-            });
+            // Output first: if removing the job directory fails, rerunning discard finishes the job.
+            if (output) await discardStore(output);
+            await rm(directory, { recursive: true, force: true });
           } else {
             if (
               job.status !== "completed" &&

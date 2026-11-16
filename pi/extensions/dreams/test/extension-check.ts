@@ -2,7 +2,7 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { visibleWidth } from "@earendil-works/pi-tui";
 import { sanitiseStatus } from "../../catppuccin-footer/format.ts";
 import assert from "node:assert/strict";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import dreams, { parseDreamOptions, splitArgs } from "../index.ts";
 import { createJob, jobDirectory, saveJob, transition } from "../jobs.ts";
@@ -214,6 +214,42 @@ export default function checks(real: ExtensionAPI) {
         stable.systemPromptOptions.sections.memory,
         adopted.systemPromptOptions.sections.memory,
       );
+      const rejected = await createJob(join(agent, "dreams"), {
+        storeKey: key,
+        storePath: store,
+        repoRoot: cwd,
+        sessionFiles: [session],
+      });
+      const rejectedDirectory = jobDirectory(
+        join(agent, "dreams"),
+        rejected.id,
+      );
+      const rejectedOutput = `${store}.dream-${rejected.id}`;
+      await mkdir(rejectedOutput, { mode: 0o700 });
+      await writeFile(join(rejectedOutput, "MEMORY.md"), "Rejected.\n");
+      transition(rejected, "running");
+      transition(rejected, "completed");
+      rejected.outputs = [{ type: "memory_store", path: rejectedOutput }];
+      await saveJob(rejectedDirectory, rejected);
+      await commands.get("dream").handler(`discard ${rejected.id}`, ctx);
+      for (const path of [rejectedOutput, rejectedDirectory])
+        await assert.rejects(stat(path), { code: "ENOENT" });
+      const legacy = await createJob(join(agent, "dreams"), {
+        storeKey: key,
+        storePath: store,
+        repoRoot: cwd,
+        sessionFiles: [session],
+      });
+      const legacyDirectory = jobDirectory(join(agent, "dreams"), legacy.id);
+      transition(legacy, "running");
+      transition(legacy, "failed", {
+        type: "internal_error",
+        message: "fixture",
+      });
+      await saveJob(legacyDirectory, legacy);
+      await writeFile(join(legacyDirectory, "output-state"), "discarded");
+      await commands.get("dream").handler(`discard ${legacy.id}`, ctx);
+      await assert.rejects(stat(legacyDirectory), { code: "ENOENT" });
       assert.deepEqual(
         splitArgs('--instructions "keep \\"quoted\\" words" --budget 1'),
         ["--instructions", 'keep "quoted" words', "--budget", "1"],
