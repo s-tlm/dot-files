@@ -2,10 +2,9 @@ import { Input, Key, ProcessTerminal, Text, TUI, matchesKey, truncateToWidth, vi
 import { setTimeout as delay } from 'node:timers/promises';
 import { preview, safeText } from './browser.mjs';
 import { filterIssues } from './fuzzy.mjs';
-import { measureBoard, renderBoardFrame } from './board-layout.mjs';
+import { SORTS, measureBoard, renderBoardFrame, statusSummary } from './board-layout.mjs';
 
-// Follows the column order, left to right.
-export const SORTS = ['key', 'created', 'name', 'status', 'assignee'];
+export { SORTS };
 const STATUS_RANK = { done: 3, indeterminate: 2, new: 1 };
 const byText = (a, b) => (b ?? '').localeCompare(a ?? '', undefined, { sensitivity: 'base' });
 // Each order is descending; missing values sort last and ties keep the incoming order.
@@ -33,7 +32,7 @@ class BoardTerminal extends ProcessTerminal {
 }
 
 export class BoardView {
-  constructor(issues, state, { terminal, filter = filterIssues, requestRender = () => {}, onAction = () => {}, onClose = () => {}, onError = () => {} }) {
+  constructor(issues, state, { terminal, filter = filterIssues, requestRender = () => {}, onAction = () => {}, onClose = () => {}, onError = () => {}, onView = () => {} }) {
     this.issues = issues;
     this.matches = issues;
     this.terminal = terminal;
@@ -42,10 +41,13 @@ export class BoardView {
     this.onAction = onAction;
     this.onClose = onClose;
     this.onError = onError;
+    this.onView = onView;
     this.sort = SORTS.includes(state.sort) ? state.sort : null;
     this.matches = sortIssues(issues, this.sort);
     this.header = state.header ?? '';
     this.alert = state.alert ?? '';
+    this.me = state.me ?? null;
+    this.previewHidden = state.previewHidden === true;
     this.input = new Input();
     this.input.setValue(safeText(state.query ?? '').replace(/[\r\n\t]/g, ' '));
     this.input.handleInput('\x05');
@@ -114,11 +116,14 @@ export class BoardView {
       }
       return;
     }
-    const layout = measureBoard(this.terminal.columns, this.terminal.rows);
+    const layout = measureBoard(this.terminal.columns, this.terminal.rows, this.previewHidden);
     const page = Math.max(1, layout.bodyHeight);
-    if (matchesKey(data, Key.shift('down')) || matchesKey(data, Key.alt('j'))) {
+    // Shift+j and Shift+k are query text while searching.
+    const scrollDown = matchesKey(data, Key.shift('down')) || matchesKey(data, Key.alt('j')) || (!this.searchMode && matchesKey(data, Key.shift('j')));
+    const scrollUp = matchesKey(data, Key.shift('up')) || matchesKey(data, Key.alt('k')) || (!this.searchMode && matchesKey(data, Key.shift('k')));
+    if (scrollDown) {
       this.previewOffset = Math.min(this.previewLimit, this.previewOffset + (matchesKey(data, Key.alt('j')) ? page : 1));
-    } else if (matchesKey(data, Key.shift('up')) || matchesKey(data, Key.alt('k'))) {
+    } else if (scrollUp) {
       this.previewOffset = Math.max(0, this.previewOffset - (matchesKey(data, Key.alt('k')) ? page : 1));
     } else if (matchesKey(data, Key.up)) this.move(-1);
     else if (matchesKey(data, Key.down)) this.move(1);
@@ -134,16 +139,25 @@ export class BoardView {
       this.onClose();
     } else if (matchesKey(data, 'j')) this.move(1);
     else if (matchesKey(data, 'k')) this.move(-1);
+    else if (matchesKey(data, Key.shift('g'))) this.move(this.matches.length);
+    else if (matchesKey(data, 'g')) this.move(-this.matches.length);
+    else if (matchesKey(data, Key.ctrl('d'))) this.move(Math.ceil(page / 2));
+    else if (matchesKey(data, Key.ctrl('u'))) this.move(-Math.ceil(page / 2));
+    else if (matchesKey(data, 'p')) {
+      this.previewHidden = !this.previewHidden;
+      this.onView({ sort: this.sort, previewHidden: this.previewHidden });
+    }
     else if (matchesKey(data, 'f')) {
       const selected = this.matches[this.selectedIndex]?.key;
       this.sort = SORTS[(SORTS.indexOf(this.sort) + 1) % SORTS.length];
       this.matches = sortIssues(this.matches, this.sort);
       this.selectedIndex = Math.max(0, this.matches.findIndex(issue => issue.key === selected));
+      this.onView({ sort: this.sort, previewHidden: this.previewHidden });
     } else {
-      const action = ['a', 'd', 's', 'p', 'c', 'r'].find(key => matchesKey(data, key));
+      const action = ['a', 'd', 'e', 'r'].find(key => matchesKey(data, key));
       const selected = this.matches[this.selectedIndex]?.key;
       if (action && (['a', 'r'].includes(action) || (!this.busy && !layout.tooSmall && selected))) {
-        const result = { query: this.input.getValue(), action, selected, sort: this.sort };
+        const result = { query: this.input.getValue(), action, selected, sort: this.sort, previewHidden: this.previewHidden };
         this.dispose();
         this.onAction(result);
       }
@@ -152,7 +166,7 @@ export class BoardView {
   }
   render(width) {
     try {
-      const layout = measureBoard(width, this.terminal.rows);
+      const layout = measureBoard(width, this.terminal.rows, this.previewHidden);
       this.input.focused = this.focused && this.searchMode;
       let searchLine;
       if (this.searchMode && layout.innerWidth >= 3) {
@@ -172,7 +186,8 @@ export class BoardView {
       this.previewOffset = Math.min(this.previewOffset, this.previewLimit);
       const frame = renderBoardFrame({ layout, searchLine, header: this.header, issues: this.matches,
         selectedIndex: this.selectedIndex, previewLines, previewOffset: this.previewOffset,
-        searchMode: this.searchMode, busy: this.busy, error: this.error, alert: this.alert, sort: this.sort });
+        searchMode: this.searchMode, busy: this.busy, error: this.error, alert: this.alert, sort: this.sort,
+        summary: statusSummary(this.issues), me: this.me });
       if (frame.length !== layout.height || frame.some(line => visibleWidth(line) > width)) throw new Error('Invalid board frame.');
       return frame;
     } catch {
@@ -185,7 +200,7 @@ export class BoardView {
   }
 }
 
-export async function browse(issues, state, { terminal, filter } = {}) {
+export async function browse(issues, state, { terminal, filter, onView } = {}) {
   if (!terminal && (!process.stdin.isTTY || !process.stdout.isTTY)) throw new Error('Open the Jira board in an interactive terminal.');
   const screen = terminal ?? new BoardTerminal();
   const tui = new TUI(screen, true);
@@ -198,7 +213,7 @@ export async function browse(issues, state, { terminal, filter } = {}) {
     view.dispose();
     if (error) reject(error); else resolve(value);
   };
-  const view = new BoardView(issues, state, { terminal: screen, filter,
+  const view = new BoardView(issues, state, { terminal: screen, filter, onView,
     requestRender: () => { if (!finished) tui.requestRender(); },
     onAction: value => finish(value), onClose: () => finish(null), onError: error => finish(null, error) });
   tui.addChild(view);

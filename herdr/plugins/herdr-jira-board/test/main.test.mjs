@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, writeFile, readFile, readdir, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, readFile, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFile } from 'node:child_process';
@@ -17,11 +17,16 @@ for (const scenario of [
   { name: 'auth validates credentials and metadata without OAuth or fzf', command: 'auth', answers: [], writes: [] },
   { name: 'check reads the snapshot without opening the browser', command: 'check', answers: [], writes: [] },
   { name: 'missing credentials fail without OAuth, browser or network setup', command: 'auth', fail: 'credentials', answers: [], writes: [], expectedError: true },
-  { name: 'cancelled comment retains its draft without writing', action: 'c', answers: ['cancel'], writes: [] },
-  { name: 'uncertain comment retains its draft without retrying', action: 'c', answers: ['submit'], fail: 'comment', writes: ['comment'] },
-  { name: 'cancelled status does not transition', action: 's', answers: ['21', 'cancel'], writes: [] },
-  { name: 'cancelled points do not update', action: 'p', answers: ['3', 'cancel'], writes: [] },
-  { name: 'refresh failure preserves the accepted write outcome', action: 's', answers: ['21', 'submit'], fail: 'refresh', writes: ['transition'] },
+  { name: 'cancelled comment retains its draft without writing', action: 'e', answers: ['comment', 'cancel'], writes: [] },
+  { name: 'uncertain comment retains its draft without retrying', action: 'e', answers: ['comment', 'submit'], fail: 'comment', writes: ['comment'] },
+  { name: 'cancelled status does not transition', action: 'e', answers: ['status', '21', 'cancel'], writes: [] },
+  { name: 'cancelled points do not update', action: 'e', answers: ['ticket', '3', 'cancel'], writes: [] },
+  { name: 'refresh failure preserves the accepted write outcome', action: 'e', answers: ['status', '21', 'submit'], fail: 'refresh', writes: ['transition'] },
+  { name: 'cancelled edit menu writes nothing', action: 'e', answers: [], writes: [] },
+  { name: 'confirmed points update through the edit menu', action: 'e', answers: ['ticket', '3', 'submit'], writes: ['points'] },
+  { name: 'a saved view restores the preview, sort and assignee but not the query or selection', action: 'r', answers: [], writes: [],
+    view: { sort: 'name', previewHidden: true, assignee: 'unassigned', query: 'old', selected: 'DATA-2' } },
+  { name: 'choosing an assignee saves the view', action: 'a', answers: ['unassigned'], writes: [], savedView: { sort: 'created', previewHidden: false, assignee: 'unassigned' } },
   { name: 'dispatch uses the originating directory without a picker and rechecks scope', action: 'd', answers: [], writes: ['dispatch'] },
   { name: 'worktree dispatch reports its Herdr branch', action: 'd', answers: [], branch: 'feat/data-1', writes: ['dispatch'] },
   { name: 'stale ticket cannot dispatch', action: 'd', answers: [], fail: 'scope', writes: [] },
@@ -102,10 +107,14 @@ for (const scenario of [
   await writeFile(join(dir, 'package.json'), '{"type":"module"}');
   const editor = join(dir, 'editor');
   await writeFile(editor, `#!${process.execPath}\nimport {writeFileSync} from 'node:fs'; writeFileSync(process.argv[2],'First line\\nSecond line\\n');`, { mode: 0o700 });
+  if (scenario.view) {
+    await mkdir(join(dir, 'state', 'herdr-jira-board'), { recursive: true });
+    await writeFile(join(dir, 'state', 'herdr-jira-board', 'view.json'), JSON.stringify(scenario.view));
+  }
   const origin = { workspace_id: 'w1', focused_pane_id: 'w1:p1', tab_id: 'w1:t1', focused_pane_cwd: dir };
   try {
     const result = await exec(process.execPath, ['--import', setup, entry, ...(scenario.command ? [scenario.command] : [])], { timeout: 10000, env: {
-      ...process.env, TMPDIR: dir, PATH: `${dir}:${process.env.PATH}`, VISUAL: editor,
+      ...process.env, TMPDIR: dir, XDG_STATE_HOME: join(dir, 'state'), PATH: `${dir}:${process.env.PATH}`, VISUAL: editor,
       HERDR_PLUGIN_CONTEXT_JSON: JSON.stringify(origin), JIRA_BOARD_ORIGIN_JSON: '',
       JIRA_TEST_LOG: log, JIRA_TEST_SETTINGS: JSON.stringify(settings),
     } }).then(value => {
@@ -137,13 +146,20 @@ for (const scenario of [
     assert.equal(lastBrowser.state.sort, 'created');
     assert.deepEqual(lastBrowser.issues.map(issue => issue.key), ['DATA-2', 'DATA-1']);
     assert.doesNotMatch(lastBrowser.state.header, /\/:search|a:assignee|Shift\+arrows/);
-    if (scenario.action === 'c') assert.deepEqual(lastBrowser.drafts, ['First line\nSecond line\n']);
+    if (scenario.answers[0] === 'comment') assert.deepEqual(lastBrowser.drafts, ['First line\nSecond line\n']);
     if (scenario.fail === 'comment') assert.ok(lastBrowser.state.alert.includes('outcome is uncertain'));
     if (scenario.fail === 'refresh') assert.ok(lastBrowser.state.alert.includes('update accepted, but a follow-up failed. Check Jira before repeating.'));
     if (scenario.fail === 'scope') assert.ok(lastBrowser.state.alert.includes('left the active scope'));
     if (!scenario.fail) assert.equal(lastBrowser.state.alert, '');
     if (scenario.branch) assert.ok(lastBrowser.state.header.includes(`${scenario.branch} (Herdr worktree)`));
     if (scenario.action === 'd') assert.equal(events.filter(event => event.name === 'fzf').length, 0);
+    if (scenario.view) {
+      const first = events.find(e => e.name === 'board').value.state;
+      assert.deepEqual([first.sort, first.previewHidden, first.assignee, first.query, first.selected], ['name', true, 'unassigned', '', undefined]);
+    }
+    const saved = await readFile(join(dir, 'state', 'herdr-jira-board', 'view.json'), 'utf8').then(JSON.parse, () => null);
+    if (scenario.savedView) assert.deepEqual(saved, scenario.savedView);
+    else if (!scenario.view) assert.equal(saved, null, 'no view change, no file');
     if (scenario.writes.includes('dispatch')) {
       const index = events.findIndex(e => e.name === 'dispatch');
       assert.equal(events[index - 1].name, 'scope');

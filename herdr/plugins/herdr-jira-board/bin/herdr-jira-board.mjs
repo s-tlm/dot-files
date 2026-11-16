@@ -8,6 +8,7 @@ import { Jira } from '../lib/jira.mjs';
 import { Herdr, captureOrigin } from '../lib/herdr.mjs';
 import { POINTS, choose, confirm, editComment, assignees, filtered, safeText } from '../lib/browser.mjs';
 import { browse } from '../lib/board.mjs';
+import { loadView, saveView } from '../lib/view.mjs';
 
 async function main() {
   const command = process.argv[2];
@@ -33,6 +34,7 @@ async function main() {
     process.stdout.write(`${safeText(snapshot.state)}: ${snapshot.issues.length} scoped tickets\n`);
     return;
   }
+  let saving = Promise.resolve();
   const dir = await mkdtemp(join(tmpdir(), 'herdr-jira-board-'));
   await chmod(dir, 0o700);
   const cleanup = async () => { await rm(dir, { recursive: true, force: true }); };
@@ -41,11 +43,14 @@ async function main() {
   process.once('SIGTERM', signal);
   try {
     const herdr = new Herdr();
-    let state = { assignee: 'all', query: '', selected: undefined, header: snapshot.state };
+    // The query and selection always start fresh; only the preview, sort and assignee filter persist.
+    let state = { assignee: 'all', query: '', selected: undefined, header: snapshot.state, me: jira.me.accountId, ...await loadView() };
+    // Saves run one at a time so a later view never loses a race with an earlier one.
+    const remember = () => { const view = { ...state }; saving = saving.then(() => saveView(view)); };
     while (true) {
       const issues = filtered(snapshot.issues, state.assignee);
       state.header = `${safeText(state.header)}\n${issues.length} tickets · ${safeText(assignees(snapshot.issues, jira.me.accountId).find(([id]) => id === state.assignee)?.[1] ?? state.assignee)}`;
-      const action = await browse(issues, state);
+      const action = await browse(issues, state, { onView: view => { Object.assign(state, view); remember(); } });
       state.header = snapshot.state;
       state.alert = '';
       if (!action) break;
@@ -54,7 +59,10 @@ async function main() {
       try {
         if (action.action === 'a') {
           const selected = await choose('Assignee', assignees(snapshot.issues, jira.me.accountId));
-          if (selected) state.assignee = selected;
+          if (selected) {
+            state.assignee = selected;
+            remember();
+          }
           continue;
         }
         if (action.action === 'r') {
@@ -70,7 +78,11 @@ async function main() {
           await jira.assertScope(key);
           const dispatched = await herdr.dispatch(key, origin, { cwd: origin.focused_pane_cwd, site: config.site, project: config.project });
           state.header = `${key}: peon started${dispatched?.branch ? ` in ${dispatched.branch} (Herdr worktree)` : ''}. Plan approval is still required.`;
-        } else if (action.action === 's') {
+          continue;
+        }
+        // Every Jira edit starts from one menu, so navigation letters can't trigger a write.
+        const edit = action.action === 'e' ? await choose(`${key}: edit`, [['ticket', 'Ticket: story points'], ['comment', 'Comment'], ['status', 'Status']]) : null;
+        if (edit === 'status') {
           process.stderr.write(`${key}: loading available transitions...\n`);
           const transitions = await jira.transitions(key);
           const selected = await choose(`${key}: choose a workflow transition`, transitions.map(t => [t.id, `${t.name} -> ${t.to?.name ?? t.name}`]));
@@ -81,7 +93,7 @@ async function main() {
             snapshot = await jira.snapshot();
             state.header = `${key}: status updated.`;
           }
-        } else if (action.action === 'p') {
+        } else if (edit === 'ticket') {
           const selected = await choose(`${key}: story points`, POINTS.map(p => [String(p), String(p)]));
           if (selected !== null && await confirm(`${key}: submit story points?`, `${key}: story points -> ${selected}`, dir)) {
             process.stderr.write(`${key}: updating and confirming story points...\n`);
@@ -90,7 +102,7 @@ async function main() {
             snapshot = await jira.snapshot();
             state.header = `${key}: story points confirmed as ${selected}.`;
           }
-        } else if (action.action === 'c') {
+        } else if (edit === 'comment') {
           const body = await editComment(key, dir);
           if (await confirm(`${key}: submit comment?`, body, dir)) {
             process.stderr.write(`${key}: submitting comment...\n`);
@@ -107,6 +119,7 @@ async function main() {
   } finally {
     process.removeListener('SIGINT', signal);
     process.removeListener('SIGTERM', signal);
+    await saving;
     await cleanup();
   }
 }

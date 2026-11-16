@@ -68,7 +68,7 @@ test('f cycles sorts, keeps the selected ticket and returns the sort with action
   }
   assert.deepEqual(actions, []);
   view.handleInput('d');
-  assert.deepEqual(actions, [{ query: '', action: 'd', selected: 'DATA-3', sort: 'key' }]);
+  assert.deepEqual(actions, [{ query: '', action: 'd', selected: 'DATA-3', sort: 'key', previewHidden: false }]);
 });
 
 test('a saved sort applies on reopen and after searches, while f types in search mode', async t => {
@@ -140,7 +140,7 @@ test('ready waits for the initial filter and blocks stale selection and write ac
   assert.ok(signal instanceof AbortSignal);
   assert.ok(renders.length > 0);
   assert.match(plain(view.render(120))[2], /Searching/);
-  for (const key of ['d', 's', 'p', 'c', 'j', '\x1b[B']) view.handleInput(key);
+  for (const key of ['d', 'e', 'j', '\x1b[B']) view.handleInput(key);
   assert.deepEqual(actions, []);
   assert.equal(view.selectedIndex, 1);
   pending.resolve([issues[2], issues[1]]);
@@ -150,7 +150,7 @@ test('ready waits for the initial filter and blocks stale selection and write ac
   assert.doesNotMatch(plain(view.render(120))[2], /Searching/);
 });
 
-for (const key of ['d', 's', 'p', 'c', 'a', 'r']) {
+for (const key of ['d', 'e', 'a', 'r']) {
   test(`navigation ${key} returns the original key once`, async t => {
     const original = issue(1);
     original.key = 'DATA-12345678901234567890';
@@ -160,7 +160,7 @@ for (const key of ['d', 's', 'p', 'c', 'a', 'r']) {
     view.handleInput(key);
     view.handleInput(key);
     view.handleInput('q');
-    assert.deepEqual(actions, [{ query: 'Ticket', action: key, selected: original.key, sort: null }]);
+    assert.deepEqual(actions, [{ query: 'Ticket', action: key, selected: original.key, sort: null, previewHidden: false }]);
     assert.deepEqual(closes, []);
     assert.equal(view.closed, true);
   });
@@ -201,7 +201,7 @@ for (const exit of ['\r', '\n', '\x1b', '\x03']) {
     assert.equal(view.closed, false);
     assert.deepEqual(actions, []);
     view.handleInput('d');
-    assert.deepEqual(actions, [{ query: 'dspcarqjk/', action: 'd', selected: 'DATA-1', sort: null }]);
+    assert.deepEqual(actions, [{ query: 'dspcarqjk/', action: 'd', selected: 'DATA-1', sort: null, previewHidden: false }]);
   });
 }
 
@@ -360,11 +360,11 @@ for (const action of ['a', 'r']) {
   test(`empty matches allow ${action} but block ticket actions`, async t => {
     const { view, actions } = model(t, { filter: async () => [] });
     await view.ready;
-    for (const key of ['d', 's', 'p', 'c', 'j', 'k', '\x1b[6~']) view.handleInput(key);
+    for (const key of ['d', 'e', 'j', 'k', '\x1b[6~']) view.handleInput(key);
     assert.deepEqual(actions, []);
     assert.match(plain(view.render(120))[5], /No tickets match/);
     view.handleInput(action);
-    assert.deepEqual(actions, [{ query: '', action, selected: undefined, sort: null }]);
+    assert.deepEqual(actions, [{ query: '', action, selected: undefined, sort: null, previewHidden: false }]);
   });
 }
 
@@ -372,7 +372,7 @@ for (const [columns, rows] of [[37, 24], [120, 7], [0, 0]]) {
   test(`a ${columns}x${rows} terminal blocks ticket writes`, async t => {
     const { view, actions } = model(t, { terminal: { columns, rows } });
     await view.ready;
-    for (const key of ['d', 's', 'p', 'c']) view.handleInput(key);
+    for (const key of ['d', 'e']) view.handleInput(key);
     assert.deepEqual(actions, []);
     assert.equal(view.closed, false);
     assert.equal(view.render(columns).length, rows);
@@ -402,7 +402,7 @@ test('stale asynchronous successes and failures cannot replace newer matches', a
   assert.equal(view.error, '');
   assert.equal(view.busy, false);
   view.handleInput('\r');
-  view.handleInput('s');
+  view.handleInput('e');
   assert.equal(actions[0].selected, 'DATA-4');
 });
 
@@ -457,7 +457,7 @@ for (const action of ['a', 'r']) {
       return search.promise;
     } });
     view.handleInput(action);
-    assert.deepEqual(actions, [{ query: '', action, selected: 'DATA-1', sort: null }]);
+    assert.deepEqual(actions, [{ query: '', action, selected: 'DATA-1', sort: null, previewHidden: false }]);
     assert.equal(signal.aborted, true);
     search.resolve([]);
     await view.ready;
@@ -482,7 +482,7 @@ test('filter failures clear stale matches and status, block actions and permit r
   assert.doesNotMatch(text[2], /Searching/);
   assert.match(text[5], /No tickets match/);
   view.handleInput('\r');
-  for (const key of ['d', 's', 'p', 'c']) view.handleInput(key);
+  for (const key of ['d', 'e']) view.handleInput(key);
   assert.deepEqual(actions, []);
   assert.deepEqual(errors, []);
   fail = false;
@@ -552,7 +552,7 @@ test('input failures close the model and report one error', async t => {
 });
 
 test('browse lifecycle', { concurrency: false, timeout: 10000 }, async t => {
-  for (const key of ['q', '\x1b', '\x03', 'd', 's', 'p', 'c', 'a', 'r']) {
+  for (const key of ['q', '\x1b', '\x03', 'd', 'e', 'a', 'r']) {
     await t.test(`restores the terminal and listeners after ${JSON.stringify(key)}`, async () => {
       const before = listeners();
       const terminal = new FakeTerminal();
@@ -570,7 +570,7 @@ test('browse lifecycle', { concurrency: false, timeout: 10000 }, async t => {
         terminal.onInput(key);
         terminal.onInput('d');
         terminal.onInput('q');
-        assert.deepEqual(await result, ['q', '\x1b', '\x03'].includes(key) ? null : { query: '', action: key, selected: 'DATA-2', sort: null });
+        assert.deepEqual(await result, ['q', '\x1b', '\x03'].includes(key) ? null : { query: '', action: key, selected: 'DATA-2', sort: null, previewHidden: false });
       } finally {
         terminal.onInput('q');
         await pending;
@@ -653,3 +653,80 @@ for (const signal of ['SIGINT', 'SIGTERM']) {
     assert.equal(stderr, '');
   });
 }
+
+test('the model shows status counts, highlights your tickets and honours NO_COLOR', async t => {
+  const mine = [issue(1, { assignee: { accountId: 'me', displayName: 'Me' }, status: { name: 'Blocked', statusCategory: { key: 'indeterminate' } } }), issue(2)];
+  const { view } = model(t, {}, { me: 'me' });
+  await view.ready;
+  view.issues = mine;
+  view.matches = mine;
+  const rows = view.render(120);
+  assert.match(plain(rows)[2], /1 Blocked · 1 Open/);
+  assert.ok(rows[5].includes('\x1b[38;2;180;190;254mMe'));
+  const previous = process.env.NO_COLOR;
+  process.env.NO_COLOR = '1';
+  t.after(() => { if (previous === undefined) delete process.env.NO_COLOR; else process.env.NO_COLOR = previous; });
+  view.previewKey = undefined;
+  assert.doesNotMatch(view.render(120).join(''), /\x1b\[38;2;/);
+});
+
+test('s, c and p no longer start edits, and p toggles the preview for the open board', async t => {
+  const { view, actions } = model(t, {}, { selected: 'DATA-1' });
+  await view.ready;
+  for (const key of ['s', 'c']) view.handleInput(key);
+  assert.deepEqual(actions, []);
+  assert.match(plain(view.render(120))[3], /Preview/);
+  assert.ok(view.previewLimit > 0);
+  view.handleInput('p');
+  assert.equal(view.previewHidden, true);
+  const hidden = plain(view.render(120));
+  assert.doesNotMatch(hidden[3], /Preview/);
+  assert.doesNotMatch(hidden.at(-1), /J\/K scroll/);
+  assert.equal(view.previewLimit, 0);
+  view.handleInput('J');
+  assert.equal(view.previewOffset, 0, 'scrolling does nothing while hidden');
+  view.handleInput('e');
+  assert.deepEqual(actions, [{ query: '', action: 'e', selected: 'DATA-1', sort: null, previewHidden: true }]);
+  const reopened = model(t, {}, { previewHidden: true });
+  await reopened.view.ready;
+  assert.doesNotMatch(plain(reopened.view.render(120))[3], /Preview/);
+  reopened.view.handleInput('p');
+  assert.match(plain(reopened.view.render(120))[3], /Preview/);
+});
+
+test('vim keys move, jump and scroll in navigation, and stay text while searching', async t => {
+  const { view } = model(t);
+  await view.ready;
+  view.render(120);
+  view.handleInput('G');
+  assert.equal(view.selectedIndex, 39);
+  view.handleInput('g');
+  assert.equal(view.selectedIndex, 0);
+  view.handleInput('\x04');
+  assert.equal(view.selectedIndex, 9);
+  view.handleInput('\x15');
+  assert.equal(view.selectedIndex, 0);
+  view.handleInput('\x1b[106;2u');
+  view.handleInput('J');
+  assert.equal(view.previewOffset, 2);
+  view.handleInput('K');
+  assert.equal(view.previewOffset, 1);
+  view.handleInput('/');
+  for (const key of ['J', 'K', 'g', 'G', 'p']) view.handleInput(key);
+  await view.ready;
+  assert.equal(view.input.getValue(), 'JKgGp');
+  assert.equal(view.previewHidden, false);
+  assert.equal(view.previewOffset, 1);
+});
+
+test('p and f report the view so it can be saved, and search text does not', async t => {
+  const views = [];
+  const { view } = model(t, { onView: value => views.push(value) });
+  await view.ready;
+  view.handleInput('p');
+  view.handleInput('f');
+  view.handleInput('/');
+  view.handleInput('p');
+  view.handleInput('f');
+  assert.deepEqual(views, [{ sort: null, previewHidden: true }, { sort: 'key', previewHidden: true }]);
+});

@@ -86,25 +86,48 @@ If there are no active sprints or more than one, the browser shows an explicit e
 
 The search bar and footer span the full pane, with thin separators and muted key-label hints matching herdr-bar. The table has aligned **Ticket ID**, **Created**, **Name**, **Status** and **Assignee** headers. **Created** shows the ticket's creation date as `YYYY-MM-DD`, in Jira's time zone. **Name** shows the Jira summary. The sorted column's heading shows `▼`. Long values use an ellipsis without shifting adjacent columns; actions always use the original ticket key.
 
-Use `/` to edit the query, including action letters. `Enter` or `Esc` returns to navigation without hiding your query. Narrow footers omit whole lower-priority hints while retaining the quit hint. The preview appears only when the table still fits at full width, from about 105 columns. Narrower panes show the table alone; panes under 56 columns ask you to widen them.
+Colours show each ticket's state and age. They use Catppuccin Mocha 24-bit colours, matching the Herdr theme:
+
+| Item | Colour |
+| --- | --- |
+| Blocked | Bold red |
+| In Progress | Yellow |
+| Review | Mauve |
+| To Do | Blue |
+| Backlog | Grey |
+| Done | Green, with the whole row dimmed |
+| Other statuses | The colour of the Jira category: blue for to do, yellow for in progress, green for done |
+| Created 0 to 7 days ago | Teal |
+| Created 8 to 30 days ago | Default text |
+| Created 31 to 90 days ago | Peach |
+| Created over 90 days ago | Red, except on Done rows |
+| Your tickets' assignee | Lavender |
+| Unassigned | Grey |
+
+The line under the search bar starts with coloured counts for each status, ordered Blocked, In Progress, Review, To Do, Backlog, Done, then any others. The preview's Status line uses the same colour. Status names match case-insensitively; a renamed status uses its category's colour. Set `NO_COLOR` to any non-empty value for the plain board.
+
+Use `/` to edit the query, including action letters. `Enter` or `Esc` returns to navigation without hiding your query. Narrow footers omit whole lower-priority hints while retaining the quit hint. The preview appears only when the table still fits at full width, from about 105 columns. Press `p` to hide or show it; the table then uses the full width. The board remembers this choice next time you open it. Narrower panes show the table alone; panes under 56 columns ask you to widen them.
 
 | Key | Action |
 | --- | --- |
-| `j` / `k`, arrows | Highlight a ticket. |
+| `j` / `k` | Highlight the next or previous ticket. The arrow keys also work, and they're the only way to move while searching. |
+| `g` / `G` | Jump to the first or last ticket. |
+| `Ctrl+d` / `Ctrl+u` | Move half a page down or up. |
 | `/` | Enter fuzzy search. Action letters become query text. |
-| `f` | Cycle the sort through every column, left to right: ticket ID, created date, name, status, then assignee, each descending. Ticket IDs sort by number. Missing values sort last. Status sorts Done, then in-progress, then to-do categories, then by name. The sort replaces search ranking and persists while the board is open. |
+| `f` | Cycle the sort through every column, left to right: ticket ID, created date, name, status, then assignee, each descending. Ticket IDs sort by number. Missing values sort last. Status sorts Done, then in-progress, then to-do categories, then by name. The sort replaces search ranking, and the board remembers it next time you open it. |
 | `Enter` / `Esc` in search | Return to navigation without running an action. |
 | `a` | Filter by all assignees, yourself, unassigned or an account ID. |
 | `d` | Start peon in a Herdr-managed worktree for Git directories, or a sibling pane otherwise. |
-| `s` | Choose an available workflow transition. |
-| `p` | Choose Fibonacci story points, including zero. |
-| `c` | Edit a multiline comment, then submit or cancel. |
+| `e` | Edit the ticket. Choose **Ticket** to set Fibonacci story points, including zero, **Comment** to write a multiline comment, or **Status** to choose an available workflow transition. |
+| `p` | Hide or show the preview. |
 | `r` | Reload the board filter, sprint and tickets. |
-| `Shift+Up` / `Shift+Down` | Scroll the preview. |
+| `J` / `K` | Scroll the preview by a line. `Shift+Up` / `Shift+Down` also work, including while searching. |
 | `Alt+j` / `Alt+k` | Scroll the preview by a page. |
 | `q` / `Esc` in navigation | Close the browser. |
 
 The preview includes the description, story points, reporter, assignee and status. Duplicate display names remain distinct in the assignee picker. Search text, the filter and the highlighted ticket survive actions where possible.
+
+The board saves your preview choice, sort and assignee filter to `${XDG_STATE_HOME:-~/.local/state}/herdr-jira-board/view.json` whenever you change them, and restores them when it opens. The search text and highlighted ticket always start fresh, so the board opens at the top with no search. The file is private (mode `0600`) and holds no ticket content. A missing or broken file, or an invalid value, falls back to the default for that value. If saving fails, the board carries on without saving and doesn't show an error. Delete the file to reset your view.
 
 ## Start work
 
@@ -122,7 +145,7 @@ Dispatch records contain identifiers, branch names and delivery stages, not tick
 
 ## Update Jira
 
-Every write requires a submit/cancel confirmation showing the ticket and proposed change. The plugin rechecks the active board scope before writing or dispatching.
+Every edit starts from the `e` menu. Every write requires a submit/cancel confirmation showing the ticket and proposed change. The plugin rechecks the active board scope before writing or dispatching.
 
 Status changes fetch fresh transitions. If a transition needs required fields, the plugin names them and asks you to complete it in Jira. Points updates change only your configured `storyPointsField` and confirm the stored value with a read-back. Comments use the issue comment endpoint with an Atlassian Document Format (ADF) body, never a description replacement or transition update. Each typed line becomes an ADF paragraph, including blank lines; Markdown characters remain literal text.
 

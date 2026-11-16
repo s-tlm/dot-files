@@ -6,10 +6,11 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 for (const scenario of [
-  { name: 'Enter exits search without dispatching', keys: ['/dspca', '\r', 'd'], expected: { query: 'dspca', action: 'd', selected: 'DATA-1', sort: null } },
-  { name: 'Esc exits search without closing', keys: ['/dspca', '\u001b', 'r'], expected: { query: 'dspca', action: 'r', selected: 'DATA-1', sort: null } },
+  { name: 'Enter exits search without dispatching', keys: ['/dspca', '\r', 'd'], expected: { query: 'dspca', action: 'd', selected: 'DATA-1', sort: null, previewHidden: false } },
+  { name: 'Esc exits search without closing', keys: ['/dspca', '\u001b', 'r'], expected: { query: 'dspca', action: 'r', selected: 'DATA-1', sort: null, previewHidden: false } },
   { name: 'q types in search and closes in navigation', keys: ['/q', '\u001b', 'q'], expected: null },
-  { name: 'refresh works in an empty snapshot', keys: ['r'], empty: true, expected: { query: '', action: 'r', sort: null } },
+  { name: 'p hides the preview and e opens the edit menu', keys: ['p', 'e'], expected: { query: '', action: 'e', selected: 'DATA-1', sort: null, previewHidden: true } },
+  { name: 'refresh works in an empty snapshot', keys: ['r'], empty: true, expected: { query: '', action: 'r', sort: null, previewHidden: false } },
 ]) test(`real TUI: ${scenario.name}`, { timeout: 15000, skip: process.platform !== 'darwin' }, async () => {
   const dir = await mkdtemp(join(tmpdir(), 'jira-fzf-test-'));
   const output = join(dir, 'result.json');
