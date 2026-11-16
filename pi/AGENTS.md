@@ -50,7 +50,6 @@ All code and configuration must be production-ready:
 - Use direct assignments instead of intermediate variables when clearer
 
 ## For application code
-- Write comprehensive unit tests
 - Never delete a failing unit test
 - Use type hints and validate inputs
 - Handle errors gracefully
@@ -67,7 +66,6 @@ shortcut with a known limit is fine when a comment names the limit.
 This file wins on process and quality:
 
 - Present options and trade-offs before you implement.
-- Write comprehensive tests that cover branches and edge cases.
 - Handle errors fully, not only at trust boundaries.
 - Keep similar files consistent, even when that means a bigger diff.
 - Choose readable code over a shorter line.

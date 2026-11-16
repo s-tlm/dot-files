@@ -77,9 +77,11 @@ const MIN_GAP = 2;
 
 /** Terminal styling and width handling, injected so tests can run without Pi. */
 export interface Painter {
-    paint(colour: FrappeColour, text: string, bold?: boolean): string;
+    paint(colour: FrappeColour, text: string, bold?: boolean, underline?: boolean): string;
     width(text: string): number;
     truncate(text: string, maxWidth: number, ellipsis?: string): string;
+    /** Wraps text in a clickable OSC 8 hyperlink. */
+    link(text: string, url: string): string;
 }
 
 export interface UsageTotals {
@@ -115,12 +117,29 @@ export interface RepoInfo {
     root: string;
 }
 
+export type PullRequestStatus = "ready" | "failing" | "review" | "other";
+
+export interface PullRequest {
+    number: number;
+    url: string;
+    status: PullRequestStatus;
+}
+
+const PR_COLOURS: Record<PullRequestStatus, FrappeColour> = {
+    ready: "green",
+    failing: "red",
+    review: "yellow",
+    other: "overlay1",
+};
+
 export interface FooterState {
     cwd: string;
     home?: string;
     repo?: RepoInfo;
     /** Branch from Pi's watcher: a name, "detached", or null outside Git. */
     branch: string | null;
+    /** Open PR for the branch, shown after the branch name. */
+    pullRequest?: PullRequest;
     sessionName?: string;
     usage: UsageSummary;
     subscription: boolean;
@@ -228,7 +247,10 @@ function location(state: FooterState, painter: Painter): string {
     if (state.branch) {
         const detached = state.branch === "detached";
         const icon = detached ? ICONS.detached : ICONS.branch;
-        parts.push(painter.paint(detached ? "peach" : "green", `${icon} ${state.branch}`));
+        let branch = painter.paint(detached ? "peach" : "green", `${icon} ${state.branch}`);
+        const pr = state.pullRequest;
+        if (pr) branch += " " + painter.link(painter.paint(PR_COLOURS[pr.status], `#${pr.number}`, false, true), pr.url);
+        parts.push(branch);
     }
 
     if (state.repo) {

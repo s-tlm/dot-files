@@ -1,11 +1,23 @@
 import type { ContextUsage, ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { type Color, parseColor, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
-import { FRAPPE, type FrappeColour, type Painter, type RepoInfo, renderFooter, type UsageSummary, summariseUsage } from "./format.ts";
+import { type Color, hyperlink, parseColor, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
+import {
+    FRAPPE,
+    type FrappeColour,
+    type Painter,
+    type PullRequest,
+    type RepoInfo,
+    renderFooter,
+    type UsageSummary,
+    summariseUsage,
+} from "./format.ts";
+import { createPullRequestClient } from "./pr.ts";
 import { findRepository } from "./repo.ts";
 
 /** Status key pi-fast-lane publishes while fast mode is on, when its `footer.mode` is `status`. */
 const FAST_STATUS_KEY = "pi-fast-lane";
 const FAST_FRAME_MS = 100;
+/** Picks up check and review changes made outside Pi. Unchanged polls get a free 304 from GitHub. */
+const PR_POLL_MS = 15_000;
 
 const COLOURS = Object.fromEntries(
     Object.entries(FRAPPE).map(([name, hex]) => [name, parseColor(hex)]),
@@ -14,14 +26,40 @@ const COLOURS = Object.fromEntries(
 export default function (pi: ExtensionAPI) {
     let enabled = true;
     let repo: RepoInfo | undefined;
+    let pullRequest: PullRequest | undefined;
+    const pullRequests = createPullRequestClient(pi.exec.bind(pi));
+    /** Set while the footer is installed, so agent events can refresh the PR. */
+    let refreshPullRequest: (() => void) | undefined;
 
     function install(ctx: ExtensionContext) {
         ctx.ui.setFooter((tui, theme, footerData) => {
             const painter: Painter = {
-                paint: (colour, text, bold) => theme.style(text, { fg: COLOURS[colour], bold }),
+                paint: (colour, text, bold, underline) => theme.style(text, { fg: COLOURS[colour], bold, underline }),
                 width: visibleWidth,
                 truncate: (text, maxWidth, ellipsis) => truncateToWidth(text, maxWidth, ellipsis),
+                link: hyperlink,
             };
+
+            // Drops results from older requests, so a slow lookup cannot overwrite a newer branch's PR.
+            let prRequest = 0;
+            const refresh = () => {
+                const request = ++prRequest;
+                const branch = footerData.getGitBranch();
+                if (!branch || branch === "detached") {
+                    pullRequest = undefined;
+                    tui.requestRender();
+                    return;
+                }
+                void pullRequests.fetchPullRequest(ctx.sessionManager.getCwd(), branch).then((pr) => {
+                    if (request !== prRequest) return;
+                    pullRequest = pr;
+                    tui.requestRender();
+                });
+            };
+            refreshPullRequest = refresh;
+            refresh();
+            const prTimer = setInterval(refresh, PR_POLL_MS);
+            prTimer.unref?.();
 
             // Usage and context scans cover the whole session, and the footer renders every frame.
             // Every append moves the leaf, so these values only change with the session, leaf, or model.
@@ -32,7 +70,8 @@ export default function (pi: ExtensionAPI) {
 
             const unsubscribe = footerData.onBranchChange(() => {
                 repo = findRepository(ctx.sessionManager.getCwd());
-                tui.requestRender();
+                pullRequest = undefined;
+                refresh();
             });
 
             // Redraws only while fast mode is on, so an idle footer costs nothing.
@@ -51,6 +90,9 @@ export default function (pi: ExtensionAPI) {
                 dispose() {
                     animate(false);
                     unsubscribe();
+                    clearInterval(prTimer);
+                    prRequest++;
+                    if (refreshPullRequest === refresh) refreshPullRequest = undefined;
                 },
                 invalidate() {
                     cacheKey = undefined;
@@ -89,6 +131,7 @@ export default function (pi: ExtensionAPI) {
                                 home: process.env.HOME ?? process.env.USERPROFILE,
                                 repo,
                                 branch: footerData.getGitBranch(),
+                                pullRequest,
                                 sessionName: sessionManager.getSessionName(),
                                 usage,
                                 subscription,
@@ -117,6 +160,11 @@ export default function (pi: ExtensionAPI) {
         if (ctx.mode !== "tui") return;
         repo = findRepository(ctx.sessionManager.getCwd());
         if (enabled) install(ctx);
+    });
+
+    // The agent may have just pushed, opened a PR, or triggered checks.
+    pi.on("agent_settled", async () => {
+        refreshPullRequest?.();
     });
 
     pi.registerCommand("footer", {

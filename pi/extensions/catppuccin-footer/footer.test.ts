@@ -20,12 +20,14 @@ import {
     summariseUsage,
     thinkingColour,
 } from "./format.ts";
+import { createPullRequestClient, parseGitHubRemote, pullRequestStatus } from "./pr.ts";
 import { findRepository } from "./repo.ts";
 
 interface Paint {
     colour: FrappeColour;
     text: string;
     bold?: boolean;
+    underline?: boolean;
 }
 
 /** Records colours and measures code points, which matches one-cell Nerd Font glyphs. */
@@ -33,8 +35,8 @@ function recordingPainter(): Painter & { calls: Paint[] } {
     const calls: Paint[] = [];
     return {
         calls,
-        paint(colour, text, bold) {
-            calls.push({ colour, text, bold });
+        paint(colour, text, bold, underline) {
+            calls.push(underline ? { colour, text, bold, underline } : { colour, text, bold });
             return text;
         },
         width: (text) => [...text].length,
@@ -45,6 +47,7 @@ function recordingPainter(): Painter & { calls: Paint[] } {
             if (maxWidth <= ellipsisWidth) return chars.slice(0, maxWidth).join("");
             return chars.slice(0, maxWidth - ellipsisWidth).join("") + ellipsis;
         },
+        link: (text, url) => `[${text}](${url})`,
     };
 }
 
@@ -419,6 +422,88 @@ describe("renderFooter statuses and widths", () => {
     });
 });
 
+describe("pull requests", () => {
+    const pr = { number: 42, url: "https://github.com/o/r/pull/42", state: "OPEN" };
+
+    test("links the PR number after the branch, coloured by status", () => {
+        const colours = { ready: "green", failing: "red", review: "yellow", other: "overlay1" } as const;
+        for (const [status, colour] of Object.entries(colours)) {
+            const painter = recordingPainter();
+            const pullRequest = { number: 42, url: pr.url, status: status as keyof typeof colours };
+            const [location] = renderFooter(state({ pullRequest }), 100, painter);
+            assert.ok(location.startsWith(`${ICONS.repo} pi  ${ICONS.branch} main [#42](${pr.url})`), location);
+            assert.deepEqual(paintFor(painter.calls, "#42"), { colour, text: "#42", bold: false, underline: true });
+        }
+    });
+
+    test("classifies status: failing checks first, then mergeable, then awaiting review", () => {
+        const facts = { draft: false, mergeableState: "blocked", reviewersRequested: false, checksFailing: false, checksPending: false };
+        assert.equal(pullRequestStatus({ ...facts, mergeableState: "clean", checksFailing: true }), "failing");
+        assert.equal(pullRequestStatus({ ...facts, mergeableState: "clean" }), "ready");
+        assert.equal(pullRequestStatus({ ...facts, mergeableState: "has_hooks" }), "ready");
+        assert.equal(pullRequestStatus(facts), "review");
+        assert.equal(pullRequestStatus({ ...facts, mergeableState: "unknown", reviewersRequested: true }), "review");
+        assert.equal(pullRequestStatus({ ...facts, checksPending: true }), "other");
+        assert.equal(pullRequestStatus({ ...facts, draft: true, reviewersRequested: true }), "other");
+        assert.equal(pullRequestStatus({ ...facts, mergeableState: "dirty" }), "other");
+    });
+
+    test("parses github.com remotes", () => {
+        const expected = { owner: "easygodata", repo: "easygo-data-platform" };
+        assert.deepEqual(parseGitHubRemote("git@github.com:easygodata/easygo-data-platform.git\n"), expected);
+        assert.deepEqual(parseGitHubRemote("https://github.com/easygodata/easygo-data-platform"), expected);
+        assert.deepEqual(parseGitHubRemote("ssh://git@github.com/easygodata/easygo-data-platform.git"), expected);
+        assert.equal(parseGitHubRemote("git@gitlab.com:o/r.git"), undefined);
+    });
+
+    describe("client", () => {
+        const REPO = "https://api.github.com/repos/o/r";
+        const routes: Record<string, unknown> = {
+            [`${REPO}/pulls?state=open&head=o%3Amain&per_page=1`]: [{ number: 42, html_url: pr.url }],
+            [`${REPO}/pulls/42`]: { number: 42, html_url: pr.url, draft: false, mergeable_state: "clean", head: { sha: "abc" } },
+            [`${REPO}/commits/abc/check-runs?per_page=100`]: { check_runs: [{ status: "completed", conclusion: "success" }] },
+            [`${REPO}/commits/abc/status`]: { state: "success", statuses: [] },
+        };
+        const exec = async (command: string) => ({ stdout: command === "gh" ? "token\n" : "git@github.com:o/r.git\n", code: 0 });
+
+        /** Serves `routes` with ETags and answers 304 when the client sends a matching If-None-Match. */
+        function fakeFetch() {
+            const seen: { url: string; etag?: string; auth?: string }[] = [];
+            const fetchImpl = async (url: string, init: { headers: Record<string, string> }) => {
+                seen.push({ url, etag: init.headers["If-None-Match"], auth: init.headers.Authorization });
+                if (!(url in routes)) return new Response("missing", { status: 404 });
+                if (init.headers["If-None-Match"] === `"${url}"`) return new Response(null, { status: 304 });
+                return Response.json(routes[url], { headers: { etag: `"${url}"` } });
+            };
+            return { seen, fetchImpl };
+        }
+
+        test("finds the branch's open PR and revalidates with ETags", async () => {
+            const { seen, fetchImpl } = fakeFetch();
+            const client = createPullRequestClient(exec, fetchImpl);
+            const expected = { number: 42, url: pr.url, status: "ready" };
+            assert.deepEqual(await client.fetchPullRequest("/repo", "main"), expected);
+            assert.equal(seen.length, 4);
+            assert.ok(seen.every((call) => call.auth === "Bearer token" && call.etag === undefined));
+
+            assert.deepEqual(await client.fetchPullRequest("/repo", "main"), expected);
+            assert.equal(seen.length, 8);
+            assert.ok(seen.slice(4).every((call) => call.etag === `"${call.url}"`), "second poll is conditional");
+        });
+
+        test("returns nothing without a PR, a GitHub remote, or a token", async () => {
+            const { fetchImpl } = fakeFetch();
+            assert.equal(await createPullRequestClient(exec, fetchImpl).fetchPullRequest("/repo", "no-pr"), undefined);
+            const gitlab = async (command: string) => ({ stdout: command === "gh" ? "token" : "git@gitlab.com:o/r.git", code: 0 });
+            assert.equal(await createPullRequestClient(gitlab, fetchImpl).fetchPullRequest("/repo", "main"), undefined);
+            const signedOut = async (command: string) => ({ stdout: command === "gh" ? "" : "git@github.com:o/r.git", code: command === "gh" ? 1 : 0 });
+            assert.equal(await createPullRequestClient(signedOut, fetchImpl).fetchPullRequest("/repo", "main"), undefined);
+            const offline = async () => Promise.reject(new Error("ENOTFOUND"));
+            assert.equal(await createPullRequestClient(exec, offline).fetchPullRequest("/repo", "main"), undefined);
+        });
+    });
+});
+
 describe("findRepository", () => {
     const root = mkdtempSync(join(tmpdir(), "catppuccin-footer-"));
     after(() => rmSync(root, { recursive: true, force: true }));
@@ -480,12 +565,14 @@ describe("renderFooter with pi-tui", { skip: tuiModule ? false : "PI_TUI_MODULE 
     test("keeps styled lines within every width", async () => {
         const tui = await import(pathToFileURL(tuiModule!).href);
         const painter: Painter = {
-            paint: (colour, text, bold) => tui.styleText(text, { fg: tui.parseColor(FRAPPE[colour]), bold }, "truecolor"),
+            paint: (colour, text, bold, underline) => tui.styleText(text, { fg: tui.parseColor(FRAPPE[colour]), bold, underline }, "truecolor"),
             width: tui.visibleWidth,
             truncate: (text, maxWidth, ellipsis) => tui.truncateToWidth(text, maxWidth, ellipsis),
+            link: tui.hyperlink,
         };
         const busy = state({
             branch: "feat/an-unusually-long-branch-name",
+            pullRequest: { number: 1234, url: "https://github.com/o/r/pull/1234", status: "failing" },
             sessionName: "long session",
             subscription: true,
             ponytail: PONYTAIL,
