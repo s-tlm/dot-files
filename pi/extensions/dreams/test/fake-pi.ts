@@ -68,7 +68,9 @@ if (model === "fake/hang" || model === "fake/ignore-term") {
     const text = await readFile(transcript, "utf8");
     read(
       transcript,
-      model === "fake/skim"
+      model === "fake/skim" ||
+        (model === "fake/skim-once" &&
+          !args.at(-1)!.includes("Your previous attempt did not read lines"))
         ? `${text.split("\n")[0]}\n\n[Showing lines 1-1 of ${text.split("\n").length}. Use offset=2 to continue.]`
         : text,
     );

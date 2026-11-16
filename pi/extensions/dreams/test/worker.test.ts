@@ -209,10 +209,19 @@ test("fails an analyzer that does not read its whole transcript", async (t) => {
   const f = await fixture(t, "fake/skim");
   const result = await runWorker(f.directory, f.runtime);
   assert.equal(result.error?.type, "analyzer_failed");
-  assert.equal(
-    result.analyses?.[0].error,
-    "The analyser did not read its whole transcript",
+  assert.match(
+    result.analyses?.[0].error ?? "",
+    /^The analyser did not read lines 2-\d+ of its transcript$/,
   );
+});
+
+test("tells a retried analyzer which lines it skipped", async (t) => {
+  const f = await fixture(t, "fake/skim-once");
+  const result = await runWorker(f.directory, f.runtime);
+  assert.equal(result.status, "completed", JSON.stringify(result.error));
+  assert.ok(result.analyses?.[0].summary);
+  // Two analyser attempts and one organiser.
+  assert.equal(result.usage.cost_usd, 0.03);
 });
 
 test("retries an organiser that skips topics, then fails the dream", async (t) => {
@@ -225,8 +234,8 @@ test("retries an organiser that skips topics, then fails the dream", async (t) =
   assert.equal(result.usage.cost_usd, 0.03);
 });
 
-test("readRange and covers follow pi's read notices", async () => {
-  const { covers, readRange } = await import("../worker.ts");
+test("readRange and unread follow pi's read notices", async () => {
+  const { readRange, unread } = await import("../worker.ts");
   assert.deepEqual(
     readRange(
       undefined,
@@ -247,8 +256,8 @@ test("readRange and covers follow pi's read notices", async () => {
     readRange(5, "[Line 5 is 60KB, exceeds 50.0KB limit. Use bash: sed]"),
     undefined,
   );
-  assert.ok(
-    covers(
+  assert.deepEqual(
+    unread(
       [
         [41, 60],
         [1, 40],
@@ -256,18 +265,21 @@ test("readRange and covers follow pi's read notices", async () => {
       ],
       90,
     ),
+    [],
   );
-  assert.ok(
-    !covers(
+  assert.deepEqual(
+    unread(
       [
         [1, 40],
         [61, Infinity],
       ],
       90,
     ),
+    [[41, 60]],
   );
-  assert.ok(!covers([[1, 40]], 90));
-  assert.ok(covers([[1, 90]], 90));
+  assert.deepEqual(unread([[1, 40]], 90), [[41, 90]]);
+  assert.deepEqual(unread([], 3), [[1, 3]]);
+  assert.deepEqual(unread([[1, 90]], 90), []);
 });
 
 test("stops at the reported budget and retains partial output", async (t) => {

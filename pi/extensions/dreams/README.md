@@ -22,7 +22,7 @@ The default model is `anthropic/claude-sonnet-5-5`, with low thinking, a $10 rep
 
 Each dream records every session it takes and when the session last changed. Automatic selection skips a session that a completed dream, which still exists, already covers at its current state. It picks up sessions that were too recent for an earlier dream, sessions past the 100-session limit, and sessions you continued after a dream. Once you discard a dream, its sessions are eligible again. A `--sessions` dream covers only the sessions you name.
 
-Each analyser must read its whole transcript, and the organiser must read every topic. The worker checks both from the children's read calls. It retries a failed analyser once and records the reason. The organiser still runs after analyser failures, so `--force` adopts an organised store, but the dream ends as `failed` with `analyzer_failed`. An organiser that still skips topics after one retry fails the dream with `organizer_incomplete`.
+Each analyser must read its whole transcript, and the organiser must read every topic. The worker checks both from the children's read calls. It retries a failed analyser once, naming any lines it skipped, and records the reason. The organiser still runs after analyser failures, so `--force` adopts an organised store, but the dream ends as `failed` with `analyzer_failed`. An organiser that still skips topics after one retry fails the dream with `organizer_incomplete`.
 
 ## Storage and safety
 

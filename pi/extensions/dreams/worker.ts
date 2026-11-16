@@ -59,13 +59,23 @@ export function readRange(offset: unknown, text: string): Range | undefined {
   return [start, Infinity];
 }
 
-export function covers(ranges: Range[], lines: number): boolean {
+// Lists the line ranges no read returned; an empty list means the whole file was read.
+export function unread(ranges: Range[], lines: number): Range[] {
+  const gaps: Range[] = [];
   let reached = 0;
   for (const [start, end] of [...ranges].sort((a, b) => a[0] - b[0])) {
-    if (start > reached + 1) break;
+    if (start > reached + 1 && reached < lines)
+      gaps.push([reached + 1, Math.min(start - 1, lines)]);
     reached = Math.max(reached, end);
   }
-  return reached >= lines;
+  if (reached < lines) gaps.push([reached + 1, lines]);
+  return gaps;
+}
+
+function lineList(gaps: Range[]): string {
+  return gaps
+    .map(([start, end]) => (start === end ? `${start}` : `${start}-${end}`))
+    .join(", ");
 }
 
 function inspectionReport(inspection: StoreInspection): string {
@@ -519,18 +529,30 @@ export async function runWorker(
           while (next < transcripts.length && !stopped) {
             const index = next++;
             const session = job.inputs[1].session_files[index];
-            const lines = (await readFile(transcripts[index], "utf8")).split(
-              "\n",
-            ).length;
+            // pi's read tool counts the empty line after a final newline; it holds nothing to read.
+            const lines = (await readFile(transcripts[index], "utf8"))
+              .replace(/\n$/, "")
+              .split("\n").length;
             let summary: string | undefined;
             let reason = "The dream stopped";
+            let gaps: Range[] = [];
             // One retry absorbs transient provider errors and lazy reads.
             for (let attempt = 0; attempt < 2 && !stopped; attempt++) {
               try {
-                const result = await runChild("analyzer", transcripts[index]);
-                if (!covers(result.reads.get(transcripts[index]) ?? [], lines))
+                const result = await runChild(
+                  "analyzer",
+                  transcripts[index],
+                  gaps.length
+                    ? `Your previous attempt did not read lines ${lineList(gaps)} of the transcript. Read the whole transcript, including those lines.`
+                    : undefined,
+                );
+                gaps = unread(
+                  result.reads.get(transcripts[index]) ?? [],
+                  lines,
+                );
+                if (gaps.length)
                   throw new Error(
-                    "The analyser did not read its whole transcript",
+                    `The analyser did not read lines ${lineList(gaps)} of its transcript`,
                   );
                 summary = result.summary;
                 break;
