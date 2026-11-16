@@ -1,5 +1,6 @@
 import { lstat, readFile, readdir, realpath, stat } from "node:fs/promises";
 import { isAbsolute, join, relative, resolve, sep } from "node:path";
+import { MAX_SESSIONS } from "./constants.ts";
 import { resolveStore } from "./store.ts";
 
 export interface SessionInfo {
@@ -357,9 +358,9 @@ export async function selectSessions(options: {
   }
   selected.sort(oldestFirst);
   return {
-    sessions: selected.slice(0, 100),
+    sessions: selected.slice(0, MAX_SESSIONS),
     skippedUnmatched,
-    limited: Math.max(0, selected.length - 100),
+    limited: Math.max(0, selected.length - MAX_SESSIONS),
   };
 }
 

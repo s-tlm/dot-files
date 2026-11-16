@@ -13,6 +13,7 @@ import {
   sep,
 } from "node:path";
 import { promisify } from "node:util";
+import { GIT_TIMEOUT_MS } from "./constants.ts";
 
 export type Exec = (
   command: string,
@@ -160,7 +161,7 @@ export async function resolveStore(
   let root = await fs.realpath(cwd);
   if (!(await fs.stat(root)).isDirectory())
     throw new Error(`Not a directory: ${cwd}`);
-  const options = { cwd: root, timeout: 10_000 };
+  const options = { cwd: root, timeout: GIT_TIMEOUT_MS };
   const commonResult = await exec(
     "git",
     ["rev-parse", "--path-format=absolute", "--git-common-dir"],
@@ -390,7 +391,7 @@ export async function diffStores(
         empty ?? before.path,
         after.path,
       ],
-      { timeout: 10_000 },
+      { timeout: GIT_TIMEOUT_MS },
     );
     if (result.code !== 0 && result.code !== 1) {
       throw new Error(`Git diff failed (${result.code}): ${result.stderr}`);

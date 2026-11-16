@@ -15,6 +15,7 @@ import {
 import { dirname, join, relative } from "node:path";
 import { homedir } from "node:os";
 import { fileURLToPath } from "node:url";
+import { GIT_TIMEOUT_MS, THINKING } from "./constants.ts";
 import { cloneStore, removeMovedStubs, storeStats } from "./store.ts";
 import type { Exec } from "./store.ts";
 import { redact, renderSession } from "./sessions.ts";
@@ -72,10 +73,10 @@ async function copyContext(
       ...names.flatMap((name) => [name, `**/${name}`]),
     ];
     const result = execute
-      ? await execute("git", args, { cwd: root, timeout: 10_000 })
+      ? await execute("git", args, { cwd: root, timeout: GIT_TIMEOUT_MS })
       : await exec("git", args, {
           cwd: root,
-          timeout: 10_000,
+          timeout: GIT_TIMEOUT_MS,
           maxBuffer: 10 * 1024 * 1024,
         }).then((result) => ({ ...result, code: 0 }));
     if (result.code !== 0) throw new Error(result.stderr);
@@ -222,7 +223,7 @@ export async function runWorker(
       "--model",
       job.model,
       "--thinking",
-      "low",
+      THINKING,
       "--system-prompt",
       join(directory, "prompts", `${phase}.md`),
       "--",

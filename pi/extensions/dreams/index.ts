@@ -17,6 +17,15 @@ import {
   resolveStore,
   storeStats,
 } from "./store.ts";
+import {
+  DEFAULT_BUDGET_USD,
+  DEFAULT_CONCURRENCY,
+  DEFAULT_MODEL,
+  MAX_CONCURRENCY,
+  MAX_SESSIONS,
+  STALE_JOB_MS,
+  THINKING,
+} from "./constants.ts";
 import { protectStore } from "./child-gate.ts";
 import { selectSessions } from "./sessions.ts";
 import {
@@ -118,8 +127,12 @@ export function parseDreamOptions(
     result.instructions = values.instructions;
   if (values.concurrency !== undefined) {
     const concurrency = Number(values.concurrency);
-    if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 100)
-      throw new Error("Concurrency must be 1 to 100");
+    if (
+      !Number.isInteger(concurrency) ||
+      concurrency < 1 ||
+      concurrency > MAX_CONCURRENCY
+    )
+      throw new Error(`Concurrency must be 1 to ${MAX_CONCURRENCY}`);
     result.concurrency = concurrency;
   }
   if (values.budget !== undefined) {
@@ -604,13 +617,13 @@ export default function dreams(pi: ExtensionAPI): void {
           report(
             pi,
             ctx,
-            `${selection.skippedUnmatched} unmatched sessions skipped; ${selection.limited} sessions deferred by the 100-session limit. Use --sessions to include old worktree session folders.`,
+            `${selection.skippedUnmatched} unmatched sessions skipped; ${selection.limited} sessions deferred by the ${MAX_SESSIONS}-session limit. Use --sessions to include old worktree session folders.`,
           );
         if (!selection.sessions.length)
           throw new Error(
             "No eligible sessions. Current, forked, short and recently changed sessions are excluded",
           );
-        const model = options.model ?? "anthropic/claude-sonnet-5-5";
+        const model = options.model ?? DEFAULT_MODEL;
         if (
           !ctx.modelRegistry
             .getAvailable()
@@ -630,7 +643,7 @@ export default function dreams(pi: ExtensionAPI): void {
             "Starting a dream requires an interactive confirmation or --yes",
           );
         const warning =
-          (options.concurrency ?? 1) > 1
+          (options.concurrency ?? DEFAULT_CONCURRENCY) > 1
             ? "\nConcurrent analyzers can overwrite conflicting facts. Use 1 for chronological updates."
             : "";
         if (
@@ -638,7 +651,7 @@ export default function dreams(pi: ExtensionAPI): void {
           !options.yes &&
           !(await ctx.ui.confirm(
             "Start dream?",
-            `${selection.sessions.length} sessions, ${bytes} transcript bytes; store ${stats.files} files / ${stats.bytes} bytes.\n${model}, thinking low, budget $${options.budget ?? 10}.${warning}\nKnown secrets are redacted, but unknown secrets may reach the provider. Nothing is adopted automatically.`,
+            `${selection.sessions.length} sessions, ${bytes} transcript bytes; store ${stats.files} files / ${stats.bytes} bytes.\n${model}, thinking ${THINKING}, budget $${options.budget ?? DEFAULT_BUDGET_USD}.${warning}\nKnown secrets are redacted, but unknown secrets may reach the provider. Nothing is adopted automatically.`,
           ))
         )
           return;
@@ -652,7 +665,7 @@ export default function dreams(pi: ExtensionAPI): void {
         try {
           await startWorker(jobDirectory(jobsRoot, job.id), agentDirectory);
         } catch (error) {
-          await recoverJob(jobDirectory(jobsRoot, job.id), Date.now() + 60_001);
+          await recoverJob(jobDirectory(jobsRoot, job.id), Date.now() + STALE_JOB_MS + 1);
           throw error;
         }
         watched.set(job.id, "pending");

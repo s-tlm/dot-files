@@ -1,6 +1,14 @@
 import { mkdir, readFile, readdir, rename, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
+import {
+  DEFAULT_BUDGET_USD,
+  DEFAULT_CONCURRENCY,
+  DEFAULT_MODEL,
+  MAX_CONCURRENCY,
+  MAX_SESSIONS,
+  STALE_JOB_MS,
+} from "./constants.ts";
 
 export type Status =
   | "pending"
@@ -113,15 +121,19 @@ export async function createJob(
   const { sessionFiles } = options;
   if (
     sessionFiles.length < 1 ||
-    sessionFiles.length > 100 ||
+    sessionFiles.length > MAX_SESSIONS ||
     new Set(sessionFiles).size !== sessionFiles.length
   ) {
-    throw new Error("Choose 1 to 100 distinct sessions");
+    throw new Error(`Choose 1 to ${MAX_SESSIONS} distinct sessions`);
   }
-  const concurrency = options.concurrency ?? 1;
-  const budget = options.budget ?? 10;
-  if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 100)
-    throw new Error("Concurrency must be 1 to 100");
+  const concurrency = options.concurrency ?? DEFAULT_CONCURRENCY;
+  const budget = options.budget ?? DEFAULT_BUDGET_USD;
+  if (
+    !Number.isInteger(concurrency) ||
+    concurrency < 1 ||
+    concurrency > MAX_CONCURRENCY
+  )
+    throw new Error(`Concurrency must be 1 to ${MAX_CONCURRENCY}`);
   if (!Number.isFinite(budget) || budget <= 0)
     throw new Error("Budget must be a positive dollar amount");
   const job: Dream = {
@@ -135,7 +147,7 @@ export async function createJob(
       { type: "sessions", session_files: sessionFiles },
     ],
     outputs: [],
-    model: options.model ?? "anthropic/claude-sonnet-5-5",
+    model: options.model ?? DEFAULT_MODEL,
     instructions: options.instructions ?? "",
     concurrency,
     budget_usd: budget,
@@ -203,7 +215,7 @@ export async function recoverJob(
   const dead = job.status === "running" && (!job.pid || !pidAlive(job.pid));
   const neverStarted =
     job.status === "pending" &&
-    now - Date.parse(job.created_at) > 60_000 &&
+    now - Date.parse(job.created_at) > STALE_JOB_MS &&
     (!job.pid || !pidAlive(job.pid));
   if (dead || neverStarted) {
     // Re-read so a worker that finished during the probe keeps its final state.
@@ -244,7 +256,7 @@ export async function cancelJob(directory: string): Promise<void> {
   await writeFile(join(directory, "cancel"), "", { mode: 0o600 });
   if (
     (job.pid && !pidAlive(job.pid)) ||
-    (!job.pid && Date.now() - Date.parse(job.created_at) > 60_000)
+    (!job.pid && Date.now() - Date.parse(job.created_at) > STALE_JOB_MS)
   ) {
     const latest = await readJob(directory);
     if (!finished(latest.status) && (!latest.pid || !pidAlive(latest.pid))) {

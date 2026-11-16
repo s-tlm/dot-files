@@ -1,0 +1,10 @@
+// Defaults and limits shared across the extension. Messages read these so text and checks stay in sync.
+export const DEFAULT_MODEL = "anthropic/claude-sonnet-5-5";
+export const DEFAULT_BUDGET_USD = 10;
+export const DEFAULT_CONCURRENCY = 1;
+export const MAX_CONCURRENCY = 100;
+export const MAX_SESSIONS = 100;
+export const THINKING = "low";
+// A pending job without a live worker after this long counts as failed.
+export const STALE_JOB_MS = 60_000;
+export const GIT_TIMEOUT_MS = 10_000;
