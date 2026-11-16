@@ -343,6 +343,11 @@ function frontmatterProblems(path: string, text: string): string[] {
   return problems;
 }
 
+// Code spans and fences show syntax as examples, so their link-like text is not a link.
+function withoutCode(text: string): string {
+  return text.replace(/```[\s\S]*?(?:```|$)/g, "").replace(/`[^`\n]*`/g, "");
+}
+
 function markdownLinks(text: string): string[] {
   return [...text.matchAll(/\[[^\]\r\n]*\]\(([^)\s]+)(?:[ \t]+"[^"]*")?\)/g)]
     .map((match) => match[1].split("#")[0])
@@ -388,9 +393,10 @@ export async function inspectStore(path: string): Promise<StoreInspection> {
     if (ticketName.test(basename(rel, ".md")))
       problems.push(`named after a PR or ticket: ${name}`);
     problems.push(...frontmatterProblems(rel, text));
-    if (/\[\[[^\]\r\n]+\]\]/.test(text))
+    const prose = withoutCode(text);
+    if (/\[\[[^\]\r\n]+\]\]/.test(prose))
       problems.push(`wiki-style link instead of a Markdown link: ${name}`);
-    for (const link of markdownLinks(text)) {
+    for (const link of markdownLinks(prose)) {
       const destination = target(rel, link);
       if (destination === undefined || !texts.has(destination))
         problems.push(`broken link in ${name}: ${JSON.stringify(link)}`);
@@ -409,7 +415,7 @@ export async function inspectStore(path: string): Promise<StoreInspection> {
         `MEMORY.md has ${lines} lines; sessions only see the first 200`,
       );
     const counts = new Map<string, number>();
-    for (const link of markdownLinks(index)) {
+    for (const link of markdownLinks(withoutCode(index))) {
       const destination = target("MEMORY.md", link);
       if (destination === undefined || !texts.has(destination))
         problems.push(

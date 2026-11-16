@@ -435,7 +435,7 @@ test("inspectStore passes a well-formed store", async (t) => {
     join(store, "dbt-seeds.md"),
     topic(
       "dbt-seeds",
-      "See [deploy](ci/deploy-workflow.md) and [docs](https://example.com/x.md).\n",
+      "See [deploy](ci/deploy-workflow.md) and [docs](https://example.com/x.md).\nStubs read `MOVED TO [[x.md]]`; index lines read `- [Title](<topic>.md): desc`.\n```md\n[gone](missing.md)\n```\n",
     ),
   );
   await put(
