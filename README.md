@@ -23,7 +23,7 @@
 
 ## Pi
 
-`pi/` holds the [pi](https://pi.dev) settings, MCP servers, `AGENTS.md`, extensions, agents and skills. `scripts/create-symlinks.sh` links each one into `~/.pi/agent/` and moves any existing file to `<name>.bak` first.
+`pi/` holds the [pi](https://pi.dev) settings, MCP servers, `AGENTS.md`, extensions, agents and skills. `scripts/create-symlinks.sh` links each one except `AGENTS.md` into `~/.pi/agent/` and moves any existing file to `<name>.bak` first. Copy `AGENTS.md` by hand, because the dreams extension rejects a symlinked context file.
 
 Auth tokens, sessions, memory and package caches stay in `~/.pi/agent/` on each machine. After linking, run `pi update --extensions` to install the packages listed in `settings.json`, then sign in to the MCP servers again.
 
