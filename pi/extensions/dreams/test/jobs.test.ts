@@ -35,7 +35,7 @@ test("creates a private pending job with the planned defaults", async (t) => {
   const { job, directory } = await fixture(t);
   assert.equal(job.status, "pending");
   assert.equal(job.model, "anthropic/claude-sonnet-5-5");
-  assert.equal(job.budget_usd, 5);
+  assert.equal(job.budget_usd, 10);
   assert.equal(job.concurrency, 1);
   assert.deepEqual(await readJob(directory), job);
   assert.equal((await stat(directory)).mode & 0o777, 0o700);

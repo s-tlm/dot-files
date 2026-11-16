@@ -18,7 +18,7 @@ While a dream is active, the status bar cycles a sleeping-face ASCII animation b
 
 You can set `--sessions <id-or-folder,...>`, `--since 14d`, `--model provider/model-id`, `--instructions "..."`, `--budget 5`, `--concurrency 1` and `--keep-transcripts`. An explicit session list replaces automatic selection. Headless starts require `--yes`.
 
-The default model is `anthropic/claude-sonnet-5-5`, with low thinking and a $5 reported-cost budget. Sequential analysis preserves chronological updates; concurrent analysis can overwrite conflicting facts.
+The default model is `anthropic/claude-sonnet-5-5`, with low thinking and a $10 reported-cost budget. Sequential analysis preserves chronological updates; concurrent analysis can overwrite conflicting facts.
 
 ## Storage and safety
 

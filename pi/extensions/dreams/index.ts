@@ -638,7 +638,7 @@ export default function dreams(pi: ExtensionAPI): void {
           !options.yes &&
           !(await ctx.ui.confirm(
             "Start dream?",
-            `${selection.sessions.length} sessions, ${bytes} transcript bytes; store ${stats.files} files / ${stats.bytes} bytes.\n${model}, thinking low, budget $${options.budget ?? 5}.${warning}\nKnown secrets are redacted, but unknown secrets may reach the provider. Nothing is adopted automatically.`,
+            `${selection.sessions.length} sessions, ${bytes} transcript bytes; store ${stats.files} files / ${stats.bytes} bytes.\n${model}, thinking low, budget $${options.budget ?? 10}.${warning}\nKnown secrets are redacted, but unknown secrets may reach the provider. Nothing is adopted automatically.`,
           ))
         )
           return;

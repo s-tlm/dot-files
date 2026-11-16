@@ -3,7 +3,11 @@ import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 
 export type Status =
-  "pending" | "running" | "completed" | "failed" | "canceled";
+  | "pending"
+  | "running"
+  | "completed"
+  | "failed"
+  | "canceled";
 export type ErrorType =
   | "timeout"
   | "input_memory_store_too_large"
@@ -115,7 +119,7 @@ export async function createJob(
     throw new Error("Choose 1 to 100 distinct sessions");
   }
   const concurrency = options.concurrency ?? 1;
-  const budget = options.budget ?? 5;
+  const budget = options.budget ?? 10;
   if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 100)
     throw new Error("Concurrency must be 1 to 100");
   if (!Number.isFinite(budget) || budget <= 0)
