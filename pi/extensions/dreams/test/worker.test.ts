@@ -163,6 +163,17 @@ test("runs analyzers and organizer, sums usage, preserves input, and removes stu
   await assert.rejects(runWorker(f.directory, f.runtime), /EEXIST/);
 });
 
+test("runs the organiser on its own model and splits cost by phase", async (t) => {
+  const f = await fixture(t);
+  f.job.organizer_model = "fake/cheap";
+  const { saveJob } = await import("../jobs.ts");
+  await saveJob(f.directory, f.job);
+  const result = await runWorker(f.directory, f.runtime);
+  assert.equal(result.status, "completed", JSON.stringify(result.error));
+  assert.deepEqual(result.cost_by_phase, { analyze: 0.01, organize: 0.001 });
+  assert.equal(result.usage.cost_usd, 0.011);
+});
+
 test("keeps transcripts only when requested", async (t) => {
   const f = await fixture(t, "fake/success", true);
   const result = await runWorker(f.directory, f.runtime);

@@ -17,6 +17,8 @@ import {
   inspectStore,
   removeMovedStubs,
   resolveStore,
+  diffIndex,
+  indexExcerpt,
   storeChanges,
   storeStats,
 } from "../store.ts";
@@ -456,6 +458,28 @@ test("inspectStore passes a well-formed store", async (t) => {
     problems: [],
     duplicates: [],
   });
+});
+
+test("indexExcerpt keeps whole lines within the line and byte limits", () => {
+  const lines = Array.from({ length: 300 }, (_, i) => `- line ${i + 1}`);
+  assert.equal(indexExcerpt(lines.join("\n")).split("\n").length, 200);
+  const wide = Array.from({ length: 150 }, (_, i) => `${i}`.padEnd(99, "x"));
+  const excerpt = indexExcerpt(wide.join("\n"));
+  assert.ok(Buffer.byteLength(excerpt) <= 8 * 1024);
+  assert.ok(excerpt.split("\n").every((line) => line.length === 99));
+  assert.equal(indexExcerpt("short\n"), "short\n");
+});
+
+test("diffIndex shows the full MEMORY.md change, including a new index", async (t) => {
+  const { store, output, put } = await fixture(t);
+  await put(join(output, "MEMORY.md"), "- [A](a.md): new entry\n");
+  assert.match(await diffIndex(store, output), /\+- \[A\]\(a\.md\): new entry/);
+  await put(join(store, "MEMORY.md"), "- [A](a.md): new entry\n");
+  assert.equal(await diffIndex(store, output), "");
+  await put(join(store, "MEMORY.md"), "- [A](a.md): old entry\n");
+  const diff = await diffIndex(store, output);
+  assert.match(diff, /-- \[A\]\(a\.md\): old entry/);
+  assert.match(diff, /\+- \[A\]\(a\.md\): new entry/);
 });
 
 test("inspectStore reports format, index, link, naming and duplicate problems", async (t) => {

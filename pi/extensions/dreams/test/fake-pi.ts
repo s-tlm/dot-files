@@ -91,7 +91,10 @@ if (model === "fake/hang" || model === "fake/ignore-term") {
     output: 10,
     cacheRead: 5,
     cacheWrite: 2,
-    cost: { total: model === "fake/budget" ? 1 : 0.01 },
+    cost: {
+      total:
+        model === "fake/budget" ? 1 : model === "fake/cheap" ? 0.001 : 0.01,
+    },
   };
   const stopReason =
     model === "fake/fail" && !organizer

@@ -4,7 +4,12 @@ import { sanitiseStatus } from "../../catppuccin-footer/format.ts";
 import assert from "node:assert/strict";
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import dreams, { parseDreamOptions, splitArgs } from "../index.ts";
+import dreams, {
+  estimateCost,
+  formatDream,
+  parseDreamOptions,
+  splitArgs,
+} from "../index.ts";
 import { createJob, jobDirectory, saveJob, transition } from "../jobs.ts";
 import { fingerprintStore } from "../store.ts";
 
@@ -265,6 +270,64 @@ export default function checks(real: ExtensionAPI) {
       await writeFile(join(legacyDirectory, "output-state"), "discarded");
       await commands.get("dream").handler(`discard ${legacy.id}`, ctx);
       await assert.rejects(stat(legacyDirectory), { code: "ENOENT" });
+      await mkdir(join(directory, "sessions"));
+      await writeFile(join(directory, "sessions", "child.jsonl"), "{}\n");
+      const oldBackups = [
+        "2000-01-01T00-00-00-000Z-a",
+        "2001-01-01T00-00-00-000Z-b",
+      ].map((suffix) => `${store}.bak-${suffix}`);
+      for (const backup of oldBackups) await mkdir(backup, { mode: 0o700 });
+      confirm = false;
+      await commands.get("dream").handler("prune", ctx);
+      await stat(join(directory, "sessions"));
+      confirm = true;
+      await commands.get("dream").handler("prune", ctx);
+      assert.match(notifications.at(-1)!, /Pruned 1 log folders and 2 backups/);
+      await assert.rejects(stat(join(directory, "sessions")), {
+        code: "ENOENT",
+      });
+      for (const backup of oldBackups)
+        await assert.rejects(stat(backup), { code: "ENOENT" });
+      await stat(join(directory, "dream.json"));
+      await commands.get("dream").handler("prune", ctx);
+      assert.equal(notifications.at(-1), "Nothing to prune");
+      const shown = formatDream(
+        {
+          ...job,
+          estimate_usd: 7.4,
+          cost_by_phase: { analyze: 7.05, organize: 0.24 },
+          analyses: [
+            { session: "/s/a.jsonl", error: "did not read lines 2-9" },
+          ],
+          checks: {
+            problems: ['not in MEMORY.md: "x.md"'],
+            duplicates: [["a.md", "b.md"]],
+          },
+          summary: JSON.stringify({
+            index_entries: 3,
+            changes: ["Merged a into b"],
+          }),
+        },
+        "/record/dream.json",
+      );
+      for (const expected of [
+        /\(estimate \$7\.40\)/,
+        /Cost: analyse \$7\.05, organise \$0\.24/,
+        /- \/s\/a\.jsonl: did not read lines 2-9/,
+        /Organiser changes \(3 index entries\):\n- Merged a into b/,
+        /- not in MEMORY\.md: "x\.md"/,
+        /- a\.md and b\.md/,
+        /Full record: \/record\/dream\.json/,
+      ])
+        assert.match(shown, expected);
+      assert.match(
+        formatDream({ ...job, summary: "plain text" }, "/r"),
+        /- plain text/,
+      );
+      // Run 2 of the benchmark: 4.02 MB of transcripts on Sonnet cost $7.29.
+      const estimate = estimateCost(4_024_601, 40_000, 2, 2);
+      assert.ok(estimate > 6.5 && estimate < 8, String(estimate));
+      assert.equal(estimateCost(1000, 1000, 0, 0), 0);
       assert.deepEqual(
         splitArgs('--instructions "keep \\"quoted\\" words" --budget 1'),
         ["--instructions", 'keep "quoted" words', "--budget", "1"],
@@ -282,6 +345,12 @@ export default function checks(real: ExtensionAPI) {
       assert.equal(options.concurrency, 2);
       assert.equal(options.keepTranscripts, true);
       assert.equal(options.yes, true);
+      assert.equal(
+        parseDreamOptions(
+          splitArgs("--organizer-model anthropic/claude-haiku-5-5"),
+        ).organizerModel,
+        "anthropic/claude-haiku-5-5",
+      );
       for (const input of [
         "--budget 0",
         "--budget Infinity",
@@ -290,6 +359,7 @@ export default function checks(real: ExtensionAPI) {
         "--sessions a,,b",
         "--unknown",
         "--model sonnet",
+        "--organizer-model haiku",
       ])
         assert.throws(() => parseDreamOptions(splitArgs(input)));
       const intervals = new Map<

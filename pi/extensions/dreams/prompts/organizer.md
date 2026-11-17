@@ -53,7 +53,7 @@ The worker removes these `.md` stubs after you finish. Never stub `MEMORY.md`, c
 
 Maintain `MEMORY.md` at the store root, without topic frontmatter. Give every live topic exactly one entry: a standard Markdown link followed by a short description, such as `- [Test setup](test-setup.md): Working test commands and known limits.` Use actual titles and store-relative paths. Group entries under brief domain headings; index neither stubs nor the index itself.
 
-The first 200 lines are injected into future sessions. Put the highest-value topic links first and keep descriptions short and factual, not instructions. Aim to fit the whole index within 200 lines, but never drop a live topic to meet that limit. A larger catalog must still have useful first 200 lines. Keep detailed facts, commands and histories in topic files.
+Future sessions receive the first 200 lines or 8 KB of the index, whichever is shorter. Put the highest-value topic links first and keep descriptions short and factual, not instructions. Aim to fit the whole index within both limits, but never drop a live topic to meet them. A larger catalog must still have a useful first 8 KB. Keep detailed facts, commands and histories in topic files.
 
 Create a missing index. Otherwise use targeted edits to preserve entries while fixing descriptions, order and links. After every write or edit, read the file back and verify the result. Re-read before each subsequent mutation. Never bypass tool refusals or report an unverified change as done.
 

@@ -15,7 +15,7 @@ import {
 import { dirname, join, relative, resolve } from "node:path";
 import { homedir } from "node:os";
 import { fileURLToPath } from "node:url";
-import { GIT_TIMEOUT_MS, THINKING } from "./constants.ts";
+import { GIT_TIMEOUT_MS, THINKING, WORKER_TIMEOUT_MS } from "./constants.ts";
 import {
   cloneStore,
   fingerprintStore,
@@ -233,7 +233,7 @@ export async function runWorker(
   process.on("SIGINT", onSignal);
   const timeout = setTimeout(
     () => stop(new DreamError("timeout", "The dream exceeded its time limit")),
-    runtime.timeoutMs ?? 2 * 60 * 60 * 1000,
+    runtime.timeoutMs ?? WORKER_TIMEOUT_MS,
   );
   let checkingCancel = false;
   const cancelTimer = setInterval(() => {
@@ -286,7 +286,7 @@ export async function runWorker(
       "--tools",
       "read,write,edit,grep,find,ls",
       "--model",
-      job.model,
+      phase === "organizer" ? (job.organizer_model ?? job.model) : job.model,
       "--thinking",
       THINKING,
       "--system-prompt",
@@ -368,6 +368,9 @@ export async function runWorker(
             job.usage.cache_read_input_tokens += usage.cacheRead;
             job.usage.cache_creation_input_tokens += usage.cacheWrite;
             job.usage.cost_usd += usage.cost.total;
+            job.cost_by_phase ??= { analyze: 0, organize: 0 };
+            job.cost_by_phase[phase === "organizer" ? "organize" : "analyze"] +=
+              usage.cost.total;
             bad = [
               "error",
               "aborted",

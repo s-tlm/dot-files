@@ -48,6 +48,7 @@ export interface Dream {
   ];
   outputs: { type: "memory_store"; path: string }[];
   model: string;
+  organizer_model?: string;
   instructions: string;
   concurrency: number;
   budget_usd: number;
@@ -59,6 +60,8 @@ export interface Dream {
   ended_at: string | null;
   archived_at: string | null;
   usage: Usage;
+  cost_by_phase?: { analyze: number; organize: number };
+  estimate_usd?: number;
   summary: string;
   analyses?: { session: string; summary?: string; error?: string }[];
   checks?: { problems: string[]; duplicates: [string, string][] };
@@ -71,6 +74,8 @@ export interface DreamOptions {
   sessionFiles: string[];
   sessionModified?: number[];
   model?: string;
+  organizerModel?: string;
+  estimateUsd?: number;
   instructions?: string;
   concurrency?: number;
   budget?: number;
@@ -169,6 +174,9 @@ export async function createJob(
     ],
     outputs: [],
     model: options.model ?? DEFAULT_MODEL,
+    ...(options.organizerModel
+      ? { organizer_model: options.organizerModel }
+      : {}),
     instructions: options.instructions ?? "",
     concurrency,
     budget_usd: budget,
@@ -191,6 +199,10 @@ export async function createJob(
       cache_creation_input_tokens: 0,
       cost_usd: 0,
     },
+    cost_by_phase: { analyze: 0, organize: 0 },
+    ...(options.estimateUsd !== undefined
+      ? { estimate_usd: options.estimateUsd }
+      : {}),
     summary: "",
     error: null,
   };

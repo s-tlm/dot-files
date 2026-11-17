@@ -14,7 +14,11 @@ import {
   sep,
 } from "node:path";
 import { promisify } from "node:util";
-import { GIT_TIMEOUT_MS } from "./constants.ts";
+import {
+  GIT_TIMEOUT_MS,
+  MEMORY_INDEX_BYTES,
+  MEMORY_INDEX_LINES,
+} from "./constants.ts";
 
 export type Exec = (
   command: string,
@@ -410,9 +414,14 @@ export async function inspectStore(path: string): Promise<StoreInspection> {
   } else {
     if (/^---\r?\n/.test(index)) problems.push("MEMORY.md has frontmatter");
     const lines = index.split("\n").length - (index.endsWith("\n") ? 1 : 0);
-    if (lines > 200)
+    if (lines > MEMORY_INDEX_LINES)
       problems.push(
-        `MEMORY.md has ${lines} lines; sessions only see the first 200`,
+        `MEMORY.md has ${lines} lines; sessions only see the first ${MEMORY_INDEX_LINES}`,
+      );
+    const bytes = Buffer.byteLength(index);
+    if (bytes > MEMORY_INDEX_BYTES)
+      problems.push(
+        `MEMORY.md is ${bytes} bytes; sessions only see the first ${MEMORY_INDEX_BYTES}`,
       );
     const counts = new Map<string, number>();
     for (const link of markdownLinks(withoutCode(index))) {
@@ -531,6 +540,49 @@ export async function removeMovedStubs(output: string): Promise<void> {
   }
   // Validate the full set before removing anything, so a bad target leaves every source intact.
   for (const path of stubs) await fs.unlink(path);
+}
+
+// The part of MEMORY.md that goes into every session's system prompt.
+export function indexExcerpt(text: string): string {
+  let content = text.split("\n").slice(0, MEMORY_INDEX_LINES).join("\n");
+  if (Buffer.byteLength(content) <= MEMORY_INDEX_BYTES) return content;
+  content = Buffer.from(content)
+    .subarray(0, MEMORY_INDEX_BYTES)
+    .toString("utf8");
+  // Cut at a line boundary so no half entry reaches the prompt.
+  return content.slice(0, Math.max(0, content.lastIndexOf("\n")));
+}
+
+// The full MEMORY.md diff, because its start goes into every session's system prompt.
+export async function diffIndex(
+  input: string,
+  output: string,
+  exec: Exec = nodeExec,
+): Promise<string> {
+  const paths: string[] = [];
+  for (const store of [input, output]) {
+    const index = join(await safePath(store), "MEMORY.md");
+    const stat = await statIfPresent(index);
+    if (stat && (!stat.isFile() || stat.nlink !== 1))
+      throw new Error(`MEMORY.md is not a regular file: ${index}`);
+    paths.push(stat ? index : "/dev/null");
+  }
+  const result = await exec(
+    "git",
+    [
+      "diff",
+      "--no-index",
+      "--no-ext-diff",
+      "--no-textconv",
+      "--no-color",
+      "--",
+      ...paths,
+    ],
+    { timeout: GIT_TIMEOUT_MS },
+  );
+  if (result.code !== 0 && result.code !== 1)
+    throw new Error(`Git diff failed (${result.code}): ${result.stderr}`);
+  return result.stdout;
 }
 
 export async function diffStores(

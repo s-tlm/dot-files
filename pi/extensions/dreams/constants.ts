@@ -8,3 +8,7 @@ export const THINKING = "low";
 // A pending job without a live worker after this long counts as failed.
 export const STALE_JOB_MS = 60_000;
 export const GIT_TIMEOUT_MS = 10_000;
+export const WORKER_TIMEOUT_MS = 2 * 60 * 60 * 1000;
+// Sessions read the start of MEMORY.md; both limits apply.
+export const MEMORY_INDEX_LINES = 200;
+export const MEMORY_INDEX_BYTES = 8 * 1024;
