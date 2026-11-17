@@ -44,6 +44,8 @@ export interface Dream {
       session_files: string[];
       // Modification times at selection, so later dreams can tell which sessions changed since.
       session_modified?: number[];
+      // Subagent sessions rendered as sub-threads of each session.
+      session_children?: string[][];
     },
   ];
   outputs: { type: "memory_store"; path: string }[];
@@ -73,6 +75,7 @@ export interface DreamOptions {
   repoRoot: string;
   sessionFiles: string[];
   sessionModified?: number[];
+  sessionChildren?: string[][];
   model?: string;
   organizerModel?: string;
   estimateUsd?: number;
@@ -146,6 +149,16 @@ export async function createJob(
       !options.sessionModified.every(Number.isFinite))
   )
     throw new Error("Session modification times must match the sessions");
+  if (
+    options.sessionChildren &&
+    (options.sessionChildren.length !== sessionFiles.length ||
+      !options.sessionChildren.every(
+        (children) =>
+          Array.isArray(children) &&
+          children.every((child) => typeof child === "string" && child),
+      ))
+  )
+    throw new Error("Subagent sessions must match the sessions");
   const concurrency = options.concurrency ?? DEFAULT_CONCURRENCY;
   const budget = options.budget ?? DEFAULT_BUDGET_USD;
   if (
@@ -169,6 +182,9 @@ export async function createJob(
         session_files: sessionFiles,
         ...(options.sessionModified
           ? { session_modified: options.sessionModified }
+          : {}),
+        ...(options.sessionChildren?.some((children) => children.length)
+          ? { session_children: options.sessionChildren }
           : {}),
       },
     ],

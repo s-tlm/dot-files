@@ -512,7 +512,11 @@ export async function runWorker(
       check();
       const target = join(directory, "transcripts", `${i + 1}.txt`);
       try {
-        await writeFile(target, await renderSession(path), { mode: 0o600 });
+        await writeFile(
+          target,
+          await renderSession(path, job.inputs[1].session_children?.[i] ?? []),
+          { mode: 0o600 },
+        );
       } catch (error) {
         throw new DreamError(
           "input_session_unavailable",

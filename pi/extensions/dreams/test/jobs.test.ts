@@ -68,6 +68,23 @@ test("records session modification times when given and validates them", async (
     (await createJob(root, options)).inputs[1].session_modified,
     undefined,
   );
+  const withChildren = await createJob(root, {
+    ...options,
+    sessionChildren: [["/s/child.jsonl"]],
+  });
+  assert.deepEqual(withChildren.inputs[1].session_children, [
+    ["/s/child.jsonl"],
+  ]);
+  assert.equal(
+    (await createJob(root, { ...options, sessionChildren: [[]] })).inputs[1]
+      .session_children,
+    undefined,
+  );
+  for (const sessionChildren of [[], [[""]]])
+    await assert.rejects(
+      createJob(root, { ...options, sessionChildren }),
+      /Subagent sessions/,
+    );
   for (const sessionModified of [[], [1, 2], [NaN]])
     await assert.rejects(
       createJob(root, { ...options, sessionModified }),

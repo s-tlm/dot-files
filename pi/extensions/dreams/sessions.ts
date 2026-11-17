@@ -1,5 +1,5 @@
 import { lstat, readFile, readdir, realpath, stat } from "node:fs/promises";
-import { isAbsolute, join, relative, resolve, sep } from "node:path";
+import { basename, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { MAX_SESSIONS } from "./constants.ts";
 import { resolveStore } from "./store.ts";
 
@@ -12,6 +12,9 @@ export interface SessionInfo {
   messageCount: number;
   parentSession?: string;
   storeKey?: string;
+  firstEntryId?: string;
+  // Subagent sessions this session started, nested ones included, in discovery order.
+  children?: string[];
 }
 
 type Content = string | Record<string, unknown>[] | null | undefined;
@@ -161,6 +164,7 @@ async function parseSession(path: string): Promise<ParsedSession> {
       created: Date.parse(header.timestamp as string),
       modified: (await stat(path)).mtimeMs,
       messageCount: entries.filter((entry) => entry.type === "message").length,
+      ...(entries[0] ? { firstEntryId: entries[0].id } : {}),
       ...(header.parentSession
         ? { parentSession: header.parentSession as string }
         : {}),
@@ -360,11 +364,55 @@ export async function selectSessions(options: {
     selected.push(session);
   }
   selected.sort(oldestFirst);
+  const chosen = selected.slice(0, MAX_SESSIONS);
+  const all =
+    options.explicit === undefined
+      ? sessions
+      : await discoverSessions(options.sessionsRoot);
+  for (const session of chosen) {
+    const children = await subSessions(session.path, all);
+    if (children.length) session.children = children;
+  }
   return {
-    sessions: selected.slice(0, MAX_SESSIONS),
+    sessions: chosen,
     skippedUnmatched,
     limited: Math.max(0, selected.length - MAX_SESSIONS),
   };
+}
+
+// shortcut: the ledger tracks the parent's modification time only, so a subagent session resumed
+// after its parent's dream is not re-read; track child times too if that becomes common.
+async function subSessions(
+  parent: string,
+  all: SessionInfo[],
+): Promise<string[]> {
+  const found: string[] = [];
+  const owners = new Map<string, string>();
+  for (const session of all) {
+    if (!session.parentSession || session.messageCount < 2) continue;
+    try {
+      owners.set(session.path, await realpath(session.parentSession));
+    } catch (error) {
+      if (!missing(error)) throw error;
+    }
+  }
+  const visit = async (owner: string) => {
+    const ownerText = await readFile(owner, "utf8");
+    for (const session of all) {
+      if (owners.get(session.path) !== owner || found.includes(session.path))
+        continue;
+      // Forks copy their parent's entries with the same IDs; subagent sessions start fresh.
+      if (
+        session.firstEntryId &&
+        ownerText.includes(`"id":${JSON.stringify(session.firstEntryId)}`)
+      )
+        continue;
+      found.push(session.path);
+      await visit(session.path);
+    }
+  };
+  await visit(parent);
+  return found;
 }
 
 export function redact(text: string): string {
@@ -484,7 +532,10 @@ function contextEntries(entries: Entry[]): Entry[] {
   ];
 }
 
-export async function renderSession(path: string): Promise<string> {
+export async function renderSession(
+  path: string,
+  children: string[] = [],
+): Promise<string> {
   const { info, entries } = await parseSession(path);
   const selected = contextEntries(entries);
   const edits = new Map(
@@ -564,6 +615,23 @@ export async function renderSession(path: string): Promise<string> {
         1024,
       );
     }
+  }
+  for (const child of children) {
+    let text: string;
+    try {
+      text = await renderSession(child);
+    } catch (error) {
+      // A subagent session is supporting evidence; one that vanished or broke shouldn't stop the dream.
+      if (
+        missing(error) ||
+        (error instanceof Error && error.message.startsWith("Invalid session "))
+      )
+        continue;
+      throw error;
+    }
+    output.push(
+      `=== sub-thread ${inline(basename(child, ".jsonl"))} ===\n${text.trimEnd()}`,
+    );
   }
   return `${output.join("\n\n")}\n`;
 }

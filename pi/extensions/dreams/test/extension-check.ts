@@ -7,6 +7,7 @@ import { join } from "node:path";
 import dreams, {
   estimateCost,
   formatDream,
+  inputRate,
   parseDreamOptions,
   splitArgs,
 } from "../index.ts";
@@ -328,6 +329,9 @@ export default function checks(real: ExtensionAPI) {
       const estimate = estimateCost(4_024_601, 40_000, 2, 2);
       assert.ok(estimate > 6.5 && estimate < 8, String(estimate));
       assert.equal(estimateCost(1000, 1000, 0, 0), 0);
+      assert.equal(inputRate({ input: 2 }), 2);
+      assert.equal(inputRate({ input: 0.1, tiers: [{ input: 0.5 }] }), 0.5);
+      assert.equal(inputRate(undefined), 0);
       assert.deepEqual(
         splitArgs('--instructions "keep \\"quoted\\" words" --budget 1'),
         ["--instructions", 'keep "quoted" words', "--budget", "1"],

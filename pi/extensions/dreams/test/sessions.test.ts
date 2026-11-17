@@ -131,7 +131,52 @@ test("discovery returns metadata, tags and filesystem modification time, oldest 
     messageCount: 2,
     parentSession: "parent.jsonl",
     storeKey: key,
+    firstEntryId: "one",
   });
+});
+
+test("selection attaches nested subagent sessions but not forks, and rendering appends them", async (t) => {
+  const f = await fixture(t);
+  const parent = await f.make({ id: "parent", storeKey: key });
+  const agent = await f.make({
+    id: "agent",
+    parentSession: parent,
+    entries: [
+      message("a1", null, "user", "Find the table"),
+      message("a2", "a1", "assistant", [
+        { type: "text", text: "It is kick_curated_prod.dim_users" },
+      ]),
+    ],
+  });
+  const nested = await f.make({
+    id: "nested",
+    parentSession: agent,
+    entries: [
+      message("n1", null, "user", "Count rows"),
+      message("n2", "n1", "assistant", [{ type: "text", text: "42 rows" }]),
+    ],
+  });
+  // A fork copies its parent's entries, IDs included.
+  await f.make({ id: "fork", parentSession: parent });
+  await f.make({
+    id: "tiny",
+    parentSession: parent,
+    entries: [message("t1", null, "user", "hi")],
+  });
+  const { sessions } = await f.select();
+  assert.deepEqual(
+    sessions.map((session) => [session.id, session.children]),
+    [["parent", [agent, nested]]],
+  );
+  const text = await renderSession(parent, [
+    agent,
+    nested,
+    join(f.root, "gone.jsonl"),
+  ]);
+  assert.match(text, /\n\n=== sub-thread agent ===\nSESSION agent\n/);
+  assert.match(text, /=== sub-thread nested ===\nSESSION nested[\s\S]*42 rows/);
+  assert.match(text, /kick_curated_prod\.dim_users/);
+  assert.equal(text.match(/=== sub-thread/g)?.length, 2);
 });
 
 test("discovery accepts a direct session file and nested grouping folders", async (t) => {

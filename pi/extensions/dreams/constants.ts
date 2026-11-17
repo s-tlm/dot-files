@@ -1,5 +1,7 @@
 // Defaults and limits shared across the extension. Messages read these so text and checks stay in sync.
 export const DEFAULT_MODEL = "anthropic/claude-sonnet-5-5";
+// Used only when --model is not set. On the benchmark it reorganised as well as Sonnet at the same cost.
+export const DEFAULT_ORGANIZER_MODEL = "anthropic/claude-haiku-5-5";
 export const DEFAULT_BUDGET_USD = 10;
 export const DEFAULT_CONCURRENCY = 1;
 export const MAX_CONCURRENCY = 100;

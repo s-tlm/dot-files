@@ -31,6 +31,7 @@ import {
   DEFAULT_BUDGET_USD,
   DEFAULT_CONCURRENCY,
   DEFAULT_MODEL,
+  DEFAULT_ORGANIZER_MODEL,
   MAX_CONCURRENCY,
   MAX_SESSIONS,
   MEMORY_INDEX_BYTES,
@@ -98,6 +99,17 @@ export function splitArgs(input: string): string[] {
 // shortcut: calibrated on one 30-session Sonnet benchmark (analysers cost 3.5 times one read of
 // their transcripts, the organiser 3 times one read of the store); recalibrate from cost_by_phase
 // when prompts or models change. Rates are dollars per million input tokens.
+// Long dream contexts pass the 100K-token tiers some models price higher, so use the top tier.
+export function inputRate(cost?: {
+  input: number;
+  tiers?: { input: number }[];
+}): number {
+  return Math.max(
+    cost?.input ?? 0,
+    ...(cost?.tiers ?? []).map((tier) => tier.input),
+  );
+}
+
 export function estimateCost(
   transcriptBytes: number,
   storeBytes: number,
@@ -812,7 +824,9 @@ export default function dreams(pi: ExtensionAPI): void {
             "No eligible sessions. Current, forked, short and recently changed sessions are excluded",
           );
         const model = options.model ?? DEFAULT_MODEL;
-        const organizerModel = options.organizerModel ?? model;
+        const organizerModel =
+          options.organizerModel ??
+          (options.model === undefined ? DEFAULT_ORGANIZER_MODEL : model);
         const available = ctx.modelRegistry.getAvailable();
         const rate = (id: string) => {
           const found = available.find(
@@ -820,14 +834,16 @@ export default function dreams(pi: ExtensionAPI): void {
           );
           if (!found)
             throw new Error(`Model not available with credentials: ${id}`);
-          return found.cost?.input ?? 0;
+          return inputRate(found.cost);
         };
         const analyzerRate = rate(model);
         const organizerRate = rate(organizerModel);
         // Render here as the worker will, so the estimate counts what the analysers read.
         let bytes = 0;
         for (const session of selection.sessions)
-          bytes += Buffer.byteLength(await renderSession(session.path));
+          bytes += Buffer.byteLength(
+            await renderSession(session.path, session.children),
+          );
         const stats = await storeStats(current.path);
         const budget = options.budget ?? DEFAULT_BUDGET_USD;
         const estimate = estimateCost(
@@ -866,6 +882,10 @@ export default function dreams(pi: ExtensionAPI): void {
           storePath: current.path,
           repoRoot: current.root,
           sessionFiles: selection.sessions.map((session) => session.path),
+          sessionChildren: selection.sessions.map(
+            (session) => session.children ?? [],
+          ),
+          organizerModel: organizerModel === model ? undefined : organizerModel,
           estimateUsd: Math.round(estimate * 100) / 100,
           sessionModified: selection.sessions.map(
             (session) => session.modified,
