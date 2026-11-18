@@ -39,10 +39,10 @@ create_symlink "$NV_SRC_DIR" "$NV_TGT_DIR"
 create_symlink "$SS_SRC_DIR" "$SS_TGT_TOML"
 create_symlink "$GHOSTTY_SRC_DIR" "$GHOSTTY_TGT_DIR"
 
-# Secrets, sessions, package caches, mcp.json and AGENTS.md stay in $PI_TGT_DIR on each machine.
+# Secrets, sessions, package caches, settings.json, mcp.json and AGENTS.md stay in $PI_TGT_DIR on each machine.
 # Copy AGENTS.md by hand: the dreams extension rejects a symlinked context file.
-# mcp.json is local because it holds API keys.
-for item in settings.json extensions agents skills; do
+# mcp.json is local because it holds API keys; settings.json because it differs per machine.
+for item in extensions agents skills; do
   create_symlink_with_backup "$PI_SRC_DIR/$item" "$PI_TGT_DIR/$item"
 done
 
