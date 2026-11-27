@@ -119,6 +119,7 @@ Use `/` to edit the query, including action letters. `Enter` or `Esc` returns to
 | `a` | Filter by all assignees, yourself, unassigned or an account ID. |
 | `d` | Start peon in a Herdr-managed worktree for Git directories, or a sibling pane otherwise. |
 | `e` | Edit the ticket. Choose **Ticket** to set Fibonacci story points, including zero, **Comment** to write a multiline comment, or **Status** to choose an available workflow transition. |
+| `o` | Open the highlighted ticket in your default browser. |
 | `p` | Hide or show the preview. |
 | `r` | Reload the board filter, sprint and tickets. |
 | `J` / `K` | Scroll the preview by a line. `Shift+Up` / `Shift+Down` also work, including while searching. |

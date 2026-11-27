@@ -154,7 +154,7 @@ export class BoardView {
       this.selectedIndex = Math.max(0, this.matches.findIndex(issue => issue.key === selected));
       this.onView({ sort: this.sort, previewHidden: this.previewHidden });
     } else {
-      const action = ['a', 'd', 'e', 'r'].find(key => matchesKey(data, key));
+      const action = ['a', 'd', 'e', 'o', 'r'].find(key => matchesKey(data, key));
       const selected = this.matches[this.selectedIndex]?.key;
       if (action && (['a', 'r'].includes(action) || (!this.busy && !layout.tooSmall && selected))) {
         const result = { query: this.input.getValue(), action, selected, sort: this.sort, previewHidden: this.previewHidden };

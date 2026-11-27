@@ -6,7 +6,7 @@ import { createInterface } from 'node:readline/promises';
 import { loadCredentials } from '../lib/credentials.mjs';
 import { Jira } from '../lib/jira.mjs';
 import { Herdr, captureOrigin } from '../lib/herdr.mjs';
-import { POINTS, choose, confirm, editComment, assignees, filtered, safeText } from '../lib/browser.mjs';
+import { POINTS, choose, confirm, editComment, assignees, filtered, run, safeText } from '../lib/browser.mjs';
 import { browse } from '../lib/board.mjs';
 import { loadView, saveView } from '../lib/view.mjs';
 
@@ -78,6 +78,13 @@ async function main() {
           await jira.assertScope(key);
           const dispatched = await herdr.dispatch(key, origin, { cwd: origin.focused_pane_cwd, site: config.site, project: config.project });
           state.header = `${key}: peon started${dispatched?.branch ? ` in ${dispatched.branch} (Herdr worktree)` : ''}. Plan approval is still required.`;
+          continue;
+        }
+        if (action.action === 'o') {
+          // run() treats exit code 1 as an fzf cancel, but for open it means failure.
+          const { code } = await run('open', [`${config.site}/browse/${encodeURIComponent(key)}`]);
+          if (code !== 0) throw new Error(`${key}: could not open the ticket in your browser.`);
+          state.header = `${key}: opened in your browser.`;
           continue;
         }
         // Every Jira edit starts from one menu, so navigation letters can't trigger a write.

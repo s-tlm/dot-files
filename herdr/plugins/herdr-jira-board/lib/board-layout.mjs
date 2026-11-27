@@ -92,7 +92,7 @@ function footer(width, index, count, searchMode, scrollable) {
   // Letters are query text while searching, so search mode keeps the arrow hints.
   const pairs = (searchMode
     ? [['↑↓', 'move'], ['Enter', 'navigate'], ['Esc', 'navigate'], ['⇧↑↓', 'scroll']]
-    : [['j/k', 'move'], ['/', 'search'], ['e', 'edit'], ['d', 'peon'], ['f', 'sort'], ['p', 'preview'],
+    : [['j/k', 'move'], ['/', 'search'], ['e', 'edit'], ['d', 'peon'], ['o', 'open'], ['f', 'sort'], ['p', 'preview'],
       ['a', 'assignee'], ['r', 'refresh'], ['J/K', 'scroll'], ['esc', 'quit']])
     .filter(([, label]) => scrollable || label !== 'scroll');
   const counter = `${count ? index + 1 : 0}/${count}`;

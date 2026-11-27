@@ -140,7 +140,7 @@ test('ready waits for the initial filter and blocks stale selection and write ac
   assert.ok(signal instanceof AbortSignal);
   assert.ok(renders.length > 0);
   assert.match(plain(view.render(120))[2], /Searching/);
-  for (const key of ['d', 'e', 'j', '\x1b[B']) view.handleInput(key);
+  for (const key of ['d', 'e', 'o', 'j', '\x1b[B']) view.handleInput(key);
   assert.deepEqual(actions, []);
   assert.equal(view.selectedIndex, 1);
   pending.resolve([issues[2], issues[1]]);
@@ -150,7 +150,7 @@ test('ready waits for the initial filter and blocks stale selection and write ac
   assert.doesNotMatch(plain(view.render(120))[2], /Searching/);
 });
 
-for (const key of ['d', 'e', 'a', 'r']) {
+for (const key of ['d', 'e', 'o', 'a', 'r']) {
   test(`navigation ${key} returns the original key once`, async t => {
     const original = issue(1);
     original.key = 'DATA-12345678901234567890';
@@ -360,7 +360,7 @@ for (const action of ['a', 'r']) {
   test(`empty matches allow ${action} but block ticket actions`, async t => {
     const { view, actions } = model(t, { filter: async () => [] });
     await view.ready;
-    for (const key of ['d', 'e', 'j', 'k', '\x1b[6~']) view.handleInput(key);
+    for (const key of ['d', 'e', 'o', 'j', 'k', '\x1b[6~']) view.handleInput(key);
     assert.deepEqual(actions, []);
     assert.match(plain(view.render(120))[5], /No tickets match/);
     view.handleInput(action);

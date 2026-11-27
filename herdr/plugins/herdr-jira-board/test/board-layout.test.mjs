@@ -147,12 +147,12 @@ test('fits whole footer hints, reserves the counter and retains escape', () => {
     assert.ok(footer.endsWith('1/1'));
     assert.match(footer, /esc quit/);
     const hints = footer.slice(0, -3).trim().split(/ {2,}/).filter(Boolean);
-    for (const hint of hints) assert.match(hint, /^(j\/k move|\/ search|e edit|d peon|f sort|p preview|a assignee|r refresh|J\/K scroll|esc quit)$/);
+    for (const hint of hints) assert.match(hint, /^(j\/k move|\/ search|e edit|d peon|o open|f sort|p preview|a assignee|r refresh|J\/K scroll|esc quit)$/);
     assert.match(lines[14], /\x1b\[38;5;249m/);
     assert.match(lines[14], /\x1b\[38;5;8m/);
   }
   const wide = frame(190, 15);
-  assert.match(wide.text[14], /j\/k move  \/ search  e edit  d peon  f sort  p preview  a assignee  r refresh  J\/K scroll  esc quit/);
+  assert.match(wide.text[14], /j\/k move  \/ search  e edit  d peon  o open  f sort  p preview  a assignee  r refresh  J\/K scroll  esc quit/);
   assert.ok(visibleWidth(wide.text[14].trimEnd()) > wide.layout.tableWidth);
   const search = frame(120, 40, { searchMode: true });
   assert.match(search.text[39], /↑↓ move  Enter navigate  Esc navigate  ⇧↑↓ scroll/);

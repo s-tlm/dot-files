@@ -30,6 +30,8 @@ for (const scenario of [
   { name: 'dispatch uses the originating directory without a picker and rechecks scope', action: 'd', answers: [], writes: ['dispatch'] },
   { name: 'worktree dispatch reports its Herdr branch', action: 'd', answers: [], branch: 'feat/data-1', writes: ['dispatch'] },
   { name: 'stale ticket cannot dispatch', action: 'd', answers: [], fail: 'scope', writes: [] },
+  { name: 'o opens the highlighted ticket in the browser without writing', action: 'o', answers: [], writes: [] },
+  { name: 'a failed browser launch shows an alert', action: 'o', answers: [], fail: 'browser', writes: [] },
 ]) test(`controller: ${scenario.name}`, async () => {
   const dir = await mkdtemp(join(tmpdir(), 'jira-controller-test-'));
   const log = join(dir, 'events.jsonl');
@@ -104,6 +106,11 @@ for (const scenario of [
     if(answer==null)process.exit(130);
     process.stdout.write(answer);
   `, { mode: 0o700 });
+  await writeFile(join(dir, 'open'), `#!${process.execPath}
+    import fs from 'node:fs';
+    fs.appendFileSync(process.env.JIRA_TEST_LOG,JSON.stringify({name:'browser',value:process.argv.slice(2)})+'\\n');
+    if(JSON.parse(process.env.JIRA_TEST_SETTINGS).fail==='browser')process.exit(1);
+  `, { mode: 0o700 });
   await writeFile(join(dir, 'package.json'), '{"type":"module"}');
   const editor = join(dir, 'editor');
   await writeFile(editor, `#!${process.execPath}\nimport {writeFileSync} from 'node:fs'; writeFileSync(process.argv[2],'First line\\nSecond line\\n');`, { mode: 0o700 });
@@ -150,6 +157,10 @@ for (const scenario of [
     if (scenario.fail === 'comment') assert.ok(lastBrowser.state.alert.includes('outcome is uncertain'));
     if (scenario.fail === 'refresh') assert.ok(lastBrowser.state.alert.includes('update accepted, but a follow-up failed. Check Jira before repeating.'));
     if (scenario.fail === 'scope') assert.ok(lastBrowser.state.alert.includes('left the active scope'));
+    if (scenario.fail === 'browser') assert.ok(lastBrowser.state.alert.includes('DATA-1: could not open the ticket in your browser.'));
+    assert.deepEqual(events.filter(e => e.name === 'browser').map(e => e.value),
+      scenario.action === 'o' ? [[`${jiraSettings.site}/browse/DATA-1`]] : []);
+    if (scenario.action === 'o' && !scenario.fail) assert.ok(lastBrowser.state.header.includes('DATA-1: opened in your browser.'));
     if (!scenario.fail) assert.equal(lastBrowser.state.alert, '');
     if (scenario.branch) assert.ok(lastBrowser.state.header.includes(`${scenario.branch} (Herdr worktree)`));
     if (scenario.action === 'd') assert.equal(events.filter(event => event.name === 'fzf').length, 0);
